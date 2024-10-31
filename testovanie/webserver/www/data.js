@@ -1,5 +1,6 @@
 const hostName = window.location.hostname
 let ws = new WebSocket("ws://" + hostName + ":8080");
+console.log(hostName)
 bind()
 
 function capitalize(string) {
@@ -8,10 +9,12 @@ function capitalize(string) {
 
 function bind(){
     ws.onopen = function () {
+        console.log("Connection open");
         document.getElementById("position").innerHTML = `<p>Connected. Waiting for data</p>`;
     }
 
     ws.onerror = function(event) {
+        console.error(event);
         ws.close();
     }
 
@@ -36,12 +39,12 @@ function bind(){
 
 
 function retry(){
-    if (ws.readyState !== WebSocket.OPEN) {
+    if (ws.readyState !== WebSocket.OPEN && ws.readyState !== WebSocket.CONNECTING) {
         console.log("Reconnecting...");
         try {
             ws = new WebSocket("ws://" + hostName + ":8080");
-            console.log("Reconnected");
             bind()
+            console.log("Reconnected");
         }
         catch (e) {}
     }

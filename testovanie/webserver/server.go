@@ -154,7 +154,7 @@ func startHttpServer() {
 	server.Handler = http.FileServer(http.Dir("./www"))
 	err := server.ListenAndServe()
 	if err != nil {
-		fmt.Println("Error starting server localhost:80", err)
+		fmt.Println("Error starting server localhost:8080", err)
 		return
 	}
 	fmt.Println("Server started")
@@ -163,7 +163,7 @@ func startHttpServer() {
 func startWSServer() {
 
 	http.HandleFunc("/", handleConnections)
-	err := http.ListenAndServe("localhost:8080", nil)
+	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		fmt.Println("Error starting server localhost:8080")
 	}

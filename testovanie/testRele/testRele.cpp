@@ -7,7 +7,7 @@ int main()
 {
     stdio_init_all();
     
-    const uint RELE_PIN = 25;
+    const uint RELE_PIN = 16;
 
     gpio_init(RELE_PIN);
     gpio_set_dir(RELE_PIN, GPIO_OUT);

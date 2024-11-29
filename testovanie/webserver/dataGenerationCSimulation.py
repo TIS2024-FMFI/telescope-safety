@@ -16,6 +16,6 @@ while True:
          "elevation": elevacia}
     s.send((json.dumps(d) + '\n').encode())
     time.sleep(1)
-    azimut += 2
-    elevacia += 3
+    azimut += 3
+    elevacia += 2
     

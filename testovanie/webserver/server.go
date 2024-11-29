@@ -50,21 +50,11 @@ func handler(conn net.Conn) {
 			fmt.Println("Error reading from connection")
 			break
 		}
-		//fmt.Printf("Reeceived message: %d\n", r)
-
-		//Could be skipped
-		//var data Data
-		//err = unwrap(r, &data)
-		//if err != nil {
-		//	break
-		//}
 
 		// Send data to webserver
-		//mutex.Lock()
 		if len(clients) > 0 {
 			broadcast <- r
 		}
-		//mutex.Unlock()
 
 	}
 }

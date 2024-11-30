@@ -23,7 +23,7 @@
                                 "<p>Enter config</p>"\
                             "</body>"
 
-# define zone_setup_page    "<!DOCTYPE html>"\
+# define zone_setup_page "<!DOCTYPE html>"\
                             "<html lang=\"en\">"\
                             "<head>"\
                                 "<meta charset=\"UTF-8\">"\

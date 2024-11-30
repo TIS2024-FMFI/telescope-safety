@@ -50,6 +50,8 @@
 extern "C" {
 #endif
 
+// #define _DHCP_DEBUG_
+
 /*
  * @brief 
  * @details If you want to display debug & processing message, Define _DHCP_DEBUG_ 

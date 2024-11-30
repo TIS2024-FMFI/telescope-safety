@@ -117,6 +117,7 @@ include_directories(${WIZNET_LIB_PATH}/Internet/httpServer)
 include_directories(${WIZNET_LIB_PATH}/Internet/DHCP)
 include_directories(${WIZNET_LIB_PATH}/Ethernet/W5500)
 include_directories(${CMAKE_SOURCE_DIR}/port/ioLibrary_Driver)
+include_directories(${CMAKE_SOURCE_DIR}/port/timer)
 include_directories(${CMAKE_SOURCE_DIR}/port/ioLibrary_Driver/inc)
 
 file(GLOB WIZNET_SOURCES
@@ -126,6 +127,7 @@ file(GLOB WIZNET_SOURCES
     "${WIZNET_LIB_PATH}/Internet/DHCP/*.c"
     "${WIZNET_LIB_PATH}/Ethernet/W5500/*.c"
     "${CMAKE_SOURCE_DIR}/port/ioLibrary_Driver/src/*.c"
+    "${CMAKE_SOURCE_DIR}/port/timer/*.c"
     # "${CMAKE_SOURCE_DIR}/port/ioLibrary_Driver/*.c"
 )
 

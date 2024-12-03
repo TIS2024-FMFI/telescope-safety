@@ -1,8 +1,8 @@
-Návrh 
+# Návrh 
 
-Podrobná špecifikácia vonkajších rozhraní systému na kontrolu polohy teleskopu:  
+## Podrobná špecifikácia vonkajších rozhraní systému na kontrolu polohy teleskopu:  
 
-Definícia komunikácie medzi jednotlivými komponentmi hardvéru (merač/vysielač a prijímač/zobrazovač):  
+### Definícia komunikácie medzi jednotlivými komponentmi hardvéru (merač/vysielač a prijímač/zobrazovač):  
 
 Modul s inerciálnou jednotkou (merač/vysielač): Inerciálna jednotka umiestnená na teleskope bude monitorovať jeho polohu a pohyb a sledovať údaje ako azimut, deklináciu, ako aj komponenty Roll-Pitch-Yaw, Eulerove uhly alebo kvaterniony. Vstavaný mikropočítač spracováva tieto informácie a prostredníctvom rádiovej komunikácie na frekvencii 868 MHz ich prenáša do riadiacej jednotky. Tento modul bude vybavený rádiovým modemom, ktorý zabezpečuje reálnu komunikáciu so systémom riadiacej jednotky.  
 
@@ -18,78 +18,42 @@ Prehliadač po prijatí JSON súboru pomocou JavaScript-u JSON rozbalí a zobr
 
 Používatelia sa cez prehliadač pripoja na web server cez HTTP[S], obdrzia od servera HTML, CSS a JS subory, následne JavaScript na stránke čaká na prijatie dát cez WebSocket.
 
-Konfiguračné súbory:  
+## Konfiguračné súbory:  
 
-Modul s inerciálnou jednotkou (MIMU):  
+### Modul s inerciálnou jednotkou (MIMU):  
+* identifikátor  
+* typ modulu  
+* nulová poloha - AZ a EL  
 
-identifikátor  
+### Riadiaca jednotka (RJ):  
+* identifikátor  
+* TCP/IP nastavenia  
+  * IP adresa (Musí byť statická, môže byt zabezpečené cez DHCP, riziko nefunkčnosti pri výpadku) 
+  * port, na ktorom bude dostupná služba pre riadiaci softvér na PC  
 
-typ modulu  
-
-nulová poloha - AZ a EL  
-
-   
-
-Riadiaca jednotka (RJ):  
-
-identifikátor  
-
-TCP/IP nastavenia  
-
-IP adresa (Musí byť statická, môže byt zabezpečené cez DHCP, riziko nefunkčnosti pri výpadku) 
-
-port, na ktorom bude dostupná služba pre riadiaci softvér na PC  
-
-   
-
-PC:   
-
+### PC:   
 Všeobecné nastavenia:  
+* počet modulov s iniciálnymi meracími jednotkami  
+* frekvencia logovania (a zobrazovania) - komunikácia medzi MIMU a RJ  
+* súradnicový systém  
+* počet zakázaných oblasti  
+* zakázaná oblasť 1  
+  * počet bodov  
+  * bod 1 - AZ a EL  
+  * ....  
+* alarm distance  
 
-počet modulov s iniciálnymi meracími jednotkami  
+## Dátové súbory:  
+* meno obsahuje "Data" + ID riadiacej jednotky, ktorá ho zaznamenala + dátum a čas vzniku súboru, t.j. prvého záznamu v ňom  
+* jeden záznam obsahuje  
+  * timestamp = dátum a čas  
+  * zdroj merania = identifikátor MIMU  
+  * Poloha  
+    * AZ – azimut  
+    * EL - elevácia (výška)  
 
-frekvencia logovania (a zobrazovania) - komunikácia medzi MIMU a RJ  
-
-súradnicový systém  
-
-počet zakázaných oblasti  
-
-zakázaná oblasť 1  
-
-počet bodov  
-
-bod 1 - AZ a EL  
-
-....  
-
-alarm distance  
-
-   
-
-  
-
-Dátové súbory:  
-
-meno obsahuje "Data" + ID riadiacej jednotky, ktorá ho zaznamenala + dátum a čas vzniku súboru, t.j. prvého záznamu v ňom  
-
-jeden záznam obsahuje  
-
-timestamp = dátum a čas  
-
-zdroj merania = identifikátor MIMU  
-
-Poloha  
-
-AZ – azimut  
-
-EL - elevácia (výška)  
-
-   
-
-Log súbory:  
-
-meno obsahuje "Log_" + dátum a čas vzniku súboru, t.j. prvého záznamu v ňom  
-
-jeden záznam obsahuje informácie o mimoriadnej udalosti alebo  konfiguračnej udalosti   
+## Log súbory:  
+* meno obsahuje "Log_" + dátum a čas vzniku súboru, t.j. prvého záznamu v ňom  
+* jeden záznam obsahuje informácie o mimoriadnej udalosti alebo  konfiguračnej udalosti   
 
 Súbory budú vo formáte CSV.

@@ -18,21 +18,18 @@ Prehliadač po prijatí JSON súboru pomocou JavaScript-u JSON rozbalí a zobr
 
 Používatelia sa cez prehliadač pripoja na web server cez HTTP[S], obdrzia od servera HTML, CSS a JS subory, následne JavaScript na stránke čaká na prijatie dát cez WebSocket.
 
-## Konfiguračné súbory:  
-
-### Modul s inerciálnou jednotkou (MIMU):  
+## Modul s inerciálnou jednotkou (MIMU):  
 * identifikátor  
 * typ modulu  
 * nulová poloha - AZ a EL  
 
-### Riadiaca jednotka (RJ):  
+## Riadiaca jednotka (RJ):  
 * identifikátor  
 * TCP/IP nastavenia  
   * IP adresa (Musí byť statická, môže byt zabezpečené cez DHCP, riziko nefunkčnosti pri výpadku) 
   * port, na ktorom bude dostupná služba pre riadiaci softvér na PC  
-
-### PC:   
-Všeobecné nastavenia:  
+   
+## Všeobecné nastavenia:  
 * počet modulov s iniciálnymi meracími jednotkami  
 * frekvencia logovania (a zobrazovania) - komunikácia medzi MIMU a RJ  
 * súradnicový systém  
@@ -54,6 +51,15 @@ Všeobecné nastavenia: 
 
 ## Log súbory:  
 * meno obsahuje "Log_" + dátum a čas vzniku súboru, t.j. prvého záznamu v ňom  
-* jeden záznam obsahuje informácie o mimoriadnej udalosti alebo  konfiguračnej udalosti   
+* jeden záznam obsahuje informácie o mimoriadnej udalosti alebo  konfiguračnej udalosti
+
+## Konfiguračné súbory:
+(treba doplniť)
 
 Súbory budú vo formáte CSV.
+
+## Diagramy:
+(treba doplniť stavový, komponent diagram)
+
+## Plán implementácie:
+(treba doplniť)

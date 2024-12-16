@@ -52,11 +52,15 @@ Používatelia sa cez prehliadač pripoja na web server cez HTTP[S], obdrzia od 
 ## Log súbory:  
 * meno obsahuje "Log_" + dátum a čas vzniku súboru, t.j. prvého záznamu v ňom  
 * jeden záznam obsahuje informácie o mimoriadnej udalosti alebo  konfiguračnej udalosti
+* Súbory budú vo formáte CSV.
 
 ## Konfiguračné súbory:
-(treba doplniť)
+* riadky začínajúce "#" sú ignorované (slúžia na zlepšenie orientacie v súbore, pomenovanie jednotlivých zón)
+* riadok obsahuje dvojicu čísel v tvare "AZIMUTH_SPACE_ELEVATION_NEWLINE"
+* prázdny riadok (obsahujúci NEWLINE) oddeluje jednotlivé oblasti
+* každú oblasť tvoria minimalne 3 záznamy Azimuthu a Elevacie
 
-Súbory budú vo formáte CSV.
+
 
 ## Diagramy:
 (treba doplniť stavový, komponent diagram)

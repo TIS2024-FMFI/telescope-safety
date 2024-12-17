@@ -128,6 +128,7 @@ file(GLOB WIZNET_SOURCES
     "${WIZNET_LIB_PATH}/Ethernet/W5500/*.c"
     "${CMAKE_SOURCE_DIR}/port/ioLibrary_Driver/src/*.c"
     "${CMAKE_SOURCE_DIR}/port/timer/*.c"
+    "${CMAKE_SOURCE_DIR}/*.c"
     # "${CMAKE_SOURCE_DIR}/port/ioLibrary_Driver/*.c"
 )
 

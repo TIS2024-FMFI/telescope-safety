@@ -12,6 +12,8 @@
 #include "w5x00_spi.h"
 #include "www/websites.h"
 #include "timer.h"
+#include "server.h"
+#include <string.h>
 
 /* Clock */
 #define PLL_SYS_KHZ (133 * 1000)
@@ -52,6 +54,7 @@ static uint8_t g_http_recv_buf[ETHERNET_BUF_MAX_SIZE] = {
 /* Socket */
 #define SOCKET_DHCP 0
 #define SOCKET_DNS 1
+#define SOCKET_UDP 6
 static uint8_t g_http_socket_num_list[HTTP_SOCKET_MAX_NUM] = {2, 3, 4, 5};
 
 /* Retry count */
@@ -87,10 +90,7 @@ static void repeating_timer_callback(void);
 char* load_file(const char* filename);
 
 
-
-
-
-
+int http_post_callback(uint8_t* uri_name, uint8_t* http_req, uint8_t* buf);
 int generate_mac(wiz_NetInfo *net_info);
 
 
@@ -107,6 +107,7 @@ int main()
     sleep_ms(3000);
     set_clock_khz();
     stdio_init_all();
+    generate_mac(&g_net_info);
     sleep_ms(3000);
 
     
@@ -144,9 +145,15 @@ int main()
     print_network_information(g_net_info);
 
     /* Register web page */
-    reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t*) index_page);
-    reg_httpServer_webContent((uint8_t *)"zone_setup.html", (uint8_t*) zone_setup_page);
-    reg_httpServer_webContent((uint8_t *)"config_setup.html", (uint8_t*) config_setup_page);
+    // reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t*) index_page);
+    reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t*) hlavna_stranka);
+    // reg_httpServer_webContent((uint8_t *)"config.html", (uint8_t*) config_page);
+    reg_httpServer_webContent((uint8_t *)"config.html", (uint8_t*) konfiguracna_stranka);
+    reg_httpServer_webContent((uint8_t *)"styles.css", (uint8_t*) styles);
+    
+
+    
+
 
     
     wizchip_1ms_timer_initialize(repeating_timer_callback);
@@ -292,6 +299,41 @@ static void repeating_timer_callback(void)
         DHCP_time_handler();
     }
 }
+
+
+int http_post_callback(uint8_t* uri_name, uint8_t* http_req, uint8_t* buf) {
+    if (strncmp((char *)http_req, "POST ", 5) == 0) {
+        printf("POST request received for URI: %s\n", uri_name);
+
+        // Parse Content-Length header
+        char *content_length_str = strstr((char *)http_req, "Content-Length: ");
+        if (content_length_str) {
+            int content_length = atoi(content_length_str + 16);
+            printf("Content-Length: %d\n", content_length);
+
+            // Locate and extract body
+            char *body = strstr((char *)http_req, "\r\n\r\n");
+            if (body) {
+                body += 4; // Skip the "\r\n\r\n"
+                printf("POST Body: %.*s\n", content_length, body);
+
+                // Process the POST data (e.g., parse JSON or form data)
+                // Example: Save to a file or handle settings update
+            }
+        }
+
+        // Send response
+        snprintf((char *)buf, ETHERNET_BUF_MAX_SIZE,
+                 "HTTP/1.1 200 OK\r\n"
+                 "Content-Type: text/plain\r\n"
+                 "Connection: close\r\n\r\n"
+                 "POST received successfully!");
+        return 200; // HTTP OK
+    }
+
+    return 404; // Not Found
+}
+
 
 
 // Function to load a file into a buffer

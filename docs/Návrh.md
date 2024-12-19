@@ -19,39 +19,27 @@ Prehliadač po prijatí JSON súboru pomocou JavaScript-u JSON rozbalí a zobr
 Používatelia sa cez prehliadač pripoja na web server cez HTTP[S], obdrzia od servera HTML, CSS a JS subory, následne JavaScript na stránke čaká na prijatie dát cez WebSocket.
 
 ## Modul s inerciálnou jednotkou (MIMU):  
-* identifikátor  
-* typ modulu  
-* nulová poloha - AZ a EL  
+* identifikátor
 
-## Riadiaca jednotka (RJ):  
-* identifikátor  
+## Riadiaca jednotka (RJ):
+* MAC adresa
 * TCP/IP nastavenia  
-  * IP adresa (Musí byť statická, môže byt zabezpečené cez DHCP, riziko nefunkčnosti pri výpadku) 
-  * port, na ktorom bude dostupná služba pre riadiaci softvér na PC  
+  * IP adresa získaná z DHCP
    
-## Všeobecné nastavenia:  
-* počet modulov s iniciálnymi meracími jednotkami  
-* frekvencia logovania (a zobrazovania) - komunikácia medzi MIMU a RJ  
-* súradnicový systém  
-* počet zakázaných oblasti  
-* zakázaná oblasť 1  
-  * počet bodov  
-  * bod 1 - AZ a EL  
-  * ....  
-* alarm distance  
+## Všeobecné nastavenia:
+* frekvencia logovania (a zobrazovania) - komunikácia medzi MIMU a RJ
 
-## Dátové súbory:  
-* meno obsahuje "Data" + ID riadiacej jednotky, ktorá ho zaznamenala + dátum a čas vzniku súboru, t.j. prvého záznamu v ňom  
-* jeden záznam obsahuje  
-  * timestamp = dátum a čas  
-  * zdroj merania = identifikátor MIMU  
-  * Poloha  
-    * AZ – azimut  
-    * EL - elevácia (výška)  
-
-## Log súbory:  
-* meno obsahuje "Log_" + dátum a čas vzniku súboru, t.j. prvého záznamu v ňom  
-* jeden záznam obsahuje informácie o mimoriadnej udalosti alebo  konfiguračnej udalosti
+## Log súbory:
+* priecinok Polohy
+  * meno obsahuje "Log_" + MAC riadiacej jednotky, ktorá ho zaznamenala + dátum vzniku súboru, t.j. prvého záznamu v ňom  
+  * jeden záznam obsahuje  
+    * timestamp = dátum a čas  
+    * zdroj merania = identifikátor MIMU  
+    * Poloha  
+      * AZ – azimut  
+      * EL - elevácia (výška)
+* jeden subor obsahuje informácie o mimoriadnej udalosti
+* jeden subor obsahuje informácie o konfiguračnej udalosti
 * Súbory budú vo formáte CSV.
 
 ## Konfiguračné súbory:

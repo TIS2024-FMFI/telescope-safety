@@ -24,7 +24,7 @@ Používatelia sa cez prehliadač pripoja na web server cez HTTP[S], obdrzia od 
 (TUTO TO CHCE NEJAKY NADPIS ĎALŠÍ)
 
 ## Modul s inerciálnou jednotkou (MIMU):
-Inerciálna jednotka umiestnená na teleskope bude monitorovať jeho polohu a pohyb pomocou komponentov Roll-Pitch-Yaw, Eulerových uhlov alebo kvaterniónov. Vstavaný mikropočítač spracováva tieto informácie, preráta ich do uhlov azimut a elevácia. Tieto údaje posiela riadiacej jednotke. V prípade odpojenia systému dostáva správu od riadiacej jednotky, že polohu nie je nutné ďalej merať.
+Inerciálna jednotka umiestnená na teleskope bude monitorovať jeho polohu a pohyb pomocou komponentov Roll-Pitch-Yaw, Eulerových uhlov alebo kvaterniónov. Vstavaný mikropočítač spracováva tieto informácie, preráta ich do uhlov azimut a elevácia. Tieto údaje posiela riadiacej jednotke. V prípade odpojenia potreby zo strany používateľa dostáva správu od riadiacej jednotky, že modul treba resetnúť a nanovo nakalibrovať.
 
 ## Riadiaca jednotka (RJ):
 * MAC adresa
@@ -64,10 +64,11 @@ Inerciálna jednotka umiestnená na teleskope bude monitorovať jeho polohu a po
 <b>Modul s inerciálnou jednotkou</b><br>
 program v jazyku C vytvorený vo vývojovom prostredí Arduino IDE pre mikropočítač Raspberry Pi Pico 2 na získanie údajov z inerciálnej jednotky 10 DOF IMU Sensor,ICM20948 vo forme Eulerových uhlov, výpočet kvaterniónov, prevod na azimut a eleváciu<br>
 program pre vysielač modemu LoRa v jazyku C vytvorený vo vývojovom prostredí Arduino IDE na rádiové zasielanie údajov získaných zo senzoru<br>
-program pre prijímač modemu LoRa na prijatie správy ohľadom vypnutia systému
+program pre prijímač modemu LoRa na prijatie správy ohľadom resetovania a opätovnej kalibrácie modulu
 
 <b>Riadiaca jednotka</b><br>
 program v jazyku C vytvorený vo vývojom prostredí Arduino IDE pre spracovanie údajov prijatých u prijímača modemu LoRa<br>
+program v jazyku C vytvorený vo vývojom prostredí Arduino IDE pre posielanie správy modulu s inerciálnou jednotkou na jeho opätovnú kalibráciu a resetovanie<br>
 program v jazyku C na vyhodnotenie nebezpečenstva podľa získaných a konfiguračných údajov, spúšťanie alarmu, vypnutie systému<br>
 program v jazyku C na spracovanie konfiguračného súboru a jeho naparsovanie do dátovej štruktúry
 

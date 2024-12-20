@@ -35,6 +35,9 @@ AzimuthElevation* fromRPYtoAzimuthElevation(RollPitchYaw* rollPitchYaw);
 // @return 0 if success, -1 if error
 int sendToControlUnit(AzimuthElevation* azimutElevation);
 
+// Receiving message from control unit about the system state(turned off, turned on)
+// @return 0 if success, -1 if error
+int readFromControlUnit();
 
 // Riadiaca jednotka
 

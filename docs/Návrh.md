@@ -1,10 +1,13 @@
 # Návrh 
 
+## Úvod
+(treba doplniť)
+
 ## Podrobná špecifikácia vonkajších rozhraní systému na kontrolu polohy teleskopu:  
 
-### Definícia komunikácie medzi jednotlivými komponentmi hardvéru (merač/vysielač a prijímač/zobrazovač):  
+### Definícia komunikácie medzi jednotlivými komponentmi hardvéru (merač/vysielač a prijímač/zobrazovač):
 
-Modul s inerciálnou jednotkou (merač/vysielač): Inerciálna jednotka umiestnená na teleskope bude monitorovať jeho polohu a pohyb a sledovať údaje ako azimut, deklináciu, ako aj komponenty Roll-Pitch-Yaw, Eulerove uhly alebo kvaterniony. Vstavaný mikropočítač spracováva tieto informácie a prostredníctvom rádiovej komunikácie na frekvencii 868 MHz ich prenáša do riadiacej jednotky. Tento modul bude vybavený rádiovým modemom, ktorý zabezpečuje reálnu komunikáciu so systémom riadiacej jednotky.  
+V moduli s inerciálnou jednotkou bude komunikácia medzi senzorom a mikropočítačom prebiehať pomocou I<sup>2</sup>C rozhrania. Modul s inerciálnou jednotkou bude vybavený rádiovým modemom, ktorý zabezpečuje reálnu komunikáciu so systémom riadiacej jednotky. Na komunikáciu mikropočítača s modemom sa využije SPI - Serial Peripheral Interface. Modem bude poskytovať bezdrátovú komunikáciu medzi modulom s inerciálnou jednotkou a riadiacou jednotkou pomocou protokolu LoRa.
 
 Riadiaca jednotka (prijímač/zobrazovač): Má schopnosť prijímať údaje o polohe teleskopu z modulu s inerciálnou jednotkou prostredníctvom rádiového signálu. Obsahuje jednoduchý displej na zobrazenie aktuálnych súradníc azimutu a elevácia. Riadiaca jednotka vie komunikovať s počítačom cez ethernetové rozhranie.  
 
@@ -18,8 +21,10 @@ Prehliadač po prijatí JSON súboru pomocou JavaScript-u JSON rozbalí a zobr
 
 Používatelia sa cez prehliadač pripoja na web server cez HTTP[S], obdrzia od servera HTML, CSS a JS subory, následne JavaScript na stránke čaká na prijatie dát cez WebSocket.
 
-## Modul s inerciálnou jednotkou (MIMU):  
-* identifikátor
+(TUTO TO CHCE NEJAKY NADPIS ĎALŠÍ)
+
+## Modul s inerciálnou jednotkou (MIMU):
+Inerciálna jednotka umiestnená na teleskope bude monitorovať jeho polohu a pohyb pomocou komponentov Roll-Pitch-Yaw, Eulerových uhlov alebo kvaterniónov. Vstavaný mikropočítač spracováva tieto informácie, preráta ich do uhlov azimut a elevácia. Tieto údaje posiela riadiacej jednotke. V prípade odpojenia systému dostáva správu od riadiacej jednotky, že polohu nie je nutné ďalej merať.
 
 ## Riadiaca jednotka (RJ):
 * MAC adresa
@@ -30,7 +35,7 @@ Používatelia sa cez prehliadač pripoja na web server cez HTTP[S], obdrzia od 
 * frekvencia logovania (a zobrazovania) - komunikácia medzi MIMU a RJ
 
 ## Log súbory:
-* priecinok Polohy
+* priečinok Polohy
   * meno obsahuje "Log_" + MAC riadiacej jednotky, ktorá ho zaznamenala + dátum vzniku súboru, t.j. prvého záznamu v ňom  
   * jeden záznam obsahuje  
     * timestamp = dátum a čas  
@@ -48,10 +53,37 @@ Používatelia sa cez prehliadač pripoja na web server cez HTTP[S], obdrzia od 
 * prázdny riadok (obsahujúci NEWLINE) oddeluje jednotlivé oblasti
 * každú oblasť tvoria minimalne 3 záznamy Azimuthu a Elevacie
 
-
-
 ## Diagramy:
 (treba doplniť stavový, komponent diagram)
 
-## Plán implementácie:
+## Návrch používateľského rozhrania:
 (treba doplniť)
+
+## Plán implementácie:
+
+<b>Modul s inerciálnou jednotkou</b><br>
+program v jazyku C vytvorený vo vývojovom prostredí Arduino IDE pre mikropočítač Raspberry Pi Pico 2 na získanie údajov z inerciálnej jednotky 10 DOF IMU Sensor,ICM20948 vo forme Eulerových uhlov, výpočet kvaterniónov, prevod na azimut a eleváciu
+program pre vysielač modemu LoRa v jazyku C vytvorený vo vývojovom prostredí Arduino IDE na rádiové zasielanie údajov získaných zo senzoru
+program pre prijímač modemu LoRa na prijatie správy ohľadom vypnutia systému
+
+<b>Riadiaca jednotka</b><br>
+program v jazyku C vytvorený vo vývojom prostredí Arduino IDE pre spracovanie údajov prijatých u prijímača modemu LoRa
+program v jazyku C na vyhodnotenie nebezpečenstva podľa získaných a konfiguračných údajov, spúšťanie alarmu, vypnutie systému
+program v jazyku C na spracovanie konfiguračného súboru a jeho naparsovanie do dátovej štruktúry
+
+program v jazyku C pre príjem HTTP requestov a distribúciu statických súborov
+program v jazyku C pre príjem HTTP POST requestov na konfiguráciu systému
+program v jazyku C pre príjem HTTP POST requestov na zipovanie a stiahnutie logovych dat
+program v jazyku C pre upgrade HTTP na WebSocket a naslednu distribuciu aktuálnych dát z inerciálnej jednotky
+
+program pre logovanie dát, posielanie na webový server
+program na vypísanie dát na displej
+
+<b>Webové rozhranie</b><br>
+program v html, css a javascript jazyku pre stránky používateľského rozhrania(konfiguračná stránka, informačná stránka)
+
+## Návrh implementácie:
+(treba doplniť-potom čo si to všetci pozrú v branchi s návrhom implementácie, najlepšie ako kód vsuvvku)
+
+## Záver
+(treba doplniť/optional)

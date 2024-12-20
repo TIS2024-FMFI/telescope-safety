@@ -62,22 +62,22 @@ Inerciálna jednotka umiestnená na teleskope bude monitorovať jeho polohu a po
 ## Plán implementácie:
 
 <b>Modul s inerciálnou jednotkou</b><br>
-program v jazyku C vytvorený vo vývojovom prostredí Arduino IDE pre mikropočítač Raspberry Pi Pico 2 na získanie údajov z inerciálnej jednotky 10 DOF IMU Sensor,ICM20948 vo forme Eulerových uhlov, výpočet kvaterniónov, prevod na azimut a eleváciu
-program pre vysielač modemu LoRa v jazyku C vytvorený vo vývojovom prostredí Arduino IDE na rádiové zasielanie údajov získaných zo senzoru
+program v jazyku C vytvorený vo vývojovom prostredí Arduino IDE pre mikropočítač Raspberry Pi Pico 2 na získanie údajov z inerciálnej jednotky 10 DOF IMU Sensor,ICM20948 vo forme Eulerových uhlov, výpočet kvaterniónov, prevod na azimut a eleváciu<br>
+program pre vysielač modemu LoRa v jazyku C vytvorený vo vývojovom prostredí Arduino IDE na rádiové zasielanie údajov získaných zo senzoru<br>
 program pre prijímač modemu LoRa na prijatie správy ohľadom vypnutia systému
 
 <b>Riadiaca jednotka</b><br>
-program v jazyku C vytvorený vo vývojom prostredí Arduino IDE pre spracovanie údajov prijatých u prijímača modemu LoRa
-program v jazyku C na vyhodnotenie nebezpečenstva podľa získaných a konfiguračných údajov, spúšťanie alarmu, vypnutie systému
+program v jazyku C vytvorený vo vývojom prostredí Arduino IDE pre spracovanie údajov prijatých u prijímača modemu LoRa<br>
+program v jazyku C na vyhodnotenie nebezpečenstva podľa získaných a konfiguračných údajov, spúšťanie alarmu, vypnutie systému<br>
 program v jazyku C na spracovanie konfiguračného súboru a jeho naparsovanie do dátovej štruktúry
 
-program v jazyku C pre príjem HTTP requestov a distribúciu statických súborov
-program v jazyku C pre príjem HTTP POST requestov na konfiguráciu systému
-program v jazyku C pre príjem HTTP POST requestov na zipovanie a stiahnutie logovych dat
+program v jazyku C pre príjem HTTP requestov a distribúciu statických súborov<br>
+program v jazyku C pre príjem HTTP POST requestov na konfiguráciu systému<br>
+program v jazyku C pre príjem HTTP POST requestov na zipovanie a stiahnutie logovych dat<br>
 program v jazyku C pre upgrade HTTP na WebSocket a naslednu distribuciu aktuálnych dát z inerciálnej jednotky
 
-program pre logovanie dát, posielanie na webový server
-program na vypísanie dát na displej
+program pre logovanie dát, posielanie na webový server<br>
+program na vypísanie dát na displej<br>
 
 <b>Webové rozhranie</b><br>
 program v html, css a javascript jazyku pre stránky používateľského rozhrania(konfiguračná stránka, informačná stránka)

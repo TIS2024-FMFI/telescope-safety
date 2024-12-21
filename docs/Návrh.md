@@ -58,6 +58,11 @@ Inerciálna jednotka umiestnená na teleskope bude monitorovať jeho polohu a po
 
 ## Návrch používateľského rozhrania:
 ![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/index_bez_upozornenia.png?raw=true)
+![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/index_s_upozornenim.png?raw=true)
+![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/prihlasenie.png?raw=true)
+![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/kofiguracia1.png?raw=true)
+![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/kofiguracia2.png?raw=true)
+![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/kofiguracia3.png?raw=true)
 
 ## Plán implementácie:
 

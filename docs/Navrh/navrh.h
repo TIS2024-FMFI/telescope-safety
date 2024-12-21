@@ -88,7 +88,7 @@ int checkFileFormat(char* newConfiguration);
 // Each Azimuth Elevation is separated by new line
 // Each forbidden zone is separated by empty line
 // Each forbidden zone contains at least 3 points
-// lines starting with # are ignored
+// Lines starting with # are ignored
 int writeNewForbiddenConfig(AzimuthElevation* azimutElevation, int numberOfForbiddenZones, int* forbiddenZonesSizes);
 
 

@@ -1,15 +1,14 @@
-#include <cstdint>
 #include <time.h>
 
 struct RollPitchYaw{
-    int16_t roll;
-    int16_t pitch;
-    int16_t yaw;
+    float roll;
+    float pitch;
+    float yaw;
 };
 
 struct AzimuthElevation{
-    int16_t azimuth;
-    int16_t elevation;
+    float azimuth;
+    float elevation;
 };
 
 enum ChangeType{

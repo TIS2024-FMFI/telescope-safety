@@ -13,7 +13,7 @@ Riadiaca jednotka (prijímač/zobrazovač): Má schopnosť prijímať údaje o p
 
 Riadiaca jednotka, po prijatí dát o polohe ďalekohľadu z inerciálnej jednotky rádiovým signálom, zaloguje prijaté dáta do súboru (pre každý deň je vytvorený nový súbor, po určitom čase sa logy automaticky mažú) a odošle dáta vo formáte JSON web klientom pripojeným na WebSocket (na WebSocket sa pripoja pomocou nacitania webu pomocou HTTP a o WS spojenie sa uz postara JS).  
 
-Riadiaca jednotka vyhodnocuje prijaté data (zisťuje, či sa náhodou teleskop nedostal do niektorej zo zakázaných zón). Pokial sa dostal teleskop do kazázanej zóny spustí fyzický alarm (audiovizuálny) a zaloguje spustenie alarmu, aktuálnu polohu , pri ktorej došlo ku kolízii (spusteniu alarmu) a dátum a čas (do špeciálneho logu kolízii, ktoré sa nemažú).  
+Riadiaca jednotka vyhodnocuje prijaté data (zisťuje, či sa náhodou teleskop nedostal do niektorej zo zakázaných zón). Pokiaľ sa dostal teleskop do zakázanej zóny spustí fyzický alarm (audiovizuálny) a zaloguje spustenie alarmu, aktuálnu polohu, pri ktorej došlo ku kolízii (spusteniu alarmu) a dátum a čas (do špeciálneho logu kolízii, ktoré sa nemažú).  
 
 Prehliadač po prijatí JSON súboru pomocou JavaScript-u JSON rozbalí a zobrazí (optionaly: vykreslí ďalekohľad a jeho aktuálnu polohu).  
 
@@ -22,17 +22,17 @@ Používatelia sa cez prehliadač pripoja na web server cez HTTP[S], obdržia od
 ## Návrh jednotlivých modulov
 
 ### Modul s inerciálnou jednotkou (MIMU):
-Inerciálna jednotka umiestnená na teleskope bude monitorovať jeho polohu a pohyb pomocou komponentov Roll-Pitch-Yaw, Eulerových uhlov alebo kvaterniónov. Vstavaný mikropočítač spracováva tieto informácie, preráta ich do uhlov azimut a elevácia. Tieto údaje posiela riadiacej jednotke. V prípade odpojenia potreby zo strany používateľa dostáva správu od riadiacej jednotky, že modul treba resetnúť a nanovo nakalibrovať.
+Inerciálna jednotka umiestnená na teleskope bude monitorovať jeho polohu a pohyb pomocou komponentov Roll-Pitch-Yaw, Eulerových uhlov alebo kvaterniónov. Vstavaný mikropočítač spracováva tieto informácie, preráta ich do uhlov azimut a elevácia. Tieto údaje posiela riadiacej jednotke. V prípade potreby zo strany používateľa dostáva správu od riadiacej jednotky, že modul treba resetnúť a nanovo nakalibrovať.
 
 ### Riadiaca jednotka (RJ):
-Riadiaca jednotka má ručne vytvorenú MAC adreru, ktora spľňa špecifikáciu pre takto generovane MAC adresy. Od DHCP servera nasledne získavá IP adresu. K servru sa klienti budu pripajat cez lokalnu adresu something.local (názov domény bude upresnený neskôr) ktorú bude server distribuovať pomocou mDNS protokolu (alternatívne by tento server updatoval svoju lokalnu IP na nejakej dostupnej stránke (najlepšie lokálnej pre menšiu závislosť na sieti), ktorú uživateľ zadá a automaticky ho presmeruje na lokálnu IP RJ).
+Riadiaca jednotka má ručne vytvorenú MAC adreru, ktora spĺňa špecifikáciu pre takto generovane MAC adresy. Od DHCP servera nasledne získavá IP adresu. K servru sa klienti budu pripajat cez lokalnu adresu something.local (názov domény bude upresnený neskôr) ktorú bude server distribuovať pomocou mDNS protokolu (alternatívne by tento server updatoval svoju lokalnu IP na nejakej dostupnej stránke (najlepšie lokálnej pre menšiu závislosť na sieti), ktorú uživateľ zadá a automaticky ho presmeruje na lokálnu IP RJ).
 
 ## Perzistentné údaje (RJ)
 
 ### Všeobecné nastavenia:
-RJ si pamätá nastavene frekvencie logovania do súboru a rekvencie zasielania Azimutu a Elevácie prihláseným klientom cez WS. 
+RJ si pamätá nastavene frekvencie logovania do súboru a frekvencie zasielania Azimutu a Elevácie prihláseným klientom cez WS. 
 
-Tiež si pamôtá nastavenia o tom, aké alarmy má spúšťať.
+Tiež si pamätá nastavenia o tom, aké alarmy má spúšťať.
 
 ### Log súbory:
 Všetku logové súbory sú vo formáte CSV

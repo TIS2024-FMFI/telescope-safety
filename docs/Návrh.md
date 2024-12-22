@@ -19,7 +19,7 @@ Prehliadač po prijatí JSON súboru pomocou JavaScript-u JSON rozbalí a zobr
 
 Používatelia sa cez prehliadač pripoja na web server cez HTTP[S], obdržia od servera HTML, CSS a JS súbory, následne JavaScript na stránke čaká na prijatie dát cez WebSocket.
 
-(TUTO TO CHCE NEJAKY NADPIS ĎALŠÍ)
+## Navrh jednotlivých modulov
 
 ### Modul s inerciálnou jednotkou (MIMU):
 Inerciálna jednotka umiestnená na teleskope bude monitorovať jeho polohu a pohyb pomocou komponentov Roll-Pitch-Yaw, Eulerových uhlov alebo kvaterniónov. Vstavaný mikropočítač spracováva tieto informácie, preráta ich do uhlov azimut a elevácia. Tieto údaje posiela riadiacej jednotke. V prípade odpojenia potreby zo strany používateľa dostáva správu od riadiacej jednotky, že modul treba resetnúť a nanovo nakalibrovať.
@@ -27,7 +27,7 @@ Inerciálna jednotka umiestnená na teleskope bude monitorovať jeho polohu a po
 ### Riadiaca jednotka (RJ):
 Riadiaca jednotka má ručne vytvorenú MAC adreru, ktora spľňa špecifikáciu pre takto generovane MAC adresy. Od DHCP servera nasledne získavá IP adresu. K servru sa klienti budu pripajat cez lokalnu adresu something.local (názov domény bude upresnený neskôr) ktorú bude server distribuovať pomocou mDNS protokolu (alternatívne by tento server updatoval svoju lokalnu IP na nejakej dostupnej stránke (najlepšie lokálnej pre menšiu závislosť na sieti), ktorú uživateľ zadá a automaticky ho presmeruje na lokálnu IP RJ).
 
-## Perzistentné údaje
+## Perzistentné údaje (RJ)
    
 ### Všeobecné nastavenia:
 RJ si pamätá nastavene frekvencie logovania do súboru a rekvencie zasielania Azimutu a Elevácie prihláseným klientom cez WS. 
@@ -99,18 +99,17 @@ program v html, css a javascript jazyku pre stránky používateľského rozhran
 
 ## Návrh implementácie:
 ```c
-#include <cstdint>
 #include <time.h>
 
 struct RollPitchYaw{
-    int16_t roll;
-    int16_t pitch;
-    int16_t yaw;
+    float roll;
+    float pitch;
+    float yaw;
 };
 
 struct AzimuthElevation{
-    int16_t azimuth;
-    int16_t elevation;
+    float azimuth;
+    float elevation;
 };
 
 enum ChangeType{
@@ -308,5 +307,3 @@ int reenable(){
 }
 
 ```
-## Záver
-(treba doplniť/optional)

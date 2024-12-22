@@ -2,19 +2,20 @@
 #include <time.h>
 
 struct RollPitchYaw{
-    int8_t roll;
-    int8_t pitch;
-    int8_t yaw;
+    int16_t roll;
+    int16_t pitch;
+    int16_t yaw;
 };
 
 struct AzimuthElevation{
-    int8_t azimuth;
-    int8_t elevation;
+    int16_t azimuth;
+    int16_t elevation;
 };
 
 enum ChangeType{
     FORBIDDEN_ZONE_CHANGED,
     LOG_FREQUENCY_CHANGED,
+    ALARM_TYPE_CHANGED,
     RESTRT
 };
 
@@ -35,7 +36,7 @@ AzimuthElevation* fromRPYtoAzimuthElevation(RollPitchYaw* rollPitchYaw);
 // @return 0 if success, -1 if error
 int sendToControlUnit(AzimuthElevation* azimutElevation);
 
-// Receiving message from control unit to reset
+// Receiving message from control unit to restart
 // @return 0 if success, -1 if error
 int readFromControlUnit();
 
@@ -58,12 +59,12 @@ int sendToClients(AzimuthElevation* azimutElevation);
 // Dispalays AzimuthElevation structure on screen
 // @param azimutElevation pointer to AzimuthElevation structure
 // @return 0 if success, -1 if error
-int displayAL(AzimuthElevation* azimutElevation);
+int displayAE(AzimuthElevation* azimutElevation);
 
 // Writes AzimuthElevation structure to log file, with timestamp in CSV format
 // @param azimutElevation pointer to AzimuthElevation structure
 // @return 0 if success, -1 if error
-int writeALtoLog(AzimuthElevation* azimutElevation);
+int writeAEtoLog(AzimuthElevation* azimutElevation);
 
 // Checks if file format is correct
 // @param newConfiguration from user
@@ -103,6 +104,25 @@ int loadForbiddenZones(AzimuthElevation* azimutElevation, int* forbiddenZonesSiz
 // @param clientUpdateFrequency new fryquency of client updates via WS
 // @return 0 if success, -1 if error
 int writeNewLogFrequency(int logFrequency, int clientUpdateFrequency);
+
+// Reads log frequency configuration
+// @param logFrequency pointer to store log frequency
+// @param clientUpdateFrequency pointer to store frequency of client updates via WS
+// @return 0 if success, -1 if error
+int loadLogFrequency(int* logFrequency, int* clientUpdateFrequency);
+
+// Writes new alarm type configuration
+// @param alarm indicates if alarm should start audiovisual signal when triggered
+// @param motors indicates if motors should be disabled when alarm is triggered
+// @return 0 if success, -1 if error
+int writeNewAlarmType(bool alarm, bool motors);
+
+// Reads alarm type configuration
+// @param alarm pointer to store if alarm should start audiovisual signal when triggered
+// @param motors pointer to store if motors should be disabled when alarm is triggered
+// @return 0 if success, -1 if error
+int loadAlarmType(bool* alarm, bool* motors);
+
 
 // Writes change of configuration to log file, with timestamp in CSV format
 // @param changeType type of change
@@ -147,12 +167,29 @@ time_t getTime();
 
 // Restarts system
 // @return 0 if success, -1 if error
-int restart();              // ?
+int restart();
 
 // Restarts inertial unit
 // @return 0 if success, -1 if error
-int restartInertialUnit();  // ?
+int restartInertialUnit();
 
+// Setup HTTP server
+// @return 0 if success, -1 if error
+int setupHTTPServer();
+
+// Setup WebSocket server
+// @return 0 if success, -1 if error
+int setupWebSocketServer();
+
+// Setup mDNS server
+// @return 0 if success, -1 if error
+int setupMDNSServer();
+
+// Starts all servers
+// @return 0 if success, -1 if error
+int startServers();
+
+// some other functions in mainloop, depending on the libraries used
 
 
 

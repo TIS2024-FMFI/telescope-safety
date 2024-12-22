@@ -59,6 +59,7 @@ n+1. line: Azimuth Elevation
 * Each Azimuth Elevation is separated by new line
 * Each forbidden zone is separated by empty line
 * Each forbidden zone contains at least 3 points
+* Lines starting with # are ignored
 
 
 ## Diagramy:

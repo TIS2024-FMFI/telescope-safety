@@ -64,7 +64,7 @@ n+1. line: Azimuth Elevation
 
 ## Diagramy:
 ![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/component_diagram.png?raw=true)
-(treba doplniť stavový, komponent diagram)
+
 
 ## Návrh používateľského rozhrania:
 ![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/index_bez_upozornenia.png?raw=true)

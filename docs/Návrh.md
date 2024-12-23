@@ -63,6 +63,7 @@ n+1. line: Azimuth Elevation
 
 
 ## Diagramy:
+![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/stavovy_diagram.png?raw=true)
 ![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/component_diagram.png?raw=true)
 
 

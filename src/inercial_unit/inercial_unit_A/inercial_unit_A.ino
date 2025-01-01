@@ -15,158 +15,105 @@ ICM_20948_SPI myICM;
 ICM_20948_I2C myICM;
 #endif
 
-void setup()
-{
+struct RollPitchYaw {
+    double roll;
+    double pitch;
+    double yaw;
+};
 
-  SERIAL_PORT.begin(115200);
-#ifndef QUAT_ANIMATION
-  SERIAL_PORT.println(F("ICM-20948 Example"));
-#endif
-
-  delay(100);
-
-#ifndef QUAT_ANIMATION
-  while (SERIAL_PORT.available())
-    SERIAL_PORT.read();
-
-  SERIAL_PORT.println(F("Press any key to continue..."));
-
-  while (!SERIAL_PORT.available())
-    ;
-#endif
+void setup() {
+    SERIAL_PORT.begin(115200);
+    delay(100);
 
 #ifdef USE_SPI
-  SPI_PORT.begin();
+    SPI_PORT.begin();
 #else
-  WIRE_PORT.begin();
-  WIRE_PORT.setClock(400000);
+    WIRE_PORT.begin();
+    WIRE_PORT.setClock(400000);
 #endif
 
-#ifndef QUAT_ANIMATION
-
-#endif
-
-  bool initialized = false;
-  while (!initialized)
-  {
-
+    bool initialized = false;
+    while (!initialized) {
 #ifdef USE_SPI
-    myICM.begin(CS_PIN, SPI_PORT);
+        myICM.begin(CS_PIN, SPI_PORT);
 #else
-    myICM.begin(WIRE_PORT, AD0_VAL);
+        myICM.begin(WIRE_PORT, AD0_VAL);
 #endif
-
-#ifndef QUAT_ANIMATION
-    SERIAL_PORT.print(F("Initialization of the sensor returned: "));
-    SERIAL_PORT.println(myICM.statusString());
-#endif
-    if (myICM.status != ICM_20948_Stat_Ok)
-    {
-#ifndef QUAT_ANIMATION
-      SERIAL_PORT.println(F("Trying again..."));
-#endif
-      delay(500);
+        if (myICM.status != ICM_20948_Stat_Ok) {
+            delay(500);
+        } else {
+            initialized = true;
+        }
     }
-    else
-    {
-      initialized = true;
+
+    bool success = true;
+    success &= (myICM.initializeDMP() == ICM_20948_Stat_Ok);
+    success &= (myICM.enableDMPSensor(INV_ICM20948_SENSOR_GAME_ROTATION_VECTOR) == ICM_20948_Stat_Ok);
+    success &= (myICM.setDMPODRrate(DMP_ODR_Reg_Quat6, 0) == ICM_20948_Stat_Ok);
+    success &= (myICM.enableFIFO() == ICM_20948_Stat_Ok);
+    success &= (myICM.enableDMP() == ICM_20948_Stat_Ok);
+    success &= (myICM.resetDMP() == ICM_20948_Stat_Ok);
+    success &= (myICM.resetFIFO() == ICM_20948_Stat_Ok);
+
+    if (!success) {
+        SERIAL_PORT.println(F("Enable DMP failed!"));
+        while (1);
     }
-  }
-
-#ifndef QUAT_ANIMATION
-  SERIAL_PORT.println(F("Device connected!"));
-#endif
-
-  bool success = true;
-
-  success &= (myICM.initializeDMP() == ICM_20948_Stat_Ok);
-
-  success &= (myICM.enableDMPSensor(INV_ICM20948_SENSOR_GAME_ROTATION_VECTOR) == ICM_20948_Stat_Ok);
-
-  success &= (myICM.setDMPODRrate(DMP_ODR_Reg_Quat6, 0) == ICM_20948_Stat_Ok);
-
-  success &= (myICM.enableFIFO() == ICM_20948_Stat_Ok);
-
-  success &= (myICM.enableDMP() == ICM_20948_Stat_Ok);
-
-  success &= (myICM.resetDMP() == ICM_20948_Stat_Ok);
-
-  success &= (myICM.resetFIFO() == ICM_20948_Stat_Ok);
-
-  if (success)
-  {
-#ifndef QUAT_ANIMATION
-    SERIAL_PORT.println(F("DMP enabled!"));
-#endif
-  }
-  else
-  {
-    SERIAL_PORT.println(F("Enable DMP failed!"));
-    SERIAL_PORT.println(F("Please check that you have uncommented line 29 (#define ICM_20948_USE_DMP) in ICM_20948_C.h..."));
-    while (1)
-      ;
-  }
 }
 
-void loop()
-{
-  icm_20948_DMP_data_t data;
-  myICM.readDMPdataFromFIFO(&data);
+RollPitchYaw* readFromSensor() {
+    static RollPitchYaw rpy;
+    icm_20948_DMP_data_t data;
 
-  if ((myICM.status == ICM_20948_Stat_Ok) || (myICM.status == ICM_20948_Stat_FIFOMoreDataAvail))
-  {
-    if ((data.header & DMP_header_bitmap_Quat6) > 0)
-    {
-      double q1 = ((double)data.Quat6.Data.Q1) / 1073741824.0; // Convert to double. Divide by 2^30
-      double q2 = ((double)data.Quat6.Data.Q2) / 1073741824.0; // Convert to double. Divide by 2^30
-      double q3 = ((double)data.Quat6.Data.Q3) / 1073741824.0; // Convert to double. Divide by 2^30
+    myICM.readDMPdataFromFIFO(&data);
 
-      double q0 = sqrt(1.0 - ((q1 * q1) + (q2 * q2) + (q3 * q3)));
+    if ((myICM.status == ICM_20948_Stat_Ok) || (myICM.status == ICM_20948_Stat_FIFOMoreDataAvail)) {
+        if ((data.header & DMP_header_bitmap_Quat6) > 0) {
+            double q1 = ((double)data.Quat6.Data.Q1) / 1073741824.0; // Convert to double. Divide by 2^30
+            double q2 = ((double)data.Quat6.Data.Q2) / 1073741824.0; // Convert to double. Divide by 2^30
+            double q3 = ((double)data.Quat6.Data.Q3) / 1073741824.0; // Convert to double. Divide by 2^30
 
-      double qw = q0; // See issue #145 - thank you @Gord1
-      double qx = q2;
-      double qy = q1;
-      double qz = -q3;
+            double q0 = sqrt(1.0 - ((q1 * q1) + (q2 * q2) + (q3 * q3)));
 
-      // roll (x-axis rotation)
-      double t0 = +2.0 * (qw * qx + qy * qz);
-      double t1 = +1.0 - 2.0 * (qx * qx + qy * qy);
-      double roll = atan2(t0, t1) * 180.0 / PI;
+            double qw = q0;
+            double qx = q2;
+            double qy = q1;
+            double qz = -q3;
 
-      // pitch (y-axis rotation)
-      double t2 = +2.0 * (qw * qy - qx * qz);
-      t2 = t2 > 1.0 ? 1.0 : t2;
-      t2 = t2 < -1.0 ? -1.0 : t2;
-      double pitch = asin(t2) * 180.0 / PI;
+            // roll (x-axis rotation)
+            double t0 = +2.0 * (qw * qx + qy * qz);
+            double t1 = +1.0 - 2.0 * (qx * qx + qy * qy);
+            rpy.roll = atan2(t0, t1) * 180.0 / PI;
 
-      // yaw (z-axis rotation)
-      double t3 = +2.0 * (qw * qz + qx * qy);
-      double t4 = +1.0 - 2.0 * (qy * qy + qz * qz);
-      double yaw = atan2(t3, t4) * 180.0 / PI;
+            // pitch (y-axis rotation)
+            double t2 = +2.0 * (qw * qy - qx * qz);
+            t2 = t2 > 1.0 ? 1.0 : t2;
+            t2 = t2 < -1.0 ? -1.0 : t2;
+            rpy.pitch = asin(t2) * 180.0 / PI;
 
-#ifndef QUAT_ANIMATION
-      SERIAL_PORT.print(F("Roll:"));
-      SERIAL_PORT.print(roll, 1);
-      SERIAL_PORT.print(F(" Pitch:"));
-      SERIAL_PORT.print(pitch, 1);
-      SERIAL_PORT.print(F(" Yaw:"));
-      SERIAL_PORT.println(yaw, 1);
-#else
-      SERIAL_PORT.print(F("{\"quat_w\":"));
-      SERIAL_PORT.print(q0, 3);
-      SERIAL_PORT.print(F(", \"quat_x\":"));
-      SERIAL_PORT.print(q1, 3);
-      SERIAL_PORT.print(F(", \"quat_y\":"));
-      SERIAL_PORT.print(q2, 3);
-      SERIAL_PORT.print(F(", \"quat_z\":"));
-      SERIAL_PORT.print(q3, 3);
-      SERIAL_PORT.println(F("}"));
-#endif
+            // yaw (z-axis rotation)
+            double t3 = +2.0 * (qw * qz + qx * qy);
+            double t4 = +1.0 - 2.0 * (qy * qy + qz * qz);
+            rpy.yaw = atan2(t3, t4) * 180.0 / PI;
+        }
     }
-  }
 
-  if (myICM.status != ICM_20948_Stat_FIFOMoreDataAvail)
-  {
-    delay(10);
-  }
+    return &rpy;
+}
+
+void loop() {
+    static unsigned long lastUpdate = 0;
+    unsigned long currentMillis = millis();
+
+    if (currentMillis - lastUpdate >= 5000) { // Check every 5 seconds
+        lastUpdate = currentMillis;
+
+        RollPitchYaw* rpy = readFromSensor();
+        SERIAL_PORT.print(F("Roll: "));
+        SERIAL_PORT.print(rpy->roll, 1);
+        SERIAL_PORT.print(F(" Pitch: "));
+        SERIAL_PORT.print(rpy->pitch, 1);
+        SERIAL_PORT.print(F(" Yaw: "));
+        SERIAL_PORT.println(rpy->yaw, 1);
+    }
 }

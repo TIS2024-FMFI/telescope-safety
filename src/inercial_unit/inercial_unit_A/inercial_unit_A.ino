@@ -62,7 +62,7 @@ void setup() {
 }
 
 RollPitchYaw* readFromSensor() {
-    static RollPitchYaw rpy;
+    static RollPitchYaw roll_pitch_yaw;
     icm_20948_DMP_data_t data;
 
     myICM.readDMPdataFromFIFO(&data);
@@ -83,37 +83,38 @@ RollPitchYaw* readFromSensor() {
             // roll (x-axis rotation)
             double t0 = +2.0 * (qw * qx + qy * qz);
             double t1 = +1.0 - 2.0 * (qx * qx + qy * qy);
-            rpy.roll = atan2(t0, t1) * 180.0 / PI;
+            roll_pitch_yaw.roll = atan2(t0, t1) * 180.0 / PI;
 
             // pitch (y-axis rotation)
             double t2 = +2.0 * (qw * qy - qx * qz);
             t2 = t2 > 1.0 ? 1.0 : t2;
             t2 = t2 < -1.0 ? -1.0 : t2;
-            rpy.pitch = asin(t2) * 180.0 / PI;
+            roll_pitch_yaw.pitch = asin(t2) * 180.0 / PI;
 
             // yaw (z-axis rotation)
             double t3 = +2.0 * (qw * qz + qx * qy);
             double t4 = +1.0 - 2.0 * (qy * qy + qz * qz);
-            rpy.yaw = atan2(t3, t4) * 180.0 / PI;
+            roll_pitch_yaw.yaw = atan2(t3, t4) * 180.0 / PI;
         }
     }
 
-    return &rpy;
+    return &roll_pitch_yaw;
 }
 
+unsigned long lastUpdate = 0; // Declare lastUpdate as a global variable
+
 void loop() {
-    static unsigned long lastUpdate = 0;
     unsigned long currentMillis = millis();
 
-    if (currentMillis - lastUpdate >= 5000) { // Check every 5 seconds
+    if (currentMillis - lastUpdate >= 500) { // Check every 0.5 seconds
         lastUpdate = currentMillis;
 
-        RollPitchYaw* rpy = readFromSensor();
+        RollPitchYaw* roll_pitch_yaw = readFromSensor();
         SERIAL_PORT.print(F("Roll: "));
-        SERIAL_PORT.print(rpy->roll, 1);
+        SERIAL_PORT.print(roll_pitch_yaw->roll, 1);
         SERIAL_PORT.print(F(" Pitch: "));
-        SERIAL_PORT.print(rpy->pitch, 1);
+        SERIAL_PORT.print(roll_pitch_yaw->pitch, 1);
         SERIAL_PORT.print(F(" Yaw: "));
-        SERIAL_PORT.println(rpy->yaw, 1);
+        SERIAL_PORT.println(roll_pitch_yaw->yaw, 1);
     }
 }

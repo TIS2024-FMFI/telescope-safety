@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hlavná stránka</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="scripts.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Monitorovanie polohy teleskopu</h1>
+    </header>
+    <main>
+		<div class="alert">
+			<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+				Riadiaca jednotka stratila spojenie s teleskopom. 
+		</div>
+        <div class="layout">
+            <section class="position">
+                <h2>Aktuálna poloha</h2>
+                <div class="coordinates">
+                    <p>Azimut:</p>
+                    <span id="azimut" class="large-text">123°</span>
+                    <p>Elevácia:</p>
+                    <span id="elevacia" class="large-text">45°</span>
+                </div>
+            </section>
+
+            <div class="image-container">
+                <img src="teleskop.jpg" alt="Teleskop">
+            </div>
+        </div>
+
+        <div class="center">
+            <button onclick="window.location.href='config.html'" class="small-button">Prejsť na konfiguráciu</button>
+        </div>
+    </main>
+    <div id="error-modal" class="modal hidden">
+        <div class="modal-content">
+            <p id="error-message">Chyba: Nie je pripojenie k serveru</p>
+        </div>
+    </div>
+</body>
+</html>

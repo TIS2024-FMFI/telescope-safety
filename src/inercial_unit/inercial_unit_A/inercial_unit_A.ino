@@ -1,11 +1,13 @@
 
 #include "gain_roll_pitch_yaw.h"
 #include "transform_to_azimuth_elevation.h"
+#include "lora_communication.h"  // Pridané: Podpora LoRa
 
 void setup() {
     Serial.begin(115200);
     delay(100);
-    initializeSensor();
+    initializeSensor();  // Inicializácia senzora
+    initializeLoRa();    // Pridané: Inicializácia LoRa
 }
 
 unsigned long lastUpdate = 0;
@@ -33,6 +35,14 @@ void loop() {
             Serial.print(azimuth_elevation->azimuth, 1);
             Serial.print(F(" Elevation: "));
             Serial.println(azimuth_elevation->elevation, 1);
+
+            // Odoslanie azimutu a elevácie cez LoRa
+            while (sendToControlUnit(azimuth_elevation) != 0);
         }
+    }
+
+    // Prijímanie dát cez LoRa
+    if (readFromControlUnit() == 0) {
+        Serial.println(F("Processed incoming message."));
     }
 }

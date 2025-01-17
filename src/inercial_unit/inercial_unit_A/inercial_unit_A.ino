@@ -1,13 +1,13 @@
 
 #include "gain_roll_pitch_yaw.h"
 #include "transform_to_azimuth_elevation.h"
-#include "lora_communication.h"  // Pridané: Podpora LoRa
+#include "lora_communication.h"
 
 void setup() {
     Serial.begin(115200);
     delay(100);
     initializeSensor();  // Inicializácia senzora
-    initializeLoRa();    // Pridané: Inicializácia LoRa
+    initializeLoRa();
 }
 
 unsigned long lastUpdate = 0;

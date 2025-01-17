@@ -29,7 +29,7 @@ int sendToControlUnit(AzimuthElevation* azimuthElevation) {
         return -1;  // Chyba pri odosielaní
     }
 
-    Serial.println("Sent: " + outgoing);
+    Serial.println("Sending to control unit: " + outgoing);
     return 0;
 }
 
@@ -54,6 +54,6 @@ int readFromControlUnit() {
     }
 
     // Výpis prijatých údajov
-    Serial.println("Message: " + incoming);
+    Serial.println("Received message from control unit: " + incoming);
     return 0;
 }

@@ -1,0 +1,25 @@
+
+#ifndef LORA_COMMUNICATION_H
+#define LORA_COMMUNICATION_H
+
+#include <SPI.h>
+#include <LoRa.h>
+
+// Konfigurácia LoRa
+#define LORA_CS_PIN 13
+#define LORA_RESET_PIN 9
+#define LORA_IRQ_PIN 2
+#define LORA_FREQUENCY 868E6
+
+struct AzimuthElevation {
+    double azimuth;
+    double elevation;
+};
+
+void initializeLoRa();
+
+AzimuthElevation* readFromInertialUnit();
+
+int restartInertialUnit();
+
+#endif // LORA_COMMUNICATION_H

@@ -12,6 +12,8 @@
 #define LORA_IRQ_PIN 2
 #define LORA_FREQUENCY 868E6
 
+#define localAddress 0xBB
+
 void initializeLoRa();
 
 int sendToControlUnit(AzimuthElevation* azimuthElevation);

@@ -22,6 +22,7 @@ int sendToControlUnit(AzimuthElevation* azimuthElevation) {
     String outgoing = String("Azimuth: ") + azimuthElevation->azimuth + ", Elevation: " + azimuthElevation->elevation;
 
     LoRa.beginPacket();               // Začiatok balíka
+    LoRa.write(localAddress);
     LoRa.write(outgoing.length());    // Dĺžka správy
     LoRa.print(outgoing);             // Obsah správy
     if (!LoRa.endPacket()) {
@@ -40,6 +41,7 @@ int readFromControlUnit() {
     }
 
     // Čítanie hlavičky
+    int sender = LoRa.read();
     byte incomingLength = LoRa.read();   // Dĺžka správy
 
     String incoming = "";
@@ -50,6 +52,11 @@ int readFromControlUnit() {
 
     if (incomingLength != incoming.length()) {  // Overenie správnej dĺžky
         Serial.println("Error: message length mismatch.");
+        return -1;
+    }
+
+    if (sender != 0xAA) {
+        Serial.println("This message is not for me.");
         return -1;
     }
 

@@ -28,6 +28,7 @@ AzimuthElevation* readFromInertialUnit() {
     }
 
     // Čítanie dĺžky prichádzajúcej správy
+    int sender = LoRa.read();
     byte incomingLength = LoRa.read();  // Dĺžka správy
 
     String incoming = "";
@@ -37,6 +38,11 @@ AzimuthElevation* readFromInertialUnit() {
 
     if (incomingLength != incoming.length()) {  // Overenie správnej dĺžky
         Serial.println("Error: message length mismatch.");
+        return nullptr;
+    }
+
+    if (sender != 0xBB) {
+        Serial.println("This message is not for me.");
         return nullptr;
     }
 
@@ -70,9 +76,9 @@ AzimuthElevation* readFromInertialUnit() {
 
     // Výpis spracovaných hodnôt
     Serial.print("Parsed Azimuth: ");
-    Serial.print(inertialData.azimuth, 2);  // Presnosť na 6 desatinných miest
+    Serial.print(inertialData.azimuth, 2);  // Presnosť na 2 desatinných miest
     Serial.print(", Elevation: ");
-    Serial.println(inertialData.elevation, 2);  // Presnosť na 6 desatinných miest
+    Serial.println(inertialData.elevation, 2);  // Presnosť na 2 desatinných miest
 
     return &inertialData;
 }
@@ -84,6 +90,7 @@ int restartInertialUnit() {
 
     // Odoslanie správy cez LoRa
     LoRa.beginPacket();                    // Začiatok balíka
+    LoRa.write(localAddress);
     LoRa.write(restartCommand.length());   // Dĺžka správy
     LoRa.print(restartCommand);            // Obsah správy
     if (!LoRa.endPacket()) {               // Ukončenie balíka a odoslanie

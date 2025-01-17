@@ -22,6 +22,7 @@ int sendToControlUnit(AzimuthElevation* azimuthElevation) {
     String outgoing = String("Azimuth: ") + azimuthElevation->azimuth + ", Elevation: " + azimuthElevation->elevation;
 
     LoRa.beginPacket();               // Začiatok balíka
+    LoRa.write(localAddress);
     LoRa.write(outgoing.length());    // Dĺžka správy
     LoRa.print(outgoing);             // Obsah správy
     if (!LoRa.endPacket()) {
@@ -29,7 +30,7 @@ int sendToControlUnit(AzimuthElevation* azimuthElevation) {
         return -1;  // Chyba pri odosielaní
     }
 
-    Serial.println("Sent: " + outgoing);
+    Serial.println("Sending to control unit: " + outgoing);
     return 0;
 }
 
@@ -40,6 +41,7 @@ int readFromControlUnit() {
     }
 
     // Čítanie hlavičky
+    int sender = LoRa.read();
     byte incomingLength = LoRa.read();   // Dĺžka správy
 
     String incoming = "";
@@ -53,7 +55,12 @@ int readFromControlUnit() {
         return -1;
     }
 
+    if (sender != 0xAA) {
+        Serial.println("This message is not for me.");
+        return -1;
+    }
+
     // Výpis prijatých údajov
-    Serial.println("Message: " + incoming);
+    Serial.println("Received message from control unit: " + incoming);
     return 0;
 }

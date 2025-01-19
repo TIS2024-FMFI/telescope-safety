@@ -29,14 +29,22 @@
 */
 
 // Example works with either Wired or WiFi Ethernet, define one of these values to 1, other to 0
-#define USE_WIFI 1
-#define USE_WIRED 0
+#define USE_WIFI 0
+#define USE_WIRED 1
+
+/* SPI */
+#define USE_SPI_PIO
+#define PIN_SCK 21
+#define PIN_MOSI 23
+#define PIN_MISO 22
+#define PIN_CS 20
+#define PIN_RST 25
 
 #if USE_WIFI
 #include <WiFi.h>
 #elif USE_WIRED
 #include <W5500lwIP.h> // Or W5100lwIP.h or ENC28J60lwIP.h
-Wiznet5500lwIP eth(1 /* chip select */); // or Wiznet5100lwIP or ENC28J60lwIP
+Wiznet5500lwIP eth(PIN_CS); // or Wiznet5100lwIP or ENC28J60lwIP
 #endif
 
 #include <WiFiClient.h>
@@ -148,10 +156,10 @@ void setup(void) {
   Serial.println(WiFi.localIP());
 #elif USE_WIRED
   // Set up SPI pinout to match your HW
-  SPI.setRX(0);
-  SPI.setCS(1);
-  SPI.setSCK(2);
-  SPI.setTX(3);
+  SPI.setRX(PIN_MISO);
+  SPI.setCS(PIN_CS);
+  SPI.setSCK(PIN_SCK);
+  SPI.setTX(PIN_MOSI);
 
   // Start the Ethernet port
   if (!eth.begin()) {

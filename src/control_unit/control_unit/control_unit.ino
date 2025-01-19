@@ -156,10 +156,13 @@ void setup(void) {
   Serial.println(WiFi.localIP());
 #elif USE_WIRED
   // Set up SPI pinout to match your HW
-  SPI.setRX(PIN_MISO);
+  SPI.setRX(PIN_MISO); // In example
   SPI.setCS(PIN_CS);
   SPI.setSCK(PIN_SCK);
-  SPI.setTX(PIN_MOSI);
+  SPI.setTX(PIN_MOSI); // In example
+  // Trying if it works like this
+  // SPI.setMOSI(PIN_MOSI);
+  // SPI.setMISO(PIN_MISO);
 
   // Start the Ethernet port
   if (!eth.begin()) {

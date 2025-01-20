@@ -1,6 +1,8 @@
 
 #include "gain_roll_pitch_yaw.h"
 
+double yawOffset=0.0;
+
 #ifdef USE_SPI
 ICM_20948_SPI myICM;
 #else
@@ -78,6 +80,10 @@ RollPitchYaw* readFromSensor() {
             double t3 = +2.0 * (qw * qz + qx * qy);
             double t4 = +1.0 - 2.0 * (qy * qy + qz * qz);
             roll_pitch_yaw.yaw = atan2(t3, t4) * 180.0 / PI;
+
+            roll_pitch_yaw.yaw += yawOffset;
+            if (roll_pitch_yaw.yaw > 180.0) roll_pitch_yaw.yaw -= 360.0;
+            if (roll_pitch_yaw.yaw < -180.0) roll_pitch_yaw.yaw += 360.0;
         }
     }
 

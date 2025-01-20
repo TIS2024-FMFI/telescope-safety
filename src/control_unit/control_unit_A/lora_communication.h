@@ -22,6 +22,6 @@ void initializeLoRa();
 
 AzimuthElevation* readFromInertialUnit();
 
-int restartInertialUnit();
+int restartInertialUnit(double azimuth = -1);
 
 #endif // LORA_COMMUNICATION_H

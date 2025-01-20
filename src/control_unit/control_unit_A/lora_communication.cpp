@@ -83,21 +83,51 @@ AzimuthElevation* readFromInertialUnit() {
     return &inertialData;
 }
 
-int restartInertialUnit() {
-    String restartCommand = "RESTART_INERTIAL_UNIT";
+int restartInertialUnit(double azimuth) {
+    String restartCommand = "RESTART_INERTIAL_UNIT:";
+    restartCommand += String(azimuth, 2);  // Add azimuth with 2 decimal places
 
-    Serial.println("Sending restart command to inertial unit...");
+    const int maxRetries = 3;              // Maximum number of retries
+    const unsigned long timeout = 400;   // Timeout for acknowledgment (in milliseconds)
 
-    // Odoslanie správy cez LoRa
-    LoRa.beginPacket();                    // Začiatok balíka
-    LoRa.write(localAddress);
-    LoRa.write(restartCommand.length());   // Dĺžka správy
-    LoRa.print(restartCommand);            // Obsah správy
-    if (!LoRa.endPacket()) {               // Ukončenie balíka a odoslanie
-        Serial.println("Failed to send restart command.");
-        return -1;  // Chyba pri odosielaní
+    for (int attempt = 1; attempt <= maxRetries; attempt++) {
+        Serial.print("Attempt ");
+        Serial.print(attempt);
+        Serial.println(": Sending restart command to inertial unit...");
+
+        // Send the command
+        LoRa.beginPacket();
+        LoRa.write(localAddress);
+        LoRa.write(restartCommand.length());
+        LoRa.print(restartCommand);
+        if (!LoRa.endPacket()) {
+            Serial.println("Failed to send restart command.");
+            continue; // Skip to the next attempt
+        }
+
+        Serial.println("Restart command sent successfully. Waiting for acknowledgment...");
+
+        // Wait for acknowledgment
+        unsigned long startTime = millis();
+        while (millis() - startTime < timeout) {
+            int packetSize = LoRa.parsePacket();
+            if (packetSize > 0) {
+                // Read acknowledgment
+                String ackMessage = "";
+                while (LoRa.available()) {
+                    ackMessage += (char)LoRa.read();
+                }
+
+                if (ackMessage == "ACK:RESTART_INERTIAL_UNIT") {
+                    Serial.println("Acknowledgment received from inertial unit.");
+                    return 0; // Success
+                }
+            }
+        }
+
+        Serial.println("Acknowledgment not received. Retrying...");
     }
 
-    Serial.println("Restart command sent successfully.");
-    return 0; // Úspešné odoslanie
+    Serial.println("Failed to receive acknowledgment after maximum retries.");
+    return -1; // Failure after retries
 }

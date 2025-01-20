@@ -61,6 +61,46 @@ int readFromControlUnit() {
     }
 
     // Výpis prijatých údajov
+    
     Serial.println("Received message from control unit: " + incoming);
-    return 0;
+    
+    // Spracovanie príkazu "RESTART_INERTIAL_UNIT:<azimuth>"
+    if (incoming.startsWith("RESTART_INERTIAL_UNIT:")) {
+        String azimuthStr = incoming.substring(22);  // Extrahovanie azimutu
+        azimuthStr.trim();
+        double azimuth = azimuthStr.toDouble();
+
+        if (isnan(azimuth)) {
+            Serial.println("Error: Invalid azimuth value.");
+            return -1;
+        }
+
+        // Resetovanie senzora
+        resetSensorPower();
+
+        RollPitchYaw* currentRPY = readFromSensor();
+        while (!currentRPY) {
+            currentRPY = readFromSensor();
+        }
+        if (azimuth == -1) {
+            Serial.println("Resetting sensor without changing azimuth...");
+            yawOffset = currentRPY->yaw; // Uloženie aktuálnej hodnoty yaw
+        } else {
+            Serial.print("Adjusting yaw to achieve azimuth: ");
+            Serial.println(azimuth);
+
+            // Zmena yaw na dosiahnutie požadovaného azimutu
+            yawOffset = adjustYawToAzimuth(azimuth, currentRPY);
+        }
+
+        // **Send acknowledgment**
+        LoRa.beginPacket();
+        LoRa.print("ACK:RESTART_INERTIAL_UNIT"); // Acknowledgment message
+        LoRa.endPacket();
+        Serial.println("Acknowledgment sent to control unit.");
+        return 0;
+    }
+
+    Serial.println("Unknown command received.");
+    return -1;
 }

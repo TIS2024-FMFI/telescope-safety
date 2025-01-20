@@ -9,12 +9,15 @@
 #define CS_PIN 2
 #define WIRE_PORT Wire
 #define AD0_VAL 0
+#define SENSOR_POWER_PIN 15
 
 struct RollPitchYaw {
     double roll;
     double pitch;
     double yaw;
 };
+
+extern double yawOffset;
 
 void initializeSensor();
 RollPitchYaw* readFromSensor();

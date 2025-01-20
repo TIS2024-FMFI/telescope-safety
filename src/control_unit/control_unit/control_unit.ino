@@ -60,6 +60,8 @@ Wiznet5500lwIP eth(PIN_CS); // or Wiznet5100lwIP or ENC28J60lwIP
 const char *ssid = STASSID;
 const char *password = STAPSK;
 
+uint8_t macAddress[] = {0x02, 0x34, 0x56, 0x78, 0x9A, 0xBC};
+
 WebServer server(80);
 
 const int led = LED_BUILTIN;
@@ -139,10 +141,20 @@ void drawGraph() {
   server.send(200, "image/svg+xml", out);
 }
 
+void blink(int time){
+  digitalWrite(led, 1);
+  delay(time);
+  digitalWrite(led, 0);
+  delay(time);
+}
+
 void setup(void) {
   pinMode(led, OUTPUT);
   digitalWrite(led, 0);
+  blink(100);
   Serial.begin(115200);
+  blink(100);
+  Serial.println("Started Serial");
 
 #if USE_WIFI
   WiFi.mode(WIFI_STA);
@@ -163,24 +175,25 @@ void setup(void) {
   Serial.println(WiFi.localIP());
 #elif USE_WIRED
   // Set up SPI pinout to match your HW
-  SPI.setRX(PIN_MISO); // In example
   SPI.setCS(PIN_CS);
   SPI.setSCK(PIN_SCK);
-  SPI.setTX(PIN_MOSI); // In example
-  // Trying if it works like this
-  // SPI.setMOSI(PIN_MOSI);
-  // SPI.setMISO(PIN_MISO);
+  SPI.setMOSI(PIN_MOSI);  // = SPI.settX
+  SPI.setMISO(PIN_MISO);  // = SPI.setRX
+
+  // eth.setSPISettings(SPI);
 
   // Start the Ethernet port
-  if (!eth.begin()) {
+  if (!eth.begin(macAddress)) {
     Serial.println("No wired Ethernet hardware detected. Check pinouts, wiring.");
     while (1) {
+      blink(1000);
       delay(1000);
     }
   }
 
   // Wait for connection
   while (eth.status() != WL_CONNECTED) {
+    blink(500);
     delay(500);
     Serial.print(".");
   }
@@ -189,8 +202,10 @@ void setup(void) {
 #endif
 
   if (MDNS.begin("picow")) {
+    blink(3000);
     Serial.println("MDNS responder started");
   }
+  blink(5000);
 
   server.on("/", handleRoot);
   server.on("/test.svg", drawGraph);
@@ -246,7 +261,7 @@ void handleJSMain(){
   server.send(200, "text/javascript", response);
 }
 
-void handleJSMain(){
+void handleJSForm(){
   // load from SD card form.js
   // for testing purposes:
   String response = "";

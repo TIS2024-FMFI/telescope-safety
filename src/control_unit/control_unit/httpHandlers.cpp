@@ -51,7 +51,7 @@ void handleFormPOST() {
     if (writeNewLogFrequency(server.arg(LOG_INTERVAL_FIELD).toInt(), (server.arg(UPDATE_INTERVAL_FIELD).toInt()))){
       writeChangeToLog(LOG_FREQUENCY_CHANGED);
     }
-    if (writeNewAlarmType(bool(server.arg(ALARM_CHECKBOX)), bool(server.arg(MOTORS_CHECKBOX)))){
+    if (writeNewAlarmType(bool(server.arg(ALARM_CHECKBOX).toInt()), bool(server.arg(MOTORS_CHECKBOX).toInt()))){
       writeChangeToLog(ALARM_TYPE_CHANGED);
     }
 

@@ -21,26 +21,14 @@ Wiznet55rp20lwIP eth(1 /* chip select */); // or Wiznet5100lwIP or ENC28J60lwIP
 #define STAPSK "your-password"
 #endif
 
-// Define form names:
-#define ZONE_CONFIG_BUTTON "config_zones"
-#define ZONE_CONFIG_FIELD "config_zones_field"
-#define ALARM_CONFIG_BUTTON "config_alarm"
-#define LOG_INTERVAL_FIELD "log_interval"
-#define UPDATE_INTERVAL_FIELD "update_interval"
-#define ALARM_CHECKBOX "alarm_conf"
-#define MOTORS_CHECKBOX "motors_conf"
-#define TURN_OFF_LOGS_CHECKBOX "turn_off_logs"
-#define RESTART_BUTTON "restart"
-#define DOWNLOAD_EVENTS_BUTTON "download_events"
-#define DOWNLOAD_LOGS_BUTTON "download_logs"
-#define DOWNLOAD_LOGS_FROM_DATEFIELD "logs_from_date"
-#define DOWNLOAD_LOGS_TO_DATEFIELD "logs_to_date"
-
 
 const char *ssid = STASSID;
 const char *password = STAPSK;
 
 WebServer server(80);
+
+// Functions
+void setupServer();
 
 
 void setup(void) {
@@ -76,12 +64,12 @@ void setup(void) {
     }
   }
 
+
+  // Wait for connection
   while (!eth.connected()) {
     Serial.print("_");
     delay(500);
   }
-
-  // Wait for connection
   while (eth.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
@@ -90,11 +78,26 @@ void setup(void) {
   Serial.println(eth.localIP());
 #endif
 
+  setupServer();
+
   Serial.println("Starting mDNS!");
   if (MDNS.begin("picow")) {
     Serial.println("MDNS responder started");
   }
 
+}
+
+void loop(void) {
+  server.handleClient();
+  MDNS.update();
+}
+
+
+
+
+
+// Functions
+void setupServer(){
   server.on("/", handleMainPage);
   server.on("/config", HTTP_GET, handleFormPage);
   server.on("/config", HTTP_POST, handleFormPOST);
@@ -104,9 +107,4 @@ void setup(void) {
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("HTTP server started");
-}
-
-void loop(void) {
-  server.handleClient();
-  MDNS.update();
 }

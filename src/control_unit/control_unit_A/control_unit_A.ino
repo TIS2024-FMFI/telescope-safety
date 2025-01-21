@@ -9,13 +9,13 @@ void setup() {
 }
 
 long lastSendTime = 0;        // last send time
-int interval = 2000;          // interval between sends
+int interval = 20000;          // interval between sends
 
 void loop() {
   if (millis() - lastSendTime > interval) {
-    while (restartInertialUnit() != 0);
+    while (restartInertialUnit(132.0) != 0);
     lastSendTime = millis();            // timestamp the message
-    interval = random(2000) + 1000;    // 2-3 seconds
+    interval = 20000;    // 20 seconds
   }
 
   AzimuthElevation* data = readFromInertialUnit();

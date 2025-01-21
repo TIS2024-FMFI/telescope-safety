@@ -5,6 +5,7 @@
 #include <SPI.h>
 #include <LoRa.h>
 #include "transform_to_azimuth_elevation.h"
+#include "reset_sensor.h"
 
 // Konfigurácia LoRa
 #define LORA_CS_PIN 10

@@ -5,6 +5,8 @@
 
 void setup() {
     Serial.begin(115200);
+    pinMode(SENSOR_POWER_PIN, OUTPUT);
+    digitalWrite(SENSOR_POWER_PIN, HIGH);
     delay(100);
     initializeSensor();  // Inicializácia senzora
     initializeLoRa();

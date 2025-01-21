@@ -66,13 +66,13 @@ int writeChangeToLog(ChangeType changeType);
 int writeAlarmToLog(AzimuthElevation* azimutElevation);
 
 
-// Retrievs real time from Ethernet
-// @return time in seconds
-time_t getRealTime();
+// // Retrievs real time from Ethernet
+// // @return time in seconds
+// time_t getRealTime();
 
-// Retrievs time from system
-// @return time in seconds
-time_t getTime();
+// // Retrievs time from system
+// // @return time in seconds
+// time_t getTime();
 
 // Restarts system
 // @return 0 if success, -1 if error

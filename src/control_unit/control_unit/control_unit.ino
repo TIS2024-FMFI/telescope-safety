@@ -1,33 +1,3 @@
-/*
-   Copyright (c) 2015, Majenko Technologies
-   All rights reserved.
-
-   Redistribution and use in source and binary forms, with or without modification,
-   are permitted provided that the following conditions are met:
-
- * * Redistributions of source code must retain the above copyright notice, this
-     list of conditions and the following disclaimer.
-
- * * Redistributions in binary form must reproduce the above copyright notice, this
-     list of conditions and the following disclaimer in the documentation and/or
-     other materials provided with the distribution.
-
- * * Neither the name of Majenko Technologies nor the names of its
-     contributors may be used to endorse or promote products derived from
-     this software without specific prior written permission.
-
-   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-   DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
-   ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-   (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-   LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-   ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
 // Example works with either Wired or WiFi Ethernet, define one of these values to 1, other to 0
 #define USE_WIFI 0
 #define USE_WIRED 1
@@ -78,7 +48,6 @@ const char *password = STAPSK;
 
 WebServer server(80);
 
-const int led = LED_BUILTIN;
 
 enum ChangeType{
     FORBIDDEN_ZONE_CHANGED,
@@ -108,8 +77,6 @@ void handleJSForm();
 
 
 void setup(void) {
-  pinMode(led, OUTPUT);
-  digitalWrite(led, 0);
   Serial.begin(115200);
 
 #if USE_WIFI
@@ -130,14 +97,6 @@ void setup(void) {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 #elif USE_WIRED
-  // Set up SPI pinout to match your HW
-  SPI.setRX(PIN_MISO); // In example
-  SPI.setCS(PIN_CS);
-  SPI.setSCK(PIN_SCK);
-  SPI.setTX(PIN_MOSI); // In example
-  // Trying if it works like this
-  // SPI.setMOSI(PIN_MOSI);
-  // SPI.setMISO(PIN_MISO);
 
   // Start the Ethernet port
   if (!eth.begin()) {

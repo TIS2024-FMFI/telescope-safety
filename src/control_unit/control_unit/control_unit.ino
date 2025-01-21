@@ -1,3 +1,4 @@
+// Example works with either Wired or WiFi Ethernet, define one of these values to 1, other to 0
 #define USE_WIFI 0
 #define USE_WIRED 1
 
@@ -10,7 +11,7 @@ Wiznet55rp20lwIP eth(1 /* chip select */); // or Wiznet5100lwIP or ENC28J60lwIP
 #endif
 
 #include <WiFiClient.h>
-#include <WebServer.h>
+#include <WebServer.h> 
 #include <LEAmDNS.h>
 #include <StreamString.h>
 #include "httpHandlers.h"
@@ -20,11 +21,26 @@ Wiznet55rp20lwIP eth(1 /* chip select */); // or Wiznet5100lwIP or ENC28J60lwIP
 #define STAPSK "your-password"
 #endif
 
+// Define form names:
+#define ZONE_CONFIG_BUTTON "config_zones"
+#define ZONE_CONFIG_FIELD "config_zones_field"
+#define ALARM_CONFIG_BUTTON "config_alarm"
+#define LOG_INTERVAL_FIELD "log_interval"
+#define UPDATE_INTERVAL_FIELD "update_interval"
+#define ALARM_CHECKBOX "alarm_conf"
+#define MOTORS_CHECKBOX "motors_conf"
+#define TURN_OFF_LOGS_CHECKBOX "turn_off_logs"
+#define RESTART_BUTTON "restart"
+#define DOWNLOAD_EVENTS_BUTTON "download_events"
+#define DOWNLOAD_LOGS_BUTTON "download_logs"
+#define DOWNLOAD_LOGS_FROM_DATEFIELD "logs_from_date"
+#define DOWNLOAD_LOGS_TO_DATEFIELD "logs_to_date"
+
+
 const char *ssid = STASSID;
 const char *password = STAPSK;
 
 WebServer server(80);
-
 
 
 void setup(void) {
@@ -85,9 +101,6 @@ void setup(void) {
   server.on("/styles.css", handleCSS);
   server.on("/form.js", handleJSForm);
   server.on("/main.js", handleJSMain);
-  server.onNotFound(handleNotFound);
-  server.begin();
-  Serial.println("HTTP server started");
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("HTTP server started");

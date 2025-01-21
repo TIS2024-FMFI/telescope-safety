@@ -19,7 +19,7 @@ void handleJSForm();
 #define UPDATE_INTERVAL_FIELD "update_interval"
 #define ALARM_CHECKBOX "alarm_conf"
 #define MOTORS_CHECKBOX "motors_conf"
-#define TURN_OFF_LOGS_CHECKBOX "turn_off_logs"
+#define TURN_OFF_LOGS_CHECKBOX "disable_logging"
 #define RESTART_BUTTON "restart"
 #define DOWNLOAD_EVENTS_BUTTON "download_events"
 #define DOWNLOAD_LOGS_BUTTON "download_logs"

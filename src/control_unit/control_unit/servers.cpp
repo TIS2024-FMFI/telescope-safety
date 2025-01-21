@@ -1,5 +1,6 @@
 #include "servers.h"
 #include "httpHandlers.h"
+#include <ESP8266mDNS.h>
 
 
 
@@ -23,7 +24,11 @@ int setupWebSocketServer(){
 
 
 int setupMDNSServer(){
-  return -1;
+  Serial.println("Starting mDNS!");
+  if (MDNS.begin("telescop")) {
+    Serial.println("MDNS responder started");
+  }
+  return 1;
 }
 
 

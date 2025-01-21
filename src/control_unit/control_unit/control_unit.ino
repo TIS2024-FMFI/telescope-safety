@@ -28,7 +28,6 @@ const int led = LED_BUILTIN;
 
 
 void handleNotFound() {
-  // digitalWrite(led, 1);
   String message = "File Not Found\n\n";
   message += "URI: ";
   message += server.uri();
@@ -43,13 +42,10 @@ void handleNotFound() {
   }
 
   server.send(404, "text/plain", message);
-  // digitalWrite(led, 0);
 }
 
 
 void setup(void) {
-  // pinMode(led, OUTPUT);
-  // digitalWrite(led, 0);
   Serial.begin(115200);
   delay(5000);
   Serial.println("Started Serial");

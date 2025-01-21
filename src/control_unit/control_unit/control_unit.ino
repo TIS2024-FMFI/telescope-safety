@@ -13,6 +13,7 @@ Wiznet55rp20lwIP eth(1 /* chip select */); // or Wiznet5100lwIP or ENC28J60lwIP
 #include <WebServer.h>
 #include <LEAmDNS.h>
 #include <StreamString.h>
+#include "httpHandlers.h"
 
 #ifndef STASSID
 #define STASSID "your-ssid"
@@ -24,25 +25,6 @@ const char *password = STAPSK;
 
 WebServer server(80);
 
-const int led = LED_BUILTIN;
-
-
-void handleNotFound() {
-  String message = "File Not Found\n\n";
-  message += "URI: ";
-  message += server.uri();
-  message += "\nMethod: ";
-  message += (server.method() == HTTP_GET) ? "GET" : "POST";
-  message += "\nArguments: ";
-  message += server.args();
-  message += "\n";
-
-  for (uint8_t i = 0; i < server.args(); i++) {
-    message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
-  }
-
-  server.send(404, "text/plain", message);
-}
 
 
 void setup(void) {
@@ -97,6 +79,15 @@ void setup(void) {
     Serial.println("MDNS responder started");
   }
 
+  server.on("/", handleMainPage);
+  server.on("/config", HTTP_GET, handleFormPage);
+  server.on("/config", HTTP_POST, handleFormPOST);
+  server.on("/styles.css", handleCSS);
+  server.on("/form.js", handleJSForm);
+  server.on("/main.js", handleJSMain);
+  server.onNotFound(handleNotFound);
+  server.begin();
+  Serial.println("HTTP server started");
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("HTTP server started");

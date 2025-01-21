@@ -1,5 +1,8 @@
 #include "httpHandlers.h"
 #include <Arduino.h>
+#include "allINeedForControlUnit.h"
+
+#define DEBUG
 
 
 // Functions
@@ -28,33 +31,38 @@ void handleMainPage() {
 }
 
 void handleFormPOST() {
-  // if (server.arg(ZONE_CONFIG_BUTTON)){
-  //   if (writeNewForbiddenConfig(server.arg(ZONE_CONFIG_FIELD))){
-  //     writeChangeToLog(FORBIDDEN_ZONE_CHANGED);
-  //   }
-  // }
-  // else if (server.arg(ALARM_CONFIG_BUTTON)){
-  //   if (server.arg(TURN_OFF_LOGS_CHECKBOX)){
-  //     //
-  //   }
-  //   if (writeNewLogFrequency(server.arg(LOG_INTERVAL_FIELD).toInt(), (server.arg(UPDATE_INTERVAL_FIELD).toInt()))){
-  //     writeChangeToLog(LOG_FREQUENCY_CHANGED);
-  //   }
-  //   if (writeNewAlarmType(bool(server.arg(ALARM_CHECKBOX)), bool(server.arg(MOTORS_CHECKBOX)))){
-  //     writeChangeToLog(ALARM_TYPE_CHANGED);
-  //   }
 
-  // }
-  // else if (server.arg(RESTART_BUTTON)){
-  //   writeChangeToLog(RESTART);
-  //   restart();
-  // }
-  // else if (server.arg(DOWNLOAD_EVENTS_BUTTON)){
+  #if DEBUG
+  Serial.println(server.args());
+  #endif
 
-  // }
-  // else if (server.arg(DOWNLOAD_LOGS_BUTTON)){
-  //   downloadLogs(server.arg(DOWNLOAD_LOGS_FROM_DATEFIELD), server.arg(DOWNLOAD_LOGS_TO_DATEFIELD));
-  // }
+  if (server.arg(ZONE_CONFIG_BUTTON)){
+    if (writeNewForbiddenConfig(server.arg(ZONE_CONFIG_FIELD))){
+      writeChangeToLog(FORBIDDEN_ZONE_CHANGED);
+    }
+  }
+  else if (server.arg(ALARM_CONFIG_BUTTON)){
+    if (server.arg(TURN_OFF_LOGS_CHECKBOX)){
+      //
+    }
+    if (writeNewLogFrequency(server.arg(LOG_INTERVAL_FIELD).toInt(), (server.arg(UPDATE_INTERVAL_FIELD).toInt()))){
+      writeChangeToLog(LOG_FREQUENCY_CHANGED);
+    }
+    if (writeNewAlarmType(bool(server.arg(ALARM_CHECKBOX)), bool(server.arg(MOTORS_CHECKBOX)))){
+      writeChangeToLog(ALARM_TYPE_CHANGED);
+    }
+
+  }
+  else if (server.arg(RESTART_BUTTON)){
+    writeChangeToLog(RESTART);
+    restart();
+  }
+  else if (server.arg(DOWNLOAD_EVENTS_BUTTON)){
+    downloadEventLogs();
+  }
+  else if (server.arg(DOWNLOAD_LOGS_BUTTON)){
+    downloadLogs(server.arg(DOWNLOAD_LOGS_FROM_DATEFIELD), server.arg(DOWNLOAD_LOGS_TO_DATEFIELD));
+  }
 
 }
 

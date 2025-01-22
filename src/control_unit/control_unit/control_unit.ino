@@ -10,7 +10,10 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 #include "servers.h"
 
 
+WiFiServer webSocket(81);
+std::list<WiFiClient> websocketClients;
 WebServer server(80);
+
 
 // Functions
 void setupEthernet();
@@ -24,6 +27,9 @@ void setup(void) {
   setupEthernet();
   setupHTTPServer();
 
+  webSocket.begin();
+
+
   Serial.println("Starting mDNS!");
   if (MDNS.begin("picow")) {
     Serial.println("MDNS responder started");
@@ -34,6 +40,22 @@ void setup(void) {
 void loop(void) {
   server.handleClient();
   MDNS.update();
+
+  WiFiClient client0 = webSocket.accept();
+  if(client0.available()) {
+    websocketClients.push_back(client0);
+  }
+  for (auto it = websocketClients.begin(); it != websocketClients.end();) {
+    if (!it->connected()) {
+      it->stop();
+      it = websocketClients.erase(it);
+    } else {
+      ++it;
+    }
+  }
+
+  // Serial.println(websocketClients.size());
+
 }
 
 
@@ -63,3 +85,4 @@ void setupEthernet(){
   Serial.print("IP address: ");
   Serial.println(eth.localIP());
 }
+

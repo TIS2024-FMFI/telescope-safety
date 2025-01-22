@@ -9,10 +9,8 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 #include "httpHandlers.h"
 #include "servers.h"
 #include <NTPClient.h>
-// #include <EthernetUdp.h>
 #include <WiFiUdp.h>
-// #include <Udp.h>
-#include "allINeedForControlUnit.h"
+#include "time.h"
 
 
 WebServer server(80);
@@ -47,6 +45,7 @@ void loop(void) {
   server.handleClient();
   MDNS.update();
   timeClient.update();
+  // Example of usage
   // Serial.println(timeToString(getRealTime()));
 }
 
@@ -78,15 +77,4 @@ void setupEthernet(){
   Serial.println(eth.localIP());
 }
 
-String timeToString(Time time) {
-  String formattedTime = String(time.year) + "-";
-  
-  // Add leading zero for month, day, hours, minutes, and seconds if necessary
-  formattedTime += (time.month < 10 ? "0" : "") + String(time.month) + "-";
-  formattedTime += (time.day < 10 ? "0" : "") + String(time.day) + " ";
-  formattedTime += (time.hours < 10 ? "0" : "") + String(time.hours) + ":";
-  formattedTime += (time.minutes < 10 ? "0" : "") + String(time.minutes) + ":";
-  formattedTime += (time.seconds < 10 ? "0" : "") + String(time.seconds);
-  
-  return formattedTime;
-}
+

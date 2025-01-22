@@ -12,14 +12,6 @@ enum ChangeType{
     RESTART
 };
 
-struct Time{
-  int year;
-  int month;
-  int day;
-  int hours;
-  int minutes;
-  int seconds;
-};
 
 
 // Sends AzimuthElevation structure to all conected clients via WS
@@ -72,11 +64,6 @@ int writeChangeToLog(ChangeType changeType);
 // Writes in witch position the telescope entered the forbidden zone to log file, with timestamp in CSV format
 // @param azimutElevation pointer to AzimuthElevation structure
 int writeAlarmToLog(AzimuthElevation* azimutElevation);
-
-
-// Retrievs real time from Ethernet
-// @return time in seconds
-Time getRealTime();
 
 
 // Restarts system

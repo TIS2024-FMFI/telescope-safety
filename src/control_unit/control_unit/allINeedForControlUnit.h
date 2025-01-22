@@ -1,4 +1,3 @@
-#include <time.h>
 #include <Arduino.h>
 
 struct AzimuthElevation{
@@ -11,6 +10,15 @@ enum ChangeType{
     LOG_FREQUENCY_CHANGED,
     ALARM_TYPE_CHANGED,
     RESTART
+};
+
+struct Time{
+  int year;
+  int month;
+  int day;
+  int hours;
+  int minutes;
+  int seconds;
 };
 
 
@@ -66,13 +74,10 @@ int writeChangeToLog(ChangeType changeType);
 int writeAlarmToLog(AzimuthElevation* azimutElevation);
 
 
-// // Retrievs real time from Ethernet
-// // @return time in seconds
-// time_t getRealTime();
+// Retrievs real time from Ethernet
+// @return time in seconds
+Time getRealTime();
 
-// // Retrievs time from system
-// // @return time in seconds
-// time_t getTime();
 
 // Restarts system
 // @return 0 if success, -1 if error

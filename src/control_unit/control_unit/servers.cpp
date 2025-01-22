@@ -1,6 +1,7 @@
 #include "servers.h"
 #include "httpHandlers.h"
 
+extern std::list<WiFiClient> websocketClients;
 
 
 int setupHTTPServer(){
@@ -13,6 +14,21 @@ int setupHTTPServer(){
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("HTTP server started");
+  return 1;
+}
+
+
+int sendToClients(AzimuthElevation* azimuthElevation){
+  String message = "{\"azimuth\":";
+  message += azimuthElevation->azimuth;
+  message += ",";
+  message += " \"elevation\"";
+  message += azimuthElevation->elevation;
+  message += "}";
+  for (WiFiClient client : websocketClients){
+    client.print(message);
+    client.flush();
+  }
   return 1;
 }
 

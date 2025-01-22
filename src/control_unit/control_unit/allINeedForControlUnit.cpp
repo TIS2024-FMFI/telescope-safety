@@ -3,10 +3,6 @@
 #include "allINeedForControlUnit.h"
 
 
-int sendToClients(AzimuthElevation* azimutElevation){
-  return -1;
-}
-
 int writeNewForbiddenConfig(String newConfiguration){
   return -1;
 }

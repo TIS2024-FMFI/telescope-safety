@@ -4,6 +4,7 @@
 
 #include <SPI.h>
 #include <LoRa.h>
+#include "common_structs.h"
 
 // Konfigurácia LoRa
 #define LORA_CS_PIN 13
@@ -12,11 +13,6 @@
 #define LORA_FREQUENCY 868E6
 
 #define localAddress 0xAA
-
-struct AzimuthElevation {
-    double azimuth;
-    double elevation;
-};
 
 void initializeLoRa();
 

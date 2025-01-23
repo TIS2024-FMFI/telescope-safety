@@ -15,8 +15,6 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 #define INERCIAL 0
 
 
-
-
 // Functions
 void setupEthernet();
 
@@ -46,7 +44,6 @@ void setup() {
 long lastSendTime = 0;        // last send time
 int interval = 20000;          // interval between sends
 
-int i = 0;
 void loop() {
   #if DISPLAY_A
   loopButtons();

@@ -1,4 +1,10 @@
 #include "allINeedForControlUnit.h"
+#include <list>
+#include <WiFiClient.h>
+
+extern std::list<WiFiClient> websocketClients;
+extern WiFiServer webSocket;
+
 
 // Setup HTTP server
 // @return 0 if success, -1 if error
@@ -20,3 +26,12 @@ int setupServers();
 // @param azimutElevation pointer to AzimuthElevation structure
 // @return 0 if success, -1 if error
 int sendToClients(AzimuthElevation* azimutElevation);
+
+String extractKey(String request);
+String getAcceptKey(String key);
+void convertHashToBytes(const uint32_t hash[5], uint8_t hashBytes[20]);
+String websocketAnswer(String acceptKey);
+String base64Encode(const uint8_t *data, size_t len);
+void websocketLoop();
+void websocketDisconnectInactive();
+void websocketConnectIncomming();

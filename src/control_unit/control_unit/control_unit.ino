@@ -23,11 +23,7 @@ void setup(void) {
 
   setupEthernet();
   setupHTTPServer();
-
-  Serial.println("Starting mDNS!");
-  if (MDNS.begin("picow")) {
-    Serial.println("MDNS responder started");
-  }
+  setupMDNSServer();
 
 }
 

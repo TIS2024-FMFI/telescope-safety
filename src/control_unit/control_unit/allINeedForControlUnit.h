@@ -1,4 +1,3 @@
-#include <time.h>
 #include <Arduino.h>
 
 struct AzimuthElevation{
@@ -12,7 +11,6 @@ enum ChangeType{
     ALARM_TYPE_CHANGED,
     RESTART
 };
-
 
 
 // Writes new forbidden zones configuration
@@ -60,14 +58,6 @@ int writeChangeToLog(ChangeType changeType);
 // @param azimutElevation pointer to AzimuthElevation structure
 int writeAlarmToLog(AzimuthElevation* azimutElevation);
 
-
-// // Retrievs real time from Ethernet
-// // @return time in seconds
-// time_t getRealTime();
-
-// // Retrievs time from system
-// // @return time in seconds
-// time_t getTime();
 
 // Restarts system
 // @return 0 if success, -1 if error

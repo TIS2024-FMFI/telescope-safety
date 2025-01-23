@@ -1,7 +1,7 @@
 #include "servers.h"
 #include "httpHandlers.h"
 #include <SimpleHOTP.h>
-
+#include <ESP8266mDNS.h>
 
 std::list<WiFiClient> websocketClients;
 WiFiServer webSocket(81);
@@ -51,7 +51,11 @@ int setupWebSocketServer(){
 
 
 int setupMDNSServer(){
-  return -1;
+  Serial.println("Starting mDNS!");
+  if (MDNS.begin("telescop")) {
+    Serial.println("MDNS responder started");
+  }
+  return 1;
 }
 
 

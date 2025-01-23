@@ -23,15 +23,6 @@ int writeAlarmToLog(AzimuthElevation* azimutElevation){
   return -1;
 }
 
-
-// time_t getRealTime(){
-//   return -1;
-// }
-
-// time_t getTime(){
-//   return -1;
-// }
-
 int restart(){
   return -1;
 }
@@ -43,3 +34,7 @@ int downloadEventLogs(){
 int downloadLogs(String from, String to){
   return -1;
 }
+
+
+
+

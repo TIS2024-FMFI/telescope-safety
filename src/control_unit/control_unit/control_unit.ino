@@ -8,12 +8,18 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 #include <StreamString.h>
 #include "httpHandlers.h"
 #include "servers.h"
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+#include "time.h"
 
 
 WebServer server(80);
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "sk.pool.ntp.org", 3600);
 
 // Functions
 void setupEthernet();
+String timeToString(Time time);
 
 
 void setup(void) {
@@ -24,14 +30,14 @@ void setup(void) {
   setupEthernet();
   setupHTTPServer();
   setupWebSocketServer();
+  setupMDNSServer();
 
 
-  Serial.println("Starting mDNS!");
-  if (MDNS.begin("picow")) {
-    Serial.println("MDNS responder started");
-  }
-
+  timeClient.begin(8001);
+  timeClient.update();
+  
 }
+
 int i = 0;
 void loop(void) {
   server.handleClient();
@@ -47,6 +53,9 @@ void loop(void) {
   i++;
   // Serial.println(websocketClients.size());
 
+  timeClient.update();
+  // Example of usage
+  // Serial.println(timeToString(getRealTime()));
 }
 
 

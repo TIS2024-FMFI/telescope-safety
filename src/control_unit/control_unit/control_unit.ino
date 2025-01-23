@@ -29,17 +29,30 @@ void setup(void) {
 
   setupEthernet();
   setupHTTPServer();
+  setupWebSocketServer();
   setupMDNSServer();
+
 
   timeClient.begin(8001);
   timeClient.update();
   
-
 }
 
+int i = 0;
 void loop(void) {
   server.handleClient();
   MDNS.update();
+
+  // Testing
+  if (i % 5000 == 0){
+    AzimuthElevation azel;
+    azel.azimuth = i % 1500;
+    azel.elevation = i % 2500;
+    sendToClients(&azel);
+  }
+  i++;
+  // Serial.println(websocketClients.size());
+
   timeClient.update();
   // Example of usage
   // Serial.println(timeToString(getRealTime()));
@@ -72,5 +85,4 @@ void setupEthernet(){
   Serial.print("IP address: ");
   Serial.println(eth.localIP());
 }
-
 

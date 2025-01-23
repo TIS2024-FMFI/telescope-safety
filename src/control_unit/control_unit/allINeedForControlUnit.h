@@ -13,13 +13,6 @@ enum ChangeType{
 };
 
 
-
-// Sends AzimuthElevation structure to all conected clients via WS
-// @param azimutElevation pointer to AzimuthElevation structure
-// @return 0 if success, -1 if error
-int sendToClients(AzimuthElevation* azimutElevation);
-
-
 // Writes new forbidden zones configuration
 // @param azimutElevation pointer to AzimuthElevation structure array
 // @param numberOfForbiddenZones number of forbidden zones

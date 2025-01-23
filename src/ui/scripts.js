@@ -1,9 +1,4 @@
-// Kontrola autentifikácie pre config.html
-const isAuthenticated = sessionStorage.getItem('authenticated') === 'true';
 
-if (!isAuthenticated && window.location.pathname.includes('config.html')) {
-    window.location.href = `login.html?redirect=config.html`;
-}
 
 // Funkcia na potvrdenie odoslania formulára
 function confirmSubmit(event) {
@@ -14,23 +9,6 @@ function confirmSubmit(event) {
     }
 }
 
-// Funkcia na overenie hesla na login stránke
-function checkPassword(event) {
-    event.preventDefault();
-
-    const passwordInput = document.getElementById('password').value;
-
-    if (passwordInput === '123') {
-        sessionStorage.setItem('authenticated', 'true'); 
-
-        const queryParams = new URLSearchParams(window.location.search);
-        const redirectUrl = queryParams.get('redirect') || 'index.html';
-
-        window.location.href = redirectUrl; 
-    } else {
-        document.getElementById('error-message').innerText = 'Nesprávne heslo. Skúste znova.';
-    }
-}
 
 document.addEventListener('DOMContentLoaded', () => {
     const shutdownButton = document.getElementById('shutdown-button');
@@ -59,12 +37,5 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadEventsButton.addEventListener('click', () => {
             alert('Sťahovanie udalostí.');
         });
-    }
-});
-
-// Funkcia na vymazanie autentifikácie pri opustení stránky
-window.addEventListener('beforeunload', () => {
-    if (window.location.pathname.includes('config.html')) {
-        sessionStorage.removeItem('authenticated'); 
     }
 });

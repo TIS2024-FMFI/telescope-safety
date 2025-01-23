@@ -5,23 +5,17 @@
 #include <W55RP20lwIP.h> // Include library for the right board
 Wiznet55rp20lwIP eth(1 /* chip select */);
 
-#include <WiFiClient.h>
-#include <WebServer.h> 
 #include <LEAmDNS.h>
-#include <StreamString.h>
 #include "httpHandlers.h"
 #include "servers.h"
-#include <NTPClient.h>
-#include <WiFiUdp.h>
 #include "time.h"
 
 #define SERVERS 1
-#define DISPLAY_A 1
-#define INERCIAL 1
+#define DISPLAY_A 0
+#define INERCIAL 0
 
-WebServer server(80);
-WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "sk.pool.ntp.org", 3600);
+
+
 
 // Functions
 void setupEthernet();
@@ -43,9 +37,7 @@ void setup() {
 
   #if SERVERS
   setupEthernet();
-  setupHTTPServer();
-  setupWebSocketServer();
-  setupMDNSServer();
+  setupServers();
   timeClient.begin(8001);
   timeClient.update();
   #endif
@@ -63,20 +55,8 @@ void loop() {
   #if SERVERS
   server.handleClient();
   MDNS.update();
-
-  // Testing
-  if (i % 5000 == 0){
-    AzimuthElevation azel;
-    azel.azimuth = i % 1500;
-    azel.elevation = i % 2500;
-    sendToClients(&azel);
-  }
-  i++;
-  // Serial.println(websocketClients.size());
-
+  websocketLoop();
   timeClient.update();
-  // Example of usage
-  // Serial.println(timeToString(getRealTime()));
   #endif
 
   #if INERCIAL

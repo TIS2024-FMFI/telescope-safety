@@ -6,6 +6,7 @@
 std::list<WiFiClient> websocketClients;
 WiFiServer webSocket(81);
 String GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+WebServer server(80);
 
 
 
@@ -19,28 +20,47 @@ int setupHTTPServer(){
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("HTTP server started");
-  return 1;
+  return 0;
 }
 
 
-int sendToClients(AzimuthElevation* azimuthElevation){
-  String message = "{\"azimuth\":";
-  message += azimuthElevation->azimuth;
-  message += ",";
-  message += " \"elevation\"";
-  message += azimuthElevation->elevation;
-  message += "}";
-  char header[1] = {0x81};
-  String out = header;
-  char len[1] = {(uint8_t)message.length()};
-  out += len;
-  out += message;
-  Serial.println(out);
-  for (WiFiClient client : websocketClients){
-    client.print(out);
-    client.flush();
-  }
-  return 1;
+int sendToClients(AzimuthElevation* azimuthElevation) {
+    String message = "{\"azimuth\":";
+    message += azimuthElevation->azimuth;
+    message += ",";
+    message += "\"elevation\":";
+    message += azimuthElevation->elevation;
+    message += "}";
+
+    size_t payloadLength = message.length();
+
+    std::vector<uint8_t> frame;
+    frame.push_back(0x81);
+
+    if (payloadLength <= 125) {
+        frame.push_back(payloadLength);
+    } else if (payloadLength <= 65535) {
+        frame.push_back(126);
+        frame.push_back((payloadLength >> 8) & 0xFF);
+        frame.push_back(payloadLength & 0xFF);
+    } else {
+        frame.push_back(127);
+        for (int i = 7; i >= 0; --i) {
+            frame.push_back((payloadLength >> (i * 8)) & 0xFF);
+        }
+    }
+
+    frame.insert(frame.end(), message.begin(), message.end());
+
+
+    for (WiFiClient client : websocketClients) {
+        if (client.connected()) {
+            client.write(frame.data(), frame.size());
+            client.flush();
+        }
+    }
+
+    return 0;
 }
 
 
@@ -55,7 +75,7 @@ int setupMDNSServer(){
   if (MDNS.begin("telescop")) {
     Serial.println("MDNS responder started");
   }
-  return 1;
+  return 0;
 }
 
 

@@ -1,9 +1,11 @@
 #include "common_structs.h"
 #include <list>
 #include <WiFiClient.h>
+#include <WebServer.h>
 
 extern std::list<WiFiClient> websocketClients;
 extern WiFiServer webSocket;
+extern WebServer server;
 
 
 // Setup HTTP server

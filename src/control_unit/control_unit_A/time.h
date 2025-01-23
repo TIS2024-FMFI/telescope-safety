@@ -1,4 +1,8 @@
 #include <Arduino.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+
+extern NTPClient timeClient;
 
 struct Time{
   int year;

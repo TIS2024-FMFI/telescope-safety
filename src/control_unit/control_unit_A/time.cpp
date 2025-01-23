@@ -1,7 +1,9 @@
 #include"time.h"
-#include <NTPClient.h>
 
-extern NTPClient timeClient;
+
+
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "sk.pool.ntp.org", 3600);
 
 
 

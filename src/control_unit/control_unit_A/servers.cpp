@@ -119,24 +119,24 @@ void websocketConnectIncomming(){
 
 
 void websocketDisconnectInactive(){
-  for (auto it = websocketClients.begin(); it != websocketClients.end();) {
-    if (!it->connected()) {
-      it->stop();
-      it = websocketClients.erase(it);
+  for (auto client = websocketClients.begin(); client != websocketClients.end();) {
+    if (!client->connected()) {
+      client->stop();
+      client = websocketClients.erase(client);
     } else {
-      ++it;
+      ++client;
     }
   }
 }
 
 String websocketAnswer(String acceptKey){
-  String out = "HTTP/1.1 101 Switching Protocols\r\n";
-  out += "Upgrade: websocket\r\n";
-  out += "Connection: Upgrade\r\n";
-  out += "Sec-WebSocket-Accept: ";
-  out += acceptKey;
-  out += "\r\n\r\n";
-  return out;
+  String answer = "HTTP/1.1 101 Switching Protocols\r\n";
+  answer += "Upgrade: websocket\r\n";
+  answer += "Connection: Upgrade\r\n";
+  answer += "Sec-WebSocket-Accept: ";
+  answer += acceptKey;
+  answer += "\r\n\r\n";
+  return answer;
 }
 
 String extractKey(String request){
@@ -145,7 +145,7 @@ String extractKey(String request){
 
   while ((newlineIndex = request.indexOf('\n', startIndex)) != -1) {
     // Extract the substring for the current line
-    String line = request.substring(startIndex, newlineIndex - 1);  // -1 
+    String line = request.substring(startIndex, newlineIndex - 1);  // -1 because every line ends with /r/n
     int keyIndex = line.indexOf(':');
     String key = line.substring(0, keyIndex);
 
@@ -179,14 +179,14 @@ void convertHashToBytes(const uint32_t hash[5], uint8_t hashBytes[20]) {
 String getAcceptKey(String key){
   String concatenated = key + GUID;
 
-  int ml = concatenated.length(); 
-  char concatenatedArray[ml+1];
-  concatenated.toCharArray(concatenatedArray, ml+1);
+  int len = concatenated.length(); 
+  char concatenatedArray[len+1];
+  concatenated.toCharArray(concatenatedArray, len+1);
 
-  ml *= 8;
+  len *= 8;
   
   uint32_t hash[5] = {}; 
-  SimpleSHA1::generateSHA((uint8_t*)concatenatedArray, ml, hash);
+  SimpleSHA1::generateSHA((uint8_t*)concatenatedArray, len, hash);
   uint8_t hashed[20];
   convertHashToBytes(hash, hashed);
 

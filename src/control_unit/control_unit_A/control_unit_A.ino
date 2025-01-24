@@ -38,6 +38,7 @@ void setup() {
   setupServers();
   timeClient.begin(8001);
   timeClient.update();
+  Serial.println(timeToString(getRealTime()));
   #endif
 }
 

@@ -17,7 +17,7 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 
 #define SERVERS 0
 #define DISPLAY_A 0
-#define INERCIAL 1
+#define INERCIAL 0
 
 WebServer server(80);
 WiFiUDP ntpUDP;

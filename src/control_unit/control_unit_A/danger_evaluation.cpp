@@ -2,17 +2,17 @@
 #include "danger_evaluation.h"
 
 // Skontroluje, či bod patrí do jedného polygónu (Ray-Casting algoritmus)
-bool isPointInPolygon(const Point& point, const ForbiddenZone& polygon) {
+bool isPointInPolygon(AzimuthElevation* azimutElevation, const ForbiddenZone& polygon) {
     int intersectCount = 0;
     int n = polygon.size();
 
     for (int i = 0; i < n; ++i) {
-        const Point& v1 = polygon[i];
-        const Point& v2 = polygon[(i + 1) % n]; // Posledný bod spája s prvým
+        const AzimuthElevation& v1 = polygon[i];
+        const AzimuthElevation& v2 = polygon[(i + 1) % n]; // Posledný bod spája s prvým
 
         // Kontrola, či priamka pretína lúč
-        if (((v1.y > point.y) != (v2.y > point.y)) &&
-            (point.x < (v2.x - v1.x) * (point.y - v1.y) / (v2.y - v1.y) + v1.x)) {
+        if (((v1.elevation > azimutElevation->elevation) != (v2.elevation > azimutElevation->elevation)) &&
+            (azimutElevation->azimuth < (v2.azimuth - v1.azimuth) * (azimutElevation->elevation - v1.elevation) / (v2.elevation - v1.elevation) + v1.azimuth)) {
             intersectCount++;
         }
     }
@@ -24,7 +24,7 @@ bool isPointInPolygon(const Point& point, const ForbiddenZone& polygon) {
 int checkForbiddenZone(AzimuthElevation* azimutElevation) {
     for (const auto& zone : systemForbiddenZones) {
         if (isPointInPolygon(azimutElevation, zone)) {
-            enteredForibiddenZone(azimutElevation);
+            enteredForbiddenZone(azimutElevation);
             return -1;
         }
     }

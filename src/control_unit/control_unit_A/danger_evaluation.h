@@ -8,7 +8,7 @@ bool isPointInPolygon(AzimuthElevation* azimutElevation, const ForbiddenZone& po
 // Skontroluje, či bod patrí do niektorej zakázanej zóny
 int checkForbiddenZone(AzimuthElevation* azimutElevation);
 
-int enteredForbidenZone(AzimuthElevation* azimutElevation){
+int enteredForbiddenZone(AzimuthElevation* azimutElevation){
     //writeAlarmToLog(azimutElevation);
     //startAlarm();
     //disableMotors();

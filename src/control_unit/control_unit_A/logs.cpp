@@ -172,7 +172,7 @@ int checkFileFormat(char* newConfiguration) {
   } else {
     inZone = true;
 
-    float az, el;
+    double az, el;
     if (sscanf(line, "%f %f", &az, &el) != 2) {
       return -1;
     }

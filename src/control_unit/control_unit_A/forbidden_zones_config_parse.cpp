@@ -1,34 +1,76 @@
 
-#include "ForbiddenZones.h"
+#include "forbidden_zones_config_parse.h"
 
 ForbiddenZones systemForbiddenZones;
 
-// Skontroluje, či bod patrí do jedného polygónu (Ray-Casting algoritmus)
-bool isPointInPolygon(const Point& point, const ForbiddenZone& polygon) {
-    int intersectCount = 0;
-    int n = polygon.size();
+// Checks if file format is correct
+// also serve for parsing the forbidden zones into data structure
+// @param newConfiguration from user
+// @return 0 if correct, -1 if error
+// @note Different error codes can be added
+int checkFileFormat(char* newConfiguration) {
+  char* current = newConfiguration;
+  char* end = newConfiguration;
+  int pointCount = 0;
+  bool inZone = false;
+  ForbiddenZones temp_zones;
+  ForbiddenZone temp_zone;
 
-    for (int i = 0; i < n; ++i) {
-        const Point& v1 = polygon[i];
-        const Point& v2 = polygon[(i + 1) % n]; // Posledný bod spája s prvým
-
-        // Kontrola, či priamka pretína lúč
-        if (((v1.y > point.y) != (v2.y > point.y)) &&
-            (point.x < (v2.x - v1.x) * (point.y - v1.y) / (v2.y - v1.y) + v1.x)) {
-            intersectCount++;
-        }
+  while (*current != '\0') {
+    while (*end != '\0' && *end != '\n') {
+      end++;
     }
 
-    return (intersectCount % 2) == 1; // Nepárny počet prienikov = vo vnútri
-}
+  size_t length = end - current;
+  char line[length + 1];
+  strncpy(line, current, length);
+  line[length] = '\0';
 
-// Skontroluje, či bod patrí do niektorej zakázanej zóny
-int checkForbiddenZone(AzimuthElevation* azimutElevation) {
-    for (const auto& zone : systemForbiddenZones) {
-        if (isPointInPolygon(azimutElevation, zone)) {
-            enteredForibiddenZone(azimutElevation);
-            return -1;
-        }
+  if (*end == '\n') {
+    end++;
+  }
+  current = end;
+
+  if (line[0] == '#') {
+    continue;
+  }
+
+  if (strlen(line) == 0) {
+    if (inZone && pointCount < 3) {
+      return -1;
     }
-    return 0;
+    if(inZone){
+      temp_zones.push_back(temp_zone);
+      temp_zone.clear();
+    }
+    pointCount = 0;
+    inZone = false;
+  } else {
+    inZone = true;
+
+    double az, el;
+    if (sscanf(line, "%f %f", &az, &el) != 2) {
+      return -1;
+    }
+
+    AzimuthElevation temp_az_el;
+    temp_az_el.azimuth=az;
+    temp_az_el.elevation=el;
+    temp_zone.push_back(temp_az_el);
+
+    pointCount++;
+    }
+  }
+
+  if (inZone && pointCount < 3) {
+    return -1;
+  }
+
+  if(inZone){
+    temp_zones.push_back(temp_zone);
+  }
+
+  systemForbiddenZones=temp_zones;
+
+  return 0;
 }

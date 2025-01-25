@@ -15,8 +15,8 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 #include <WiFiUdp.h>
 #include "time.h"
 
-#define SERVERS 1
-#define DISPLAY_A 1
+#define SERVERS 0
+#define DISPLAY_A 0
 #define INERCIAL 1
 
 WebServer server(80);
@@ -53,6 +53,7 @@ void setup() {
 
 long lastSendTime = 0;        // last send time
 int interval = 20000;          // interval between sends
+boolean reset_flag=true;
 
 int i = 0;
 void loop() {
@@ -80,10 +81,14 @@ void loop() {
   #endif
 
   #if INERCIAL
-  if (millis() - lastSendTime > interval) {
-    while (restartInertialUnit(132.0) != 0);
-    lastSendTime = millis();            // timestamp the message
-    interval = 20000;    // 20 seconds
+  if (!reset_flag || millis() - lastSendTime > interval) {
+    if (restartInertialUnit(132.0) != 0){
+      reset_flag=false;
+    }
+    else{
+      lastSendTime = millis();            // timestamp the message
+      reset_flag=true;
+    }
   }
 
   AzimuthElevation* data = readFromInertialUnit();

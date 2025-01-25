@@ -1,7 +1,4 @@
 
-#include "lora_communication.h"
-#include "buttons.h"
-#include "logs.h"
 #include <W55RP20lwIP.h> // Include library for the right board
 Wiznet55rp20lwIP eth(1 /* chip select */);
 
@@ -15,9 +12,6 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 #include <WiFiUdp.h>
 #include "time.h"
 
-#define SERVERS 1
-#define DISPLAY_A 1
-#define INERCIAL 1
 
 WebServer server(80);
 WiFiUDP ntpUDP;
@@ -25,42 +19,27 @@ NTPClient timeClient(ntpUDP, "sk.pool.ntp.org", 3600);
 
 // Functions
 void setupEthernet();
+String timeToString(Time time);
 
 
-void setup() {
-  Serial.begin(9600);                   // initialize serial
-  delay(100);
+void setup(void) {
+  Serial.begin(115200);
+  delay(5000);
   Serial.println("Started Serial");
-  
-  #if INERCIAL
-  initializeLoRa();
-  #endif
 
-  #if DISPLAY_A
-  setupButtons();
-  setupSD();
-  #endif
-
-  #if SERVERS
   setupEthernet();
   setupHTTPServer();
   setupWebSocketServer();
   setupMDNSServer();
+
+
   timeClient.begin(8001);
   timeClient.update();
-  #endif
+  
 }
 
-long lastSendTime = 0;        // last send time
-int interval = 20000;          // interval between sends
-
 int i = 0;
-void loop() {
-  #if DISPLAY_A
-  loopButtons();
-  #endif
-
-  #if SERVERS
+void loop(void) {
   server.handleClient();
   MDNS.update();
 
@@ -77,21 +56,9 @@ void loop() {
   timeClient.update();
   // Example of usage
   // Serial.println(timeToString(getRealTime()));
-  #endif
-
-  #if INERCIAL
-  if (millis() - lastSendTime > interval) {
-    while (restartInertialUnit(132.0) != 0);
-    lastSendTime = millis();            // timestamp the message
-    interval = 20000;    // 20 seconds
-  }
-
-  AzimuthElevation* data = readFromInertialUnit();
-    if (data) {
-        Serial.println(F("Processed incoming message."));
-    }
-  #endif
 }
+
+
 
 
 
@@ -118,3 +85,4 @@ void setupEthernet(){
   Serial.print("IP address: ");
   Serial.println(eth.localIP());
 }
+

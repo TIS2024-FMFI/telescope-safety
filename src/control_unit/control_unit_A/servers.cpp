@@ -6,6 +6,7 @@
 std::list<WiFiClient> websocketClients;
 WiFiServer webSocket(81);
 String GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+WebServer server(80);
 
 
 
@@ -19,28 +20,47 @@ int setupHTTPServer(){
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("HTTP server started");
-  return 1;
+  return 0;
 }
 
 
-int sendToClients(AzimuthElevation* azimuthElevation){
-  String message = "{\"azimuth\":";
-  message += azimuthElevation->azimuth;
-  message += ",";
-  message += " \"elevation\"";
-  message += azimuthElevation->elevation;
-  message += "}";
-  char header[1] = {0x81};
-  String out = header;
-  char len[1] = {(uint8_t)message.length()};
-  out += len;
-  out += message;
-  Serial.println(out);
-  for (WiFiClient client : websocketClients){
-    client.print(out);
-    client.flush();
-  }
-  return 1;
+int sendToClients(AzimuthElevation* azimuthElevation) {
+    String message = "{\"azimuth\":";
+    message += azimuthElevation->azimuth;
+    message += ",";
+    message += "\"elevation\":";
+    message += azimuthElevation->elevation;
+    message += "}";
+
+    size_t payloadLength = message.length();
+
+    std::vector<uint8_t> frame;
+    frame.push_back(0x81);
+
+    if (payloadLength <= 125) {
+        frame.push_back(payloadLength);
+    } else if (payloadLength <= 65535) {
+        frame.push_back(126);
+        frame.push_back((payloadLength >> 8) & 0xFF);
+        frame.push_back(payloadLength & 0xFF);
+    } else {
+        frame.push_back(127);
+        for (int i = 7; i >= 0; --i) {
+            frame.push_back((payloadLength >> (i * 8)) & 0xFF);
+        }
+    }
+
+    frame.insert(frame.end(), message.begin(), message.end());
+
+
+    for (WiFiClient client : websocketClients) {
+        if (client.connected()) {
+            client.write(frame.data(), frame.size());
+            client.flush();
+        }
+    }
+
+    return 0;
 }
 
 
@@ -55,7 +75,7 @@ int setupMDNSServer(){
   if (MDNS.begin("telescop")) {
     Serial.println("MDNS responder started");
   }
-  return 1;
+  return 0;
 }
 
 
@@ -99,24 +119,24 @@ void websocketConnectIncomming(){
 
 
 void websocketDisconnectInactive(){
-  for (auto it = websocketClients.begin(); it != websocketClients.end();) {
-    if (!it->connected()) {
-      it->stop();
-      it = websocketClients.erase(it);
+  for (auto client = websocketClients.begin(); client != websocketClients.end();) {
+    if (!client->connected()) {
+      client->stop();
+      client = websocketClients.erase(client);
     } else {
-      ++it;
+      ++client;
     }
   }
 }
 
 String websocketAnswer(String acceptKey){
-  String out = "HTTP/1.1 101 Switching Protocols\r\n";
-  out += "Upgrade: websocket\r\n";
-  out += "Connection: Upgrade\r\n";
-  out += "Sec-WebSocket-Accept: ";
-  out += acceptKey;
-  out += "\r\n\r\n";
-  return out;
+  String answer = "HTTP/1.1 101 Switching Protocols\r\n";
+  answer += "Upgrade: websocket\r\n";
+  answer += "Connection: Upgrade\r\n";
+  answer += "Sec-WebSocket-Accept: ";
+  answer += acceptKey;
+  answer += "\r\n\r\n";
+  return answer;
 }
 
 String extractKey(String request){
@@ -125,7 +145,7 @@ String extractKey(String request){
 
   while ((newlineIndex = request.indexOf('\n', startIndex)) != -1) {
     // Extract the substring for the current line
-    String line = request.substring(startIndex, newlineIndex - 1);  // -1 
+    String line = request.substring(startIndex, newlineIndex - 1);  // -1 because every line ends with /r/n
     int keyIndex = line.indexOf(':');
     String key = line.substring(0, keyIndex);
 
@@ -159,14 +179,14 @@ void convertHashToBytes(const uint32_t hash[5], uint8_t hashBytes[20]) {
 String getAcceptKey(String key){
   String concatenated = key + GUID;
 
-  int ml = concatenated.length(); 
-  char concatenatedArray[ml+1];
-  concatenated.toCharArray(concatenatedArray, ml+1);
+  int len = concatenated.length(); 
+  char concatenatedArray[len+1];
+  concatenated.toCharArray(concatenatedArray, len+1);
 
-  ml *= 8;
+  len *= 8;
   
   uint32_t hash[5] = {}; 
-  SimpleSHA1::generateSHA((uint8_t*)concatenatedArray, ml, hash);
+  SimpleSHA1::generateSHA((uint8_t*)concatenatedArray, len, hash);
   uint8_t hashed[20];
   convertHashToBytes(hash, hashed);
 

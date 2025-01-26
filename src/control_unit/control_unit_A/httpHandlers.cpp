@@ -37,7 +37,7 @@ void handleFileDownload() {
     return;
   }
 
-  server.streamFile(file, "application/octet-stream");
+  server.streamFile(file, "text/csv");
 
   file.close();
 }

@@ -9,6 +9,7 @@ void handleMainPage();
 void handleCSS();
 void handleJSMain();
 void handleJSForm();
+void handleFileDownload();
 
 
 // Define form names:

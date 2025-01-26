@@ -17,6 +17,7 @@ int setupHTTPServer(){
   server.on("/styles.css", handleCSS);
   server.on("/form.js", handleJSForm);
   server.on("/main.js", handleJSMain);
+  server.on("/download", handleFileDownload);
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("HTTP server started");

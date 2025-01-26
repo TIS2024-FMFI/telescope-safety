@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include "allINeedForControlUnit.h"
 #include "logs.h"
+#include <SD.h>
 
 #define DEBUG 1
 
@@ -22,6 +23,25 @@ void handleNotFound() {
   }
   server.send(404, "text/plain", message);
 }
+
+void handleFileDownload() {
+  String fileName = server.arg("file");
+  if (fileName.length() == 0) {
+    server.send(400, "text/plain", "File name not specified!");
+    return;
+  }
+
+  File file = SD.open("/" + fileName);
+  if (!file) {
+    server.send(404, "text/plain", "File not found!");
+    return;
+  }
+
+  server.streamFile(file, "application/octet-stream");
+
+  file.close();
+}
+
 
 void handleMainPage() {
   // load from SD card index.html

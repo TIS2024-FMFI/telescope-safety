@@ -26,12 +26,13 @@ int setupHTTPServer(){
 
 int sendToClients(AzimuthElevation* azimuthElevation) {
   auto start = millis();
-  String message = "{\"azimuth\":";
-  message += azimuthElevation->azimuth;
-  message += ",";
-  message += "\"elevation\":";
-  message += azimuthElevation->elevation;
-  message += "}";
+  String message;
+  message.reserve(45);
+  message.concat("{\"azimuth\":");
+  message.concat(azimuthElevation->azimuth, 2);
+  message.concat(",\"elevation\":");
+  message.concat(azimuthElevation->elevation, 2);
+  message.concat("}");
 
   size_t payloadLength = message.length();
 

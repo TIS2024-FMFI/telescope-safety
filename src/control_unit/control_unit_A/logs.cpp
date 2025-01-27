@@ -14,9 +14,6 @@ const char *logCollisionFileName = "";
 
 
 void setupSD() {
-  Serial.begin(9600);
-  while (!Serial);
-
   Serial.print("Initializing SD card...");
   SPI.setRX(_MISO);
   SPI.setTX(_MOSI);

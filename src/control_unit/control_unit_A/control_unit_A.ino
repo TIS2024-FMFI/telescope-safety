@@ -7,14 +7,9 @@
 #include <W55RP20lwIP.h> // Include library for the right board
 Wiznet55rp20lwIP eth(1 /* chip select */);
 
-#include <WiFiClient.h>
-#include <WebServer.h> 
 #include <LEAmDNS.h>
-#include <StreamString.h>
 #include "httpHandlers.h"
 #include "servers.h"
-#include <NTPClient.h>
-#include <WiFiUdp.h>
 #include "time.h"
 
 #define SERVERS 0
@@ -23,9 +18,7 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 #define CONFIGURATION 1
 #define DANGER 1
 
-WebServer server(80);
-WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "sk.pool.ntp.org", 3600);
+
 
 // Functions
 void setupEthernet();
@@ -47,11 +40,10 @@ void setup() {
 
   #if SERVERS
   setupEthernet();
-  setupHTTPServer();
-  setupWebSocketServer();
-  setupMDNSServer();
+  setupServers();
   timeClient.begin(8001);
   timeClient.update();
+  Serial.println(timeToString(getRealTime()));
   #endif
 }
 
@@ -59,8 +51,6 @@ long lastSendTime = 0;        // last send time
 int interval = 20000;          // interval between sends
 boolean reset_flag=true;
 boolean file_format_flag=false;
-
-int i = 0;
 
 const char* testConfig =
     "# Zone 1\n"
@@ -73,6 +63,7 @@ const char* testConfig =
     "35.0 45.0\n"
     "40.0 35.0\n";
 
+
 void loop() {
   #if DISPLAY_A
   loopButtons();
@@ -81,20 +72,8 @@ void loop() {
   #if SERVERS
   server.handleClient();
   MDNS.update();
-
-  // Testing
-  if (i % 5000 == 0){
-    AzimuthElevation azel;
-    azel.azimuth = i % 1500;
-    azel.elevation = i % 2500;
-    sendToClients(&azel);
-  }
-  i++;
-  // Serial.println(websocketClients.size());
-
+  websocketLoop();
   timeClient.update();
-  // Example of usage
-  // Serial.println(timeToString(getRealTime()));
   #endif
 
   #if INERCIAL

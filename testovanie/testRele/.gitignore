@@ -1,0 +1,41 @@
+# Ignore build directories
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Ignore pico-sdk submodule or folder (if you cloned it into your project)
+pico-sdk/
+pico-extras/
+
+# Ignore any UF2 files (compiled binary for Pico)
+*.uf2
+
+# Ignore log files
+*.log
+
+# Ignore temporary/system files
+*.DS_Store
+*.swp
+*.swo
+*.tmp
+
+# Ignore VS Code files
+.vscode/
+
+# Ignore compiled object files
+*.o
+*.a
+
+# Ignore dependency files generated during build
+*.d
+
+# Ignore executables (if any are generated for host testing)
+*.elf
+*.bin
+
+# Ignore any generated documentation (optional)
+docs/
+*.html
+*.pdf

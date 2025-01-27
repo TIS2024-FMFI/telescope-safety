@@ -20,6 +20,8 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 #define SERVERS 0
 #define DISPLAY_A 0
 #define INERCIAL 0
+#define CONFIGURATION 1
+#define DANGER 1
 
 WebServer server(80);
 WiFiUDP ntpUDP;
@@ -56,8 +58,21 @@ void setup() {
 long lastSendTime = 0;        // last send time
 int interval = 20000;          // interval between sends
 boolean reset_flag=true;
+boolean file_format_flag=false;
 
 int i = 0;
+
+const char* testConfig =
+    "# Zone 1\n"
+    "10.0 20.0\n"
+    "15.0 25.0\n"
+    "20.0 15.0\n"
+    "\n"
+    "# Zone 2\n"
+    "30.0 40.0\n"
+    "35.0 45.0\n"
+    "40.0 35.0\n";
+
 void loop() {
   #if DISPLAY_A
   loopButtons();
@@ -96,6 +111,33 @@ void loop() {
   AzimuthElevation* data = readFromInertialUnit();
     if (data) {
         Serial.println(F("Processed incoming message."));
+    }
+  #endif
+
+  #if CONFIGURATION
+  // Test the configuration parsing
+    int parseResult = checkFileFormat(testConfig);
+    if (parseResult == 0) {
+        Serial.println("Configuration parsed successfully.");
+        file_format_flag=true;
+    } else {
+        Serial.println("Error parsing configuration.");
+        file_format_flag=false;
+    }
+  #endif
+
+  #if DANGER
+  // Test danger
+    AzimuthElevation testPoint = {15.0, 20.0};
+
+    // Check if the test point falls in any forbidden zone
+    if(file_format_flag){
+      int result = checkForbiddenZone(&testPoint);
+      if (result == -1) {
+          Serial.println("Point is in a forbidden zone!");
+      } else {
+          Serial.println("Point is safe.");
+      }
     }
   #endif
 }

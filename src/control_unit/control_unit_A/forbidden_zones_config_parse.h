@@ -19,7 +19,7 @@ extern ForbiddenZones systemForbiddenZones;
 // @param newConfiguration from user
 // @return 0 if correct, -1 if error
 // @note Different error codes can be added
-int checkFileFormat(char* newConfiguration);
+int checkFileFormat(const char* newConfiguration);
 
 void sortZoneClockwise(ForbiddenZone& zone);
 

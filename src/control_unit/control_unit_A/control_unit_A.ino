@@ -15,9 +15,6 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 #define SERVERS 0
 #define DISPLAY_A 0
 #define INERCIAL 0
-#define CONFIGURATION 1
-#define DANGER 1
-
 
 
 // Functions
@@ -93,32 +90,8 @@ void loop() {
     }
   #endif
 
-  #if CONFIGURATION
-  // Test the configuration parsing
-    int parseResult = checkFileFormat(testConfig);
-    if (parseResult == 0) {
-        Serial.println("Configuration parsed successfully.");
-        file_format_flag=true;
-    } else {
-        Serial.println("Error parsing configuration.");
-        file_format_flag=false;
-    }
-  #endif
+  testing_parsation_and_evaluation();
 
-  #if DANGER
-  // Test danger
-    AzimuthElevation testPoint = {15.0, 20.0};
-
-    // Check if the test point falls in any forbidden zone
-    if(file_format_flag){
-      int result = checkForbiddenZone(&testPoint);
-      if (result == -1) {
-          Serial.println("Point is in a forbidden zone!");
-      } else {
-          Serial.println("Point is safe.");
-      }
-    }
-  #endif
 }
 
 

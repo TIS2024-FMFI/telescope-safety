@@ -58,8 +58,6 @@ int sendToClients(AzimuthElevation* azimuthElevation) {
   for (WiFiClient client : websocketClients) {
     if (client.connected()) {
       client.write(frame.data(), frame.size());
-      // Code is faster, flush is blocking
-      // client.flush();
     }
   }
   end = millis();
@@ -106,28 +104,12 @@ void websocketLoop(){
 void websocketConnectIncomming(){
   WiFiClient client0 = webSocket.accept();
   if(client0.available()) {
-    auto start = millis();
     websocketClients.push_back(client0);
-    // String request = readClientData(client0);
-    auto end = millis();
-    Serial.printf("Reading WS proposal took: %lu\n", end-start);
-    start = millis();
     String websocketKey = extractKey(client0);
-    end = millis();
-    Serial.printf("Extracting WS answer took: %lu\n", end-start);
     if (websocketKey){
-      start = millis();
       String acceptKey = getAcceptKey(websocketKey);
-      end = millis();
-      Serial.printf("Generating WS key took: %lu\n", end-start);
-      start = millis();
       client0.print(websocketAnswer(acceptKey));
-      // Code is faster, flush is blocking
-      // client0.flush();
-      end = millis();
-      Serial.printf("Sending WS answer took: %lu\n", end-start);
     }
-    // Serial.println(request);
   }
 }
 

@@ -2,6 +2,8 @@
 #include "common_structs.h"
 #include <vector>
 #include <string_view>
+#include <algorithm>
+#include <cmath>
 
 // Zakázaná zóna (polygón)
 using ForbiddenZone = std::vector<AzimuthElevation>;

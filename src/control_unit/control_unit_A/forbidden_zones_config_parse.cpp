@@ -19,17 +19,17 @@ int checkFileFormat(const char* newConfiguration) {
     bool inZone = false;
 
     while (current < config.size()) {
-        // Nájdite koniec riadku
+        // Find the end of the line
         end = config.find('\n', current);
         if (end == std::string_view::npos) {
             end = config.size();
         }
 
-        // Extrahujte riadok ako `std::string_view`
+        // Extract the line as `std::string_view`
         std::string_view line = config.substr(current, end - current);
-        current = end + 1; // Posuňte sa na ďalší riadok
+        current = end + 1; // Move to the next line
 
-        // Odstránenie medzier na začiatku a na konci
+        // Trim whitespace from the start and end
         while (!line.empty() && (line.front() == ' ' || line.front() == '\t')) {
             line.remove_prefix(1);
         }
@@ -37,13 +37,18 @@ int checkFileFormat(const char* newConfiguration) {
             line.remove_suffix(1);
         }
 
-        // Ignorujte komentáre a prázdne riadky
+        // Ignore comments and empty lines
         if (line.empty() || line[0] == '#') {
             if (line.empty() && inZone) {
-                // Ukončujeme aktuálnu zónu
+                // Finish the current zone
                 if (pointCount < 3) {
-                    return -1; // Chyba: Zóna obsahuje menej ako 3 body
+                    return -1; // Error: Zone contains fewer than 3 points
                 }
+
+                // Sort the current zone clockwise before storing it
+                //Ray-casting algorithm in danger evaluation requires this sort
+                sortZoneClockwise(temp_zone);
+
                 temp_zones.push_back(std::move(temp_zone));
                 temp_zone.clear();
                 pointCount = 0;
@@ -52,27 +57,57 @@ int checkFileFormat(const char* newConfiguration) {
             continue;
         }
 
-        // Parsovanie bodu (azimuth, elevation)
+        // Parse a point (azimuth, elevation)
         double az, el;
         if (sscanf(line.data(), "%lf %lf", &az, &el) != 2) {
-            return -1; // Chyba: Neplatný formát riadku
+            return -1; // Error: Invalid line format
         }
 
-        // Pridanie bodu do aktuálnej zóny
+        // Add the point to the current zone
         temp_zone.push_back({az, el});
         pointCount++;
         inZone = true;
     }
 
-    // Ukončenie poslednej zóny
+    // Finalize the last zone
     if (inZone) {
         if (pointCount < 3) {
-            return -1; // Chyba: Zóna obsahuje menej ako 3 body
+            return -1; // Error: Zone contains fewer than 3 points
         }
+
+        // Sort the current zone clockwise before storing it
+        //Ray-casting algorithm in danger evaluation requires this sort
+        sortZoneClockwise(temp_zone);
+
         temp_zones.push_back(std::move(temp_zone));
     }
 
-    // Aktualizácia globálnych zakázaných zón
+    // Update the global forbidden zones
     systemForbiddenZones = std::move(temp_zones);
     return 0; // Success
+}
+
+// Function to compute the centroid and sort points in clockwise order
+void sortZoneClockwise(ForbiddenZone& zone) {
+    if (zone.size() < 3) return; // No sorting needed for less than 3 points
+
+    // Step 1: Calculate the centroid
+    AzimuthElevation centroid = {0.0, 0.0};
+    for (const auto& point : zone) {
+        centroid.azimuth += point.azimuth;
+        centroid.elevation += point.elevation;
+    }
+    centroid.azimuth /= zone.size();
+    centroid.elevation /= zone.size();
+
+    // Step 2: Sort points in clockwise order based on the centroid
+    std::sort(zone.begin(), zone.end(),
+              [&centroid](const AzimuthElevation& a, const AzimuthElevation& b) {
+                  return calculateAngle(a, centroid) < calculateAngle(b, centroid);
+              });
+}
+
+// Helper function to calculate the polar angle relative to the centroid
+double calculateAngle(const AzimuthElevation& point, const AzimuthElevation& centroid) {
+    return atan2(point.elevation - centroid.elevation, point.azimuth - centroid.azimuth);
 }

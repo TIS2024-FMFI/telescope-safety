@@ -1,6 +1,13 @@
 
 #include "danger_evaluation.h"
 
+int enteredForbiddenZone(AzimuthElevation* azimutElevation){
+    //writeAlarmToLog(azimutElevation);
+    //startAlarm();
+    //disableMotors();
+    return 0;
+}
+
 // Skontroluje, či bod patrí do jedného polygónu (Ray-Casting algoritmus)
 bool isPointInPolygon(AzimuthElevation* azimutElevation, const ForbiddenZone& polygon) {
     int intersectCount = 0;

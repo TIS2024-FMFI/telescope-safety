@@ -25,42 +25,48 @@ int setupHTTPServer(){
 
 
 int sendToClients(AzimuthElevation* azimuthElevation) {
-    String message = "{\"azimuth\":";
-    message += azimuthElevation->azimuth;
-    message += ",";
-    message += "\"elevation\":";
-    message += azimuthElevation->elevation;
-    message += "}";
+  auto start = millis();
+  String message = "{\"azimuth\":";
+  message += azimuthElevation->azimuth;
+  message += ",";
+  message += "\"elevation\":";
+  message += azimuthElevation->elevation;
+  message += "}";
 
-    size_t payloadLength = message.length();
+  size_t payloadLength = message.length();
 
-    std::vector<uint8_t> frame;
-    frame.push_back(0x81);
+  std::vector<uint8_t> frame;
+  frame.push_back(0x81);
 
-    if (payloadLength <= 125) {
-        frame.push_back(payloadLength);
-    } else if (payloadLength <= 65535) {
-        frame.push_back(126);
-        frame.push_back((payloadLength >> 8) & 0xFF);
-        frame.push_back(payloadLength & 0xFF);
-    } else {
-        frame.push_back(127);
-        for (int i = 7; i >= 0; --i) {
-            frame.push_back((payloadLength >> (i * 8)) & 0xFF);
-        }
+  if (payloadLength <= 125) {
+    frame.push_back(payloadLength);
+  } else if (payloadLength <= 65535) {
+    frame.push_back(126);
+    frame.push_back((payloadLength >> 8) & 0xFF);
+    frame.push_back(payloadLength & 0xFF);
+  } else {
+    frame.push_back(127);
+    for (int i = 7; i >= 0; --i) {
+      frame.push_back((payloadLength >> (i * 8)) & 0xFF);
     }
+  }
+  frame.insert(frame.end(), message.begin(), message.end());
+  auto end = millis();
+  Serial.printf("Generating WS message took: %lu\n", end-start);
 
-    frame.insert(frame.end(), message.begin(), message.end());
-
-
-    for (WiFiClient client : websocketClients) {
-        if (client.connected()) {
-            client.write(frame.data(), frame.size());
-            client.flush();
-        }
+  start = millis();
+  for (WiFiClient client : websocketClients) {
+    if (client.connected()) {
+      client.write(frame.data(), frame.size());
+      // Code is faster, flush is blocking
+      // client.flush();
     }
+  }
+  end = millis();
 
-    return 0;
+  Serial.printf("Sending WS message took: %lu\n", end-start);
+
+  return 0;
 }
 
 
@@ -100,23 +106,30 @@ void websocketLoop(){
 void websocketConnectIncomming(){
   WiFiClient client0 = webSocket.accept();
   if(client0.available()) {
+    auto start = millis();
     websocketClients.push_back(client0);
-    Serial.println("Going to read Client");
-    String request = client0.readString();
-    String websocketKey = extractKey(request);
+    // String request = readClientData(client0);
+    auto end = millis();
+    Serial.printf("Reading WS proposal took: %lu\n", end-start);
+    start = millis();
+    String websocketKey = extractKey(client0);
+    end = millis();
+    Serial.printf("Extracting WS answer took: %lu\n", end-start);
     if (websocketKey){
-      Serial.print("Client key is: ");
-      Serial.println(websocketKey);
+      start = millis();
       String acceptKey = getAcceptKey(websocketKey);
-      Serial.print("Accept key is: ");
-      Serial.println(acceptKey);
+      end = millis();
+      Serial.printf("Generating WS key took: %lu\n", end-start);
+      start = millis();
       client0.print(websocketAnswer(acceptKey));
-      client0.flush();
+      // Code is faster, flush is blocking
+      // client0.flush();
+      end = millis();
+      Serial.printf("Sending WS answer took: %lu\n", end-start);
     }
     // Serial.println(request);
   }
 }
-
 
 void websocketDisconnectInactive(){
   for (auto client = websocketClients.begin(); client != websocketClients.end();) {
@@ -129,39 +142,30 @@ void websocketDisconnectInactive(){
   }
 }
 
-String websocketAnswer(String acceptKey){
-  String answer = "HTTP/1.1 101 Switching Protocols\r\n";
-  answer += "Upgrade: websocket\r\n";
-  answer += "Connection: Upgrade\r\n";
-  answer += "Sec-WebSocket-Accept: ";
-  answer += acceptKey;
-  answer += "\r\n\r\n";
-  return answer;
+String websocketAnswer(String& acceptKey) {
+    return "HTTP/1.1 101 Switching Protocols\r\n"
+           "Upgrade: websocket\r\n"
+           "Connection: Upgrade\r\n"
+           "Sec-WebSocket-Accept: " + acceptKey + "\r\n\r\n";
 }
 
-String extractKey(String request){
-  int startIndex = 0;
-  int newlineIndex;
 
-  while ((newlineIndex = request.indexOf('\n', startIndex)) != -1) {
-    // Extract the substring for the current line
-    String line = request.substring(startIndex, newlineIndex - 1);  // -1 because every line ends with /r/n
-    int keyIndex = line.indexOf(':');
-    String key = line.substring(0, keyIndex);
+String extractKey(WiFiClient& client){
+  String request = "";
+  const int timeout = 500; // 500ms timeout
+  unsigned long startMillis = millis();
+  bool keyExtraction = false;
 
-    if (key.equals("Sec-WebSocket-Key")){
-      return line.substring(keyIndex + 2);
-    }
-
-    startIndex = newlineIndex + 1;
-  }
-  if (startIndex < request.length()) {
-    String line = request.substring(startIndex);
-    int keyIndex = line.indexOf(':');
-    String key = line.substring(0, keyIndex);
-
-    if (key.equals("Sec-WebSocket-Key")){
-      return line.substring(keyIndex + 2);
+  while (client.connected() && (millis() - startMillis < timeout)) {
+    while (client.available()) {
+      char c = client.read();
+      request += c;
+      if (keyExtraction && request.endsWith("\r\n")){
+        return request.substring(request.lastIndexOf(" "), request.lastIndexOf("\r"));
+      }
+      else if (request.endsWith("Sec-WebSocket-Key: ")){
+        keyExtraction = true;
+      }
     }
   }
   return "";
@@ -176,7 +180,7 @@ void convertHashToBytes(const uint32_t hash[5], uint8_t hashBytes[20]) {
     }
 }
 
-String getAcceptKey(String key){
+String getAcceptKey(String& key){
   String concatenated = key + GUID;
 
   int len = concatenated.length(); 

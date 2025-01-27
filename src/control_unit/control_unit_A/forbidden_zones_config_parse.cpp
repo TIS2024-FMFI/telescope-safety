@@ -41,7 +41,7 @@ int checkFileFormat(const char* newConfiguration) {
                 }
 
                 // Sort the current zone clockwise before storing it
-                //Ray-casting algorithm in danger evaluation requires this sort
+                // Ray-casting algorithm in danger evaluation requires this sort
                 sortZoneClockwise(temp_zone);
 
                 temp_zones.push_back(std::move(temp_zone));
@@ -55,7 +55,7 @@ int checkFileFormat(const char* newConfiguration) {
         // Parse a point (azimuth, elevation)
         double az, el;
         if (sscanf(line.data(), "%lf %lf", &az, &el) != 2) {
-            return -1; // Error: Invalid line format
+            return -2; // Error: Invalid line format
         }
 
         // Add the point to the current zone

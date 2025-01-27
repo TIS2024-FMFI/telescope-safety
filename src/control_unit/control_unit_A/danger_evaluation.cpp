@@ -37,3 +37,43 @@ int checkForbiddenZone(AzimuthElevation* azimutElevation) {
     }
     return 0;
 }
+
+void testing_parsation_and_evaluation() {
+    // Test Configuration Parsing
+    Serial.print("Testing configuration parsing...");
+    bool control_danger_flag = false;
+    const char* testConfig =
+        "# Zone 1\n"
+        "10.0 20.0\n"
+        "15.0 25.0\n"
+        "20.0 15.0\n"
+        "\n"
+        "# Zone 2\n"
+        "30.0 40.0\n"
+        "35.0 45.0\n"
+        "40.0 35.0\n";
+
+    int configResult = checkFileFormat(testConfig);
+    if (configResult == 0) {
+        Serial.print("Configuration parsed successfully!\n");
+        control_danger_flag = true;
+    } else {
+        if (configResult == -1) {
+            Serial.print("Configuration parsing failed! Error: one of the zones has fewer than three points.\n");
+        } else {
+            Serial.print("Configuration parsing failed! Error: one of the lines has bad format. Check if there is just one space between azimuth and elevation and if there are only digits or dot.\n");
+        }
+    }
+
+    // Test Danger Evaluation
+    if (control_danger_flag) {
+        Serial.print("Testing danger evaluation...\n");
+        AzimuthElevation testPoint = {35, 44};
+        int dangerResult = checkForbiddenZone(&testPoint);
+        if (dangerResult == -1) {
+            Serial.print("Point is in a forbidden zone!\n");
+        } else {
+            Serial.print("Point is safe.\n");
+        }
+    }
+}

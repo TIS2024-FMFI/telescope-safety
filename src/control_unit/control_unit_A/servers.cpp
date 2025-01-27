@@ -6,6 +6,7 @@
 std::list<WiFiClient> websocketClients;
 WiFiServer webSocket(81);
 String GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+WebServer server(80);
 
 
 
@@ -16,31 +17,56 @@ int setupHTTPServer(){
   server.on("/styles.css", handleCSS);
   server.on("/form.js", handleJSForm);
   server.on("/main.js", handleJSMain);
+  server.on("/download", handleFileDownload);
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("HTTP server started");
-  return 1;
+  return 0;
 }
 
 
-int sendToClients(AzimuthElevation* azimuthElevation){
-  String message = "{\"azimuth\":";
-  message += azimuthElevation->azimuth;
-  message += ",";
-  message += " \"elevation\"";
-  message += azimuthElevation->elevation;
-  message += "}";
-  char header[1] = {0x81};
-  String out = header;
-  char len[1] = {(uint8_t)message.length()};
-  out += len;
-  out += message;
-  Serial.println(out);
-  for (WiFiClient client : websocketClients){
-    client.print(out);
-    client.flush();
+int sendToClients(AzimuthElevation* azimuthElevation) {
+  auto start = millis();
+  String message;
+  message.reserve(45);
+  message.concat("{\"azimuth\":");
+  message.concat(String(azimuthElevation->azimuth, 2));
+  message.concat(",\"elevation\":");
+  message.concat(String(azimuthElevation->elevation, 2));
+  message.concat("}");
+
+  size_t payloadLength = message.length();
+
+  std::vector<uint8_t> frame;
+  frame.push_back(0x81);
+
+  if (payloadLength <= 125) {
+    frame.push_back(payloadLength);
+  } else if (payloadLength <= 65535) {
+    frame.push_back(126);
+    frame.push_back((payloadLength >> 8) & 0xFF);
+    frame.push_back(payloadLength & 0xFF);
+  } else {
+    frame.push_back(127);
+    for (int i = 7; i >= 0; --i) {
+      frame.push_back((payloadLength >> (i * 8)) & 0xFF);
+    }
   }
-  return 1;
+  frame.insert(frame.end(), message.begin(), message.end());
+  auto end = millis();
+  Serial.printf("Generating WS message took: %lu\n", end-start);
+
+  start = millis();
+  for (WiFiClient client : websocketClients) {
+    if (client.connected()) {
+      client.write(frame.data(), frame.size());
+    }
+  }
+  end = millis();
+
+  Serial.printf("Sending WS message took: %lu\n", end-start);
+
+  return 0;
 }
 
 
@@ -55,7 +81,7 @@ int setupMDNSServer(){
   if (MDNS.begin("telescop")) {
     Serial.println("MDNS responder started");
   }
-  return 1;
+  return 0;
 }
 
 
@@ -81,67 +107,49 @@ void websocketConnectIncomming(){
   WiFiClient client0 = webSocket.accept();
   if(client0.available()) {
     websocketClients.push_back(client0);
-    Serial.println("Going to read Client");
-    String request = client0.readString();
-    String websocketKey = extractKey(request);
+    String websocketKey = extractKey(client0);
     if (websocketKey){
-      Serial.print("Client key is: ");
-      Serial.println(websocketKey);
       String acceptKey = getAcceptKey(websocketKey);
-      Serial.print("Accept key is: ");
-      Serial.println(acceptKey);
       client0.print(websocketAnswer(acceptKey));
-      client0.flush();
     }
-    // Serial.println(request);
   }
 }
-
 
 void websocketDisconnectInactive(){
-  for (auto it = websocketClients.begin(); it != websocketClients.end();) {
-    if (!it->connected()) {
-      it->stop();
-      it = websocketClients.erase(it);
+  for (auto client = websocketClients.begin(); client != websocketClients.end();) {
+    if (!client->connected()) {
+      client->stop();
+      client = websocketClients.erase(client);
     } else {
-      ++it;
+      ++client;
     }
   }
 }
 
-String websocketAnswer(String acceptKey){
-  String out = "HTTP/1.1 101 Switching Protocols\r\n";
-  out += "Upgrade: websocket\r\n";
-  out += "Connection: Upgrade\r\n";
-  out += "Sec-WebSocket-Accept: ";
-  out += acceptKey;
-  out += "\r\n\r\n";
-  return out;
+String websocketAnswer(String& acceptKey) {
+    return "HTTP/1.1 101 Switching Protocols\r\n"
+           "Upgrade: websocket\r\n"
+           "Connection: Upgrade\r\n"
+           "Sec-WebSocket-Accept: " + acceptKey + "\r\n\r\n";
 }
 
-String extractKey(String request){
-  int startIndex = 0;
-  int newlineIndex;
 
-  while ((newlineIndex = request.indexOf('\n', startIndex)) != -1) {
-    // Extract the substring for the current line
-    String line = request.substring(startIndex, newlineIndex - 1);  // -1 
-    int keyIndex = line.indexOf(':');
-    String key = line.substring(0, keyIndex);
+String extractKey(WiFiClient& client){
+  String request = "";
+  const int timeout = 500; // 500ms timeout
+  unsigned long startMillis = millis();
+  bool keyExtraction = false;
 
-    if (key.equals("Sec-WebSocket-Key")){
-      return line.substring(keyIndex + 2);
-    }
-
-    startIndex = newlineIndex + 1;
-  }
-  if (startIndex < request.length()) {
-    String line = request.substring(startIndex);
-    int keyIndex = line.indexOf(':');
-    String key = line.substring(0, keyIndex);
-
-    if (key.equals("Sec-WebSocket-Key")){
-      return line.substring(keyIndex + 2);
+  while (client.connected() && (millis() - startMillis < timeout)) {
+    while (client.available()) {
+      char c = client.read();
+      request += c;
+      if (keyExtraction && request.endsWith("\r\n")){
+        return request.substring(request.lastIndexOf(" "), request.lastIndexOf("\r"));
+      }
+      else if (request.endsWith("Sec-WebSocket-Key: ")){
+        keyExtraction = true;
+      }
     }
   }
   return "";
@@ -156,17 +164,17 @@ void convertHashToBytes(const uint32_t hash[5], uint8_t hashBytes[20]) {
     }
 }
 
-String getAcceptKey(String key){
+String getAcceptKey(String& key){
   String concatenated = key + GUID;
 
-  int ml = concatenated.length(); 
-  char concatenatedArray[ml+1];
-  concatenated.toCharArray(concatenatedArray, ml+1);
+  int len = concatenated.length(); 
+  char concatenatedArray[len+1];
+  concatenated.toCharArray(concatenatedArray, len+1);
 
-  ml *= 8;
+  len *= 8;
   
   uint32_t hash[5] = {}; 
-  SimpleSHA1::generateSHA((uint8_t*)concatenatedArray, ml, hash);
+  SimpleSHA1::generateSHA((uint8_t*)concatenatedArray, len, hash);
   uint8_t hashed[20];
   convertHashToBytes(hash, hashed);
 

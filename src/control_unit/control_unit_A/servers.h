@@ -1,9 +1,11 @@
 #include "common_structs.h"
 #include <list>
 #include <WiFiClient.h>
+#include <WebServer.h>
 
 extern std::list<WiFiClient> websocketClients;
 extern WiFiServer webSocket;
+extern WebServer server;
 
 
 // Setup HTTP server
@@ -19,6 +21,7 @@ int setupWebSocketServer();
 int setupMDNSServer();
 
 // Starts all servers
+
 // @return 0 if success, -1 if error
 int setupServers();
 
@@ -27,10 +30,10 @@ int setupServers();
 // @return 0 if success, -1 if error
 int sendToClients(AzimuthElevation* azimutElevation);
 
-String extractKey(String request);
-String getAcceptKey(String key);
+String extractKey(WiFiClient& client);
+String getAcceptKey(String& key);
 void convertHashToBytes(const uint32_t hash[5], uint8_t hashBytes[20]);
-String websocketAnswer(String acceptKey);
+String websocketAnswer(String& acceptKey);
 String base64Encode(const uint8_t *data, size_t len);
 void websocketLoop();
 void websocketDisconnectInactive();

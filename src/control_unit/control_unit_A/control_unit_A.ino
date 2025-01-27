@@ -7,23 +7,18 @@
 #include <W55RP20lwIP.h> // Include library for the right board
 Wiznet55rp20lwIP eth(1 /* chip select */);
 
-#include <WiFiClient.h>
-#include <WebServer.h> 
 #include <LEAmDNS.h>
-#include <StreamString.h>
 #include "httpHandlers.h"
 #include "servers.h"
-#include <NTPClient.h>
-#include <WiFiUdp.h>
 #include "time.h"
 
 #define SERVERS 0
 #define DISPLAY_A 0
 #define INERCIAL 0
+#define CONFIGURATION 1
+#define DANGER 1
 
-WebServer server(80);
-WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "sk.pool.ntp.org", 3600);
+
 
 // Functions
 void setupEthernet();
@@ -45,11 +40,10 @@ void setup() {
 
   #if SERVERS
   setupEthernet();
-  setupHTTPServer();
-  setupWebSocketServer();
-  setupMDNSServer();
+  setupServers();
   timeClient.begin(8001);
   timeClient.update();
+  Serial.println(timeToString(getRealTime()));
   #endif
 }
 
@@ -58,7 +52,17 @@ int interval = 20000;          // interval between sends
 boolean reset_flag=true;
 boolean file_format_flag=false;
 
-int i = 0;
+const char* testConfig =
+    "# Zone 1\n"
+    "10.0 20.0\n"
+    "15.0 25.0\n"
+    "20.0 15.0\n"
+    "\n"
+    "# Zone 2\n"
+    "30.0 40.0\n"
+    "35.0 45.0\n"
+    "40.0 35.0\n";
+
 
 void loop() {
   #if DISPLAY_A
@@ -68,20 +72,8 @@ void loop() {
   #if SERVERS
   server.handleClient();
   MDNS.update();
-
-  // Testing
-  if (i % 5000 == 0){
-    AzimuthElevation azel;
-    azel.azimuth = i % 1500;
-    azel.elevation = i % 2500;
-    sendToClients(&azel);
-  }
-  i++;
-  // Serial.println(websocketClients.size());
-
+  websocketLoop();
   timeClient.update();
-  // Example of usage
-  // Serial.println(timeToString(getRealTime()));
   #endif
 
   #if INERCIAL
@@ -101,8 +93,32 @@ void loop() {
     }
   #endif
 
-  testing_parsation_and_evaluation();
+  #if CONFIGURATION
+  // Test the configuration parsing
+    int parseResult = checkFileFormat(testConfig);
+    if (parseResult == 0) {
+        Serial.println("Configuration parsed successfully.");
+        file_format_flag=true;
+    } else {
+        Serial.println("Error parsing configuration.");
+        file_format_flag=false;
+    }
+  #endif
 
+  #if DANGER
+  // Test danger
+    AzimuthElevation testPoint = {15.0, 20.0};
+
+    // Check if the test point falls in any forbidden zone
+    if(file_format_flag){
+      int result = checkForbiddenZone(&testPoint);
+      if (result == -1) {
+          Serial.println("Point is in a forbidden zone!");
+      } else {
+          Serial.println("Point is safe.");
+      }
+    }
+  #endif
 }
 
 

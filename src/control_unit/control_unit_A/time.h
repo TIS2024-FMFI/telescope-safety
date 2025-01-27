@@ -1,4 +1,8 @@
 #include <Arduino.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+
+extern NTPClient timeClient;
 
 struct Time{
   int year;
@@ -12,7 +16,6 @@ struct Time{
 // Retrievs real time from Ethernet
 // @return time in seconds
 Time getRealTime();
-int getYear();
-int getMonth();
-int getDay();
+int getYearMonthDay(Time *time);
+bool isLeapYear(int year);
 String timeToString(Time time);

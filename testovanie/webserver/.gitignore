@@ -1,0 +1,34 @@
+# Go binaries
+/bin/
+/obj/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Go test binary
+*_test
+
+# Dependency directories
+/vendor/
+.Gopkg.lock
+/go.sum
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.DS_Store
+
+# Log files
+*.log
+
+# Build directories
+/build/
+dist/
+
+# Coverage files
+*.out
+*.cover

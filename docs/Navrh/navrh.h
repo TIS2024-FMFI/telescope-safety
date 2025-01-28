@@ -1,4 +1,11 @@
-#include <time.h>
+struct Time{
+  int year;
+  int month;
+  int day;
+  int hours;
+  int minutes;
+  int seconds;
+};
 
 struct RollPitchYaw{
     float roll;
@@ -9,6 +16,12 @@ struct RollPitchYaw{
 struct AzimuthElevation{
     float azimuth;
     float elevation;
+};
+
+struct DegreesMinutesSeconds {
+    int degrees;
+    int minutes;
+    int seconds;
 };
 
 enum ChangeType{
@@ -143,7 +156,7 @@ int reenable();
 
 // Retrievs real time from Ethernet
 // @return time in seconds
-time_t getRealTime();
+Time getRealTime();
 
 // Restarts system
 // @return 0 if success, -1 if error

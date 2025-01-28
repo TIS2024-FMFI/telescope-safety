@@ -2,6 +2,8 @@
 #include "lora_communication.h"
 #include "buttons.h"
 #include "logs.h"
+#include "forbidden_zones_config_parse.h"
+#include "danger_evaluation.h"
 #include <W55RP20lwIP.h> // Include library for the right board
 Wiznet55rp20lwIP eth(1 /* chip select */);
 
@@ -10,7 +12,7 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 #include "servers.h"
 #include "time.h"
 
-#define SERVERS 1
+#define SERVERS 0
 #define DISPLAY_A 0
 #define INERCIAL 0
 
@@ -44,6 +46,9 @@ void setup() {
 
 long lastSendTime = 0;        // last send time
 int interval = 20000;          // interval between sends
+boolean reset_flag=true;
+
+
 
 void loop() {
   #if DISPLAY_A
@@ -58,10 +63,14 @@ void loop() {
   #endif
 
   #if INERCIAL
-  if (millis() - lastSendTime > interval) {
-    while (restartInertialUnit(132.0) != 0);
-    lastSendTime = millis();            // timestamp the message
-    interval = 20000;    // 20 seconds
+  if (!reset_flag || millis() - lastSendTime > interval) {
+    if (restartInertialUnit(132.0) != 0){
+      reset_flag=false;
+    }
+    else{
+      lastSendTime = millis();            // timestamp the message
+      reset_flag=true;
+    }
   }
 
   AzimuthElevation* data = readFromInertialUnit();
@@ -69,6 +78,9 @@ void loop() {
         Serial.println(F("Processed incoming message."));
     }
   #endif
+
+  testing_parsation_and_evaluation();
+
 }
 
 

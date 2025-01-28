@@ -30,9 +30,9 @@ int sendToClients(AzimuthElevation* azimuthElevation) {
   String message;
   message.reserve(45);
   message.concat("{\"azimuth\":");
-  message.concat(azimuthElevation->azimuth, 2);
+  message.concat(String(azimuthElevation->azimuth, 2));
   message.concat(",\"elevation\":");
-  message.concat(azimuthElevation->elevation, 2);
+  message.concat(String(azimuthElevation->elevation, 2));
   message.concat("}");
 
   size_t payloadLength = message.length();

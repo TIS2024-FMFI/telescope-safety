@@ -2,8 +2,8 @@
 #define COMMON_STRUCTS
 
 struct AzimuthElevation {
-    float azimuth;
-    float elevation;
+    double azimuth;
+    double elevation;
 };
 
 enum ChangeType {

@@ -1,4 +1,3 @@
-
 #include "forbidden_zones_config_parse.h"
 #include "logs.h"
 #include <Arduino.h>

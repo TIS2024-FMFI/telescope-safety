@@ -46,6 +46,10 @@ void loopButtons() {
   button3State = gpio_get(BUTTON3_PIN);
   button4State = gpio_get(BUTTON4_PIN);
 
+  if (toNano.available()) {
+    String data = toNano.readStringUntil('\n');
+    Serial.println(data); 
+  }
   if (button1State && !lastButton1State) {
     toNano.write("BUTTON1\n");
   } else if (button2State) {
@@ -56,22 +60,13 @@ void loopButtons() {
       unsigned long pressDuration = to_ms_since_boot(get_absolute_time()) - button2PressTime;
       if (pressDuration > 2000 && !button2LongPressSent) {
         toNano.write("SEND\n");
-        String data = "";  // Create a string to hold the incoming data
-        while (toNano.available()) {
-        char incomingByte = toNano.read();  // Read one byte at a time
-        data += incomingByte;              // Append to the string
-        }
-        Serial.println(data);                  // Print the received string
-        //float azimuth = data.toFloat();        // Convert the string to a float
-        //Serial.print("Azimuth: ");
-        //Serial.println(azimuth);
-        Serial.println("Olaaaa2");
         button2LongPressSent = true;
       }
     }
   } else if (!button2State && lastButton2State) {
     if (!button2LongPressSent) {
       toNano.write("BUTTON2\n");
+      
     }
   } else if (button3State && !lastButton3State) {
     toNano.write("BUTTON3\n");

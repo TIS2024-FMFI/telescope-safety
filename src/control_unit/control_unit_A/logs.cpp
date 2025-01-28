@@ -7,10 +7,8 @@ const int _MOSI = 7;
 const int _CS = 5;
 const int _SCK = 6;
 
-const char *logFileName = "";
-const char *timestamp = "";
-const char *logConfigFileName = "";
-const char *logCollisionFileName = "";
+const char *logConfigFileName = "Log_configuration.csv";
+const char *logCollisionFileName = "Log_collisions.csv";
 
 
 void setupSD() {
@@ -20,6 +18,7 @@ void setupSD() {
   SPI.setSCK(_SCK);
 
   if (!SD.begin(_CS)) {
+    Serial.println("nie je dobre inicializovana SD");
     return;
   }
 }
@@ -28,107 +27,111 @@ void setupSD() {
 // @param filename - názov súboru
 // @param header - hlavička, ktorá sa má zapísať
 // @return 0, ak úspech, -1, ak chyba
-int writeHeaderIfNeeded(const char *filename, const char *header) {
-    if (!SD.exists(filename)) {
-        File myFile = SD.open(filename, FILE_WRITE);
-        if (!myFile) {
-            return -1;
-        }
-
-        myFile.println(header);
-        myFile.close();
+int writeHeaderIfNeeded(String filename, const char *header) {
+  if (!SD.exists(filename)) {
+    File myFile = SD.open(filename, FILE_WRITE);
+    if (!myFile) {
+      return -1;
     }
-    return 0;
+
+    myFile.println(header);
+    myFile.close();
+  }
+  return 0;
 }
 
 // Funkcia zapisuje AzimuthElevation do log súboru
 // @param azimuthElevation - ukazovateľ na štruktúru AzimuthElevation
 // @return 0, ak úspech, -1, ak chyba
 int writeAEtoLog(AzimuthElevation *azimuthElevation) {
-    if (writeHeaderIfNeeded(logFileName, "Timestamp;Azimuth;Elevation;") != 0) {
-        return -1;
-    }
+  Serial.println("Zapisujem log.");
+  String logFileName = "Log-";
+  logFileName += dateToString(getRealTime());
+  logFileName += ".csv";
+  if (writeHeaderIfNeeded(logFileName, "Timestamp;Azimuth;Elevation;") != 0) {
+    return -1;
+  }
 
-    File myFile = SD.open(logFileName, FILE_WRITE);
-    if (!myFile) {
-        return -1;
-    }
+  File myFile = SD.open(logFileName, FILE_WRITE);
+  if (!myFile) {
+    return -1;
+  }
 
-    myFile.print(timestamp);
-    myFile.print(";");
-    myFile.print(azimuthElevation->azimuth, 2);
-    myFile.print(";");
-    myFile.print(azimuthElevation->elevation, 2);
-    myFile.println(";");
+  myFile.print(timeToString(getRealTime()));
+  myFile.print(";");
+  myFile.print(azimuthElevation->azimuth, 2);
+  myFile.print(";");
+  myFile.print(azimuthElevation->elevation, 2);
+  myFile.println(";");
 
-    myFile.close();
-    return 0;
+  myFile.close();
+  return 0;
 }
 
 // Writes change of configuration to log file, with timestamp in CSV format
 // @param changeType type of change
 // @return 0 if success, -1 if error
 int writeChangeToLog(ChangeType changeType, const char *ip) {
-    if (writeHeaderIfNeeded(logConfigFileName, "Timestamp;ChangeType;IP;") != 0) {
-        return -1;
-    }
+  if (writeHeaderIfNeeded(logConfigFileName, "Timestamp;ChangeType;IP;") != 0) {
+    return -1;
+  }
 
-    File myFile = SD.open(logConfigFileName, FILE_WRITE);
-    if (!myFile) {
-        return -1;
-    }
+  File myFile = SD.open(logConfigFileName, FILE_WRITE);
+  if (!myFile) {
+    return -1;
+  }
 
-    myFile.print(timestamp);
-    myFile.print(";");
+  myFile.print(timeToString(getRealTime()));
+  myFile.print(";");
 
-    switch (changeType) {
-        case FORBIDDEN_ZONE_CHANGED:
-            myFile.print("FORBIDDEN_ZONE_CHANGED");
-            break;
-        case LOG_FREQUENCY_CHANGED:
-            myFile.print("LOG_FREQUENCY_CHANGED");
-            break;
-        case ALARM_TYPE_CHANGED:
-            myFile.print("ALARM_TYPE_CHANGED");
-            break;
-        case RESTART:
-            myFile.print("RESTART");
-            break;
-        default:
-            myFile.print("UNKNOWN_CHANGE");
-            break;
-    }
+  switch (changeType) {
+    case FORBIDDEN_ZONE_CHANGED:
+      myFile.print("FORBIDDEN_ZONE_CHANGED");
+      break;
+    case LOG_FREQUENCY_CHANGED:
+      myFile.print("LOG_FREQUENCY_CHANGED");
+      break;
+    case ALARM_TYPE_CHANGED:
+      myFile.print("ALARM_TYPE_CHANGED");
+      break;
+    case RESTART:
+      myFile.print("RESTART");
+      break;
+    default:
+      myFile.print("UNKNOWN_CHANGE");
+      break;
+  }
 
-    myFile.print(";");
-    myFile.print(ip);
-    myFile.println(";");
+  myFile.print(";");
+  myFile.print(ip);
+  myFile.println(";");
 
-    myFile.close();
-    return 0;
+  myFile.close();
+  return 0;
 }
 
 // Writes alarm data when the telescope enters the forbidden zone
 // @param azimuthElevation pointer to AzimuthElevation structure
 // @return 0 if success, -1 if error
 int writeAlarmToLog(AzimuthElevation *azimuthElevation) {
-    if (writeHeaderIfNeeded(logCollisionFileName, "Timestamp;Azimuth;Elevation;") != 0) {
-        return -1;
-    }
+  if (writeHeaderIfNeeded(logCollisionFileName, "Timestamp;Azimuth;Elevation;") != 0) {
+    return -1;
+  }
 
-    File myFile = SD.open(logCollisionFileName, FILE_WRITE);
-    if (!myFile) {
-        return -1;
-    }
+  File myFile = SD.open(logCollisionFileName, FILE_WRITE);
+  if (!myFile) {
+    return -1;
+  }
 
-    myFile.print(timestamp);
-    myFile.print(";");
-    myFile.print(azimuthElevation->azimuth, 2);
-    myFile.print(";");
-    myFile.print(azimuthElevation->elevation, 2);
-    myFile.println(";");
+  myFile.print(timeToString(getRealTime()));
+  myFile.print(";");
+  myFile.print(azimuthElevation->azimuth, 2);
+  myFile.print(";");
+  myFile.print(azimuthElevation->elevation, 2);
+  myFile.println(";");
 
-    myFile.close();
-    return 0;
+  myFile.close();
+  return 0;
 }
 
 int writeConfigAlarmAndIntervals(const char* data) {
@@ -171,12 +174,12 @@ int writeConfigAlarmAndIntervals(const char* data) {
   return 0;
 }
 
-int writeConfigZones(const char* zones) {
+int writeNewForbiddenConfig(const char* zones) {
   const char* forbiddenConfigFileName = "MyZones.txt";
   File myFile = SD.open(forbiddenConfigFileName, O_WRITE | O_CREAT | O_TRUNC);
-    if (!myFile) {
-        return -1;
-    }
+  if (!myFile) {
+    return -1;
+  }
   myFile.print(zones);
   myFile.close();
   return 0;
@@ -207,5 +210,4 @@ char* loadFile(const char* filePath) {
 
   return fileContent;
 }
-
 

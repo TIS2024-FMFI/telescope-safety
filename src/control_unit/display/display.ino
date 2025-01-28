@@ -41,33 +41,11 @@ void loop()
     } else if (command == "SEND" && settingsScreen) {
       ae = newae; //poslat newae
       DegreesMinutesSeconds azimuth = convertToDMS(newae.azimuth);
-      char degrees[30];
-      char minutes[10];
-      char seconds[10];
-      sprintf(degrees, "%d %d %d\n\0", azimuth.degrees, azimuth.minutes, azimuth.seconds);
-
-      //sprintf(minutes, "%d", azimuth.minutes);
-      //sprintf(seconds, "%d", azimuth.seconds);
-      //toPico.write(degrees);
-      //toPico.write(";");
-      //toPico.write(minutes);
-      //toPico.write(";");
-      //toPico.write(seconds);
-      String posli = degrees;
-      posli += " ";
-      posli += minutes;
-      posli += " ";
-      posli += seconds;
-      toPico.write(degrees);
-      toPico.flush();
-      //Serial.println(newae.azimuth);
-      //char azimuth[50];
-      //snprintf(azimuth, sizeof(azimuth), "%d", (int)ae.azimuth);
-      
+      char send[8];
+      sprintf(send, "%d %d %d\n", azimuth.degrees, azimuth.minutes, azimuth.seconds);
+      toPico.write(send);
       settingsScreen = false;
       displayAE(ae);
-      //myGLCD.setColor(255, 255, 255);
-      //myGLCD.print(".", CENTER, 200);
     }
   }
 }

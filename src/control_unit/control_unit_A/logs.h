@@ -1,4 +1,5 @@
 #include "common_structs.h"
+#include "time.h"
 
 extern const int _MISO;
 extern const int _MOSI;
@@ -6,11 +7,7 @@ extern const int _CS;
 extern const int _SCK;
 
 
-int writeHeaderIfNeeded(const char *filename, const char *header);
-
-// Writes AzimuthElevation structure to log file, with timestamp in CSV format
-// @param azimutElevation pointer to AzimuthElevation structure
-// @return 0 if success, -1 if error
+int writeHeaderIfNeeded(String filename, const char *header);
 int writeAEtoLog(AzimuthElevation *azimuthElevation);
 
 int writeChangeToLog(ChangeType changeType, const char *ip);

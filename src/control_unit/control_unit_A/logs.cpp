@@ -88,11 +88,8 @@ int writeChangeToLog(ChangeType changeType, const char *ip) {
     case FORBIDDEN_ZONE_CHANGED:
       myFile.print("FORBIDDEN_ZONE_CHANGED");
       break;
-    case LOG_FREQUENCY_CHANGED:
-      myFile.print("LOG_FREQUENCY_CHANGED");
-      break;
-    case ALARM_TYPE_CHANGED:
-      myFile.print("ALARM_TYPE_CHANGED");
+    case LOG_FREQUENCY_AND_ALARM_TYPE_CHANGED:
+      myFile.print("LOG_FREQUENCY_AND_ALARM_TYPE_CHANGED");
       break;
     case RESTART:
       myFile.print("RESTART");

@@ -9,14 +9,16 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 #include "httpHandlers.h"
 #include "servers.h"
 
+Settings settings;
 
 #define SERVERS 0
 #define DISPLAY_A 0
 #define INERCIAL 0
 
-
 // Functions
 void setupEthernet();
+void setupSettings();
+int restart();
 
 
 void setup() {
@@ -50,6 +52,7 @@ boolean reset_flag=true;
 
 void loop() {
   #if DISPLAY_A
+  setupSettings();
   loopButtons();
   #endif
 
@@ -111,4 +114,7 @@ void setupEthernet(){
 // @return 0 if success, -1 if error
 int restart(){
   return -1;
+}
+
+void setupSettings(){
 }

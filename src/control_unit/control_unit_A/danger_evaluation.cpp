@@ -1,5 +1,7 @@
-
 #include "danger_evaluation.h"
+#include "common_structs.h"
+
+const int RELE = 27;
 
 int enteredForbiddenZone(AzimuthElevation* azimutElevation){
     //writeAlarmToLog(azimutElevation);
@@ -35,13 +37,13 @@ bool isPointInPolygon(AzimuthElevation* azimutElevation, const ForbiddenZone& po
 
 // Skontroluje, či bod patrí do niektorej zakázanej zóny
 int checkForbiddenZone(AzimuthElevation* azimutElevation) {
-    for (const auto& zone : systemForbiddenZones) {
-        if (isPointInPolygon(azimutElevation, zone)) {
-            enteredForbiddenZone(azimutElevation);
-            return -1;
-        }
+  for (const auto& zone : systemForbiddenZones) {
+    if (isPointInPolygon(azimutElevation, zone)) {
+      enteredForbiddenZone(azimutElevation);
+      return -1;
     }
-    return 0;
+  }
+  return 0;
 }
 
 void testing_parsation_and_evaluation() {
@@ -82,4 +84,22 @@ void testing_parsation_and_evaluation() {
             Serial.print("Point is safe.\n");
         }
     }
+}
+
+void setupMotors(){
+  pinMode(RELE, OUTPUT);
+  digitalWrite(RELE, 1);
+}
+
+int disableMotors(){
+  if (settings.rele){
+    digitalWrite(RELE, 0);
+    return 0;
+  }
+  return 1;
+}
+
+int enableMotors(){
+  digitalWrite(RELE, 1);
+  return 0;
 }

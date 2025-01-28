@@ -35,3 +35,5 @@ int enableMotors(); //to be done
 // Stops alarm and enables motors
 // @return 0 if success, -1 if error
 int reenable(); //to be done
+
+void setupMotors();

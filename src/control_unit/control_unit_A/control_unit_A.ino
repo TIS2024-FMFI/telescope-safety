@@ -47,18 +47,7 @@ void setup() {
 long lastSendTime = 0;        // last send time
 int interval = 20000;          // interval between sends
 boolean reset_flag=true;
-boolean file_format_flag=false;
 
-const char* testConfig =
-    "# Zone 1\n"
-    "10.0 20.0\n"
-    "15.0 25.0\n"
-    "20.0 15.0\n"
-    "\n"
-    "# Zone 2\n"
-    "30.0 40.0\n"
-    "35.0 45.0\n"
-    "40.0 35.0\n";
 
 
 void loop() {

@@ -10,6 +10,7 @@ void handleCSS();
 void handleJSMain();
 void handleJSForm();
 void handleFileDownload();
+void setupStaticFiles();
 
 
 // Define form names:

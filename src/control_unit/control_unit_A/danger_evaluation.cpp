@@ -10,6 +10,12 @@ int enteredForbiddenZone(AzimuthElevation* azimutElevation){
     return 0;
 }
 
+int reenable(){
+    stopAlarm();
+    enableMotors();
+    return 0;
+}
+
 // Skontroluje, či bod patrí do jedného polygónu (Ray-Casting algoritmus)
 bool isPointInPolygon(AzimuthElevation* azimutElevation, const ForbiddenZone& polygon) {
     int intersectCount = 0;

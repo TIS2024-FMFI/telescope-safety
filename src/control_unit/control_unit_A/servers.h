@@ -21,7 +21,6 @@ int setupWebSocketServer();
 int setupMDNSServer();
 
 // Starts all servers
-
 // @return 0 if success, -1 if error
 int setupServers();
 

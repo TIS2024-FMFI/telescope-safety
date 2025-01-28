@@ -83,12 +83,6 @@ void handleFormPOST() {
     writeChangeToLog(RESTART, clientIP);
     restart();
   }
-  else if (server.arg(DOWNLOAD_EVENTS_BUTTON)){
-    downloadEventLogs();
-  }
-  else if (server.arg(DOWNLOAD_LOGS_BUTTON)){
-    downloadLogs(server.arg(DOWNLOAD_LOGS_FROM_DATEFIELD), server.arg(DOWNLOAD_LOGS_TO_DATEFIELD));
-  }
   handleFormPage();
 
 }

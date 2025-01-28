@@ -227,10 +227,32 @@ button:hover {
     background-color: #004a99;
 }
 
-/* The alert message box */
 .alert {
-  padding: 20px;
-  background-color: #f44336;
-  color: white;
-  margin-bottom: 15px;
-}
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .alert--error {
+      background-color: #f44336;
+      color: #ffffff; 
+  }
+  
+  .alert--success {
+      background-color: #4caf50;
+      color: #ffffff;
+    }
+  
+    .alert--warning {
+      background-color: #ff9800; 
+      color: #ffffff; 
+    }
+  
+    .alert__close {
+      font-size: 25px; 
+      font-weight: bold; 
+      color: #ffff !important; 
+      cursor: pointer;
+    }

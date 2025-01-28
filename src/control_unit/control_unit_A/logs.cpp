@@ -131,60 +131,6 @@ int writeAlarmToLog(AzimuthElevation *azimuthElevation) {
     return 0;
 }
 
-// Checks if file format is correct
-// @param newConfiguration from user
-// @return 0 if correct, -1 if error
-// @note Different error codes can be added
-int checkFileFormat(char* newConfiguration) {
-  char* current = newConfiguration;
-  char* end = newConfiguration;
-  int pointCount = 0;
-  bool inZone = false;
-
-  while (*current != '\0') {
-    while (*end != '\0' && *end != '\n') {
-      end++;
-    }
-
-  size_t length = end - current;
-  char line[length + 1];
-  strncpy(line, current, length);
-  line[length] = '\0';
-
-  if (*end == '\n') {
-    end++;
-  }
-  current = end;
-
-  if (line[0] == '#') {
-    continue;
-  }
-
-  if (strlen(line) == 0) {
-    if (inZone && pointCount < 3) {
-      return -1;
-    }
-  pointCount = 0;
-  inZone = false;
-  } else {
-    inZone = true;
-
-    float az, el;
-    if (sscanf(line, "%f %f", &az, &el) != 2) {
-      return -1;
-    }
-
-    pointCount++;
-    }
-  }
-
-  if (inZone && pointCount < 3) {
-    return -1;
-  }
-
-  return 0;
-}
-
 int writeConfigAlarmAndIntervals(const char* data) {
   const char* ConfigFileName = "AlarmAndIntervalsConfig.txt";
   File myFile = SD.open(ConfigFileName, O_WRITE | O_CREAT | O_TRUNC);

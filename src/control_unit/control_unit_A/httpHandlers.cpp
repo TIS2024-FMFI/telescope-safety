@@ -60,9 +60,11 @@ void handleFormPOST() {
   Serial.println(message);
   #endif
 
+  const char *clientIP = server.client().remoteIP().toString().c_str();
+
   if (server.arg(ZONE_CONFIG_BUTTON)){
     if (writeNewForbiddenConfig(server.arg(ZONE_CONFIG_FIELD))){
-      writeChangeToLog(FORBIDDEN_ZONE_CHANGED, "");
+      writeChangeToLog(FORBIDDEN_ZONE_CHANGED, clientIP);
     }
   }
   else if (server.arg(ALARM_CONFIG_BUTTON)){
@@ -70,15 +72,15 @@ void handleFormPOST() {
       //
     }
     if (writeNewLogFrequency(server.arg(LOG_INTERVAL_FIELD).toInt(), (server.arg(UPDATE_INTERVAL_FIELD).toInt()))){
-      writeChangeToLog(LOG_FREQUENCY_CHANGED, "");
+      writeChangeToLog(LOG_FREQUENCY_AND_ALARM_TYPE_CHANGED, clientIP);
     }
     if (writeNewAlarmType(bool(server.arg(ALARM_CHECKBOX).toInt()), bool(server.arg(MOTORS_CHECKBOX).toInt()))){
-      writeChangeToLog(ALARM_TYPE_CHANGED, "");
+      writeChangeToLog(LOG_FREQUENCY_AND_ALARM_TYPE_CHANGED, clientIP);
     }
 
   }
   else if (server.arg(RESTART_BUTTON)){
-    writeChangeToLog(RESTART, "");
+    writeChangeToLog(RESTART, clientIP);
     restart();
   }
   else if (server.arg(DOWNLOAD_EVENTS_BUTTON)){

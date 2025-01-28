@@ -15,3 +15,23 @@ int checkForbiddenZone(AzimuthElevation* azimutElevation);
 int enteredForbiddenZone(AzimuthElevation* azimutElevation);
 
 void testing_parsation_and_evaluation();
+
+// Starts alarm
+// @return 0 if success, -1 if error
+int startAlarm(); //to be done
+
+// Stops alarm
+// @return 0 if success, -1 if error
+int stopAlarm(); //to be done
+
+// Disables motors
+// @return 0 if success, -1 if error
+int disableMotors(); //to be done
+
+// Enables motors
+// @return 0 if success, -1 if error
+int enableMotors(); //to be done
+
+// Stops alarm and enables motors
+// @return 0 if success, -1 if error
+int reenable(); //to be done

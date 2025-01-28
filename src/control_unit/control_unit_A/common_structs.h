@@ -6,10 +6,9 @@ struct AzimuthElevation {
     double elevation;
 };
 
-enum ChangeType {
+enum ChangeType{
     FORBIDDEN_ZONE_CHANGED,
-    LOG_FREQUENCY_CHANGED,
-    ALARM_TYPE_CHANGED,
-    RESTART
+    LOG_FREQUENCY_ALARM_CHANGED,
+    RESTRT
 };
 #endif

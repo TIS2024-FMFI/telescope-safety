@@ -106,3 +106,9 @@ void setupEthernet(){
   Serial.print("IP address: ");
   Serial.println(eth.localIP());
 }
+
+// Restarts system
+// @return 0 if success, -1 if error
+int restart(){
+  return -1;
+}

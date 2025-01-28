@@ -1,8 +1,6 @@
 
 #include "lora_communication.h"
 #include "buttons.h"
-#include "logs.h"
-#include "forbidden_zones_config_parse.h"
 #include "danger_evaluation.h"
 #include <W55RP20lwIP.h> // Include library for the right board
 Wiznet55rp20lwIP eth(1 /* chip select */);
@@ -10,7 +8,7 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 #include <LEAmDNS.h>
 #include "httpHandlers.h"
 #include "servers.h"
-#include "time.h"
+
 
 #define SERVERS 0
 #define DISPLAY_A 0
@@ -79,7 +77,7 @@ void loop() {
     }
   #endif
 
-  testing_parsation_and_evaluation();
+  //testing_parsation_and_evaluation();
 
 }
 

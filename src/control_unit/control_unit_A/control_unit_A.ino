@@ -1,8 +1,6 @@
 
 #include "lora_communication.h"
 #include "buttons.h"
-#include "logs.h"
-#include "forbidden_zones_config_parse.h"
 #include "danger_evaluation.h"
 #include <W55RP20lwIP.h> // Include library for the right board
 Wiznet55rp20lwIP eth(1 /* chip select */);
@@ -42,10 +40,6 @@ void setup() {
   timeClient.update();
   Serial.println(timeToString(getRealTime()));
   #endif
-
-  AzimuthElevation ae = {45.98, 30.23};
-
-  writeAEtoLog(&ae);
 }
 
 long lastSendTime = 0;        // last send time
@@ -83,7 +77,7 @@ void loop() {
     }
   #endif
 
-  testing_parsation_and_evaluation();
+  //testing_parsation_and_evaluation();
 
 }
 

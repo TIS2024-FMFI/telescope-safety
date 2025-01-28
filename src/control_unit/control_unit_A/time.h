@@ -1,3 +1,6 @@
+#ifndef TIME_H
+#define TIME_H
+
 #include <Arduino.h>
 #include <NTPClient.h>
 #include <WiFiUdp.h>
@@ -20,3 +23,4 @@ int getYearMonthDay(Time *time);
 bool isLeapYear(int year);
 String dateToString(Time time);
 String timeToString(Time time);
+#endif

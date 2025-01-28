@@ -17,13 +17,19 @@ Time getRealTime(){
   return time;
 }
 
+String dateToString(Time time) {
+  String formattedDate = String(time.year) + "-";
+
+  formattedDate += (time.month < 10 ? "0" : "") + String(time.month) + "-";
+  formattedDate += (time.day < 10 ? "0" : "") + String(time.day);
+
+  return formattedDate;
+}
+
 
 String timeToString(Time time) {
-  String formattedTime = String(time.year) + "-";
+  String formattedTime = "";
   
-  // Add leading zero for month, day, hours, minutes, and seconds if necessary
-  formattedTime += (time.month < 10 ? "0" : "") + String(time.month) + "-";
-  formattedTime += (time.day < 10 ? "0" : "") + String(time.day) + " ";
   formattedTime += (time.hours < 10 ? "0" : "") + String(time.hours) + ":";
   formattedTime += (time.minutes < 10 ? "0" : "") + String(time.minutes) + ":";
   formattedTime += (time.seconds < 10 ? "0" : "") + String(time.seconds);

@@ -8,10 +8,9 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 #include <LEAmDNS.h>
 #include "httpHandlers.h"
 #include "servers.h"
-#include "time.h"
 
 #define SERVERS 1
-#define DISPLAY_A 0
+#define DISPLAY_A 1
 #define INERCIAL 0
 
 
@@ -40,6 +39,10 @@ void setup() {
   timeClient.update();
   Serial.println(timeToString(getRealTime()));
   #endif
+
+  AzimuthElevation ae = {45.98, 30.23};
+
+  writeAEtoLog(&ae);
 }
 
 long lastSendTime = 0;        // last send time

@@ -7,10 +7,8 @@ const int _MOSI = 7;
 const int _CS = 5;
 const int _SCK = 6;
 
-const char *logFileName = "";
-const char *timestamp = "";
-const char *logConfigFileName = "";
-const char *logCollisionFileName = "";
+const char *logConfigFileName = "Log_configuration.csv";
+const char *logCollisionFileName = "Log_collisions.csv";
 
 
 void setupSD() {
@@ -20,6 +18,7 @@ void setupSD() {
   SPI.setSCK(_SCK);
 
   if (!SD.begin(_CS)) {
+    Serial.println("nie je dobre inicializovana SD");
     return;
   }
 }
@@ -28,10 +27,12 @@ void setupSD() {
 // @param filename - názov súboru
 // @param header - hlavička, ktorá sa má zapísať
 // @return 0, ak úspech, -1, ak chyba
-int writeHeaderIfNeeded(const char *filename, const char *header) {
+int writeHeaderIfNeeded(String filename, const char *header) {
     if (!SD.exists(filename)) {
         File myFile = SD.open(filename, FILE_WRITE);
+        Serial.println(SD.open(filename, FILE_WRITE));
         if (!myFile) {
+          Serial.println("Neotvoril subor v header funkcii.");
             return -1;
         }
 
@@ -45,16 +46,23 @@ int writeHeaderIfNeeded(const char *filename, const char *header) {
 // @param azimuthElevation - ukazovateľ na štruktúru AzimuthElevation
 // @return 0, ak úspech, -1, ak chyba
 int writeAEtoLog(AzimuthElevation *azimuthElevation) {
+  Serial.println("Zapisujem log.");
+  String logFileName = "Log-";
+    logFileName += dateToString(getRealTime());
+    logFileName += ".csv";
+    Serial.println(logFileName);
     if (writeHeaderIfNeeded(logFileName, "Timestamp;Azimuth;Elevation;") != 0) {
+        Serial.println("Nezapisal header.");
         return -1;
     }
 
     File myFile = SD.open(logFileName, FILE_WRITE);
     if (!myFile) {
+      Serial.println("Neotvoril subor.");
         return -1;
     }
 
-    myFile.print(timestamp);
+    myFile.print(timeToString(getRealTime()));
     myFile.print(";");
     myFile.print(azimuthElevation->azimuth, 2);
     myFile.print(";");
@@ -78,7 +86,7 @@ int writeChangeToLog(ChangeType changeType, const char *ip) {
         return -1;
     }
 
-    myFile.print(timestamp);
+    myFile.print(timeToString(getRealTime()));
     myFile.print(";");
 
     switch (changeType) {
@@ -120,7 +128,7 @@ int writeAlarmToLog(AzimuthElevation *azimuthElevation) {
         return -1;
     }
 
-    myFile.print(timestamp);
+    myFile.print(timeToString(getRealTime()));
     myFile.print(";");
     myFile.print(azimuthElevation->azimuth, 2);
     myFile.print(";");

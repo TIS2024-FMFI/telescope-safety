@@ -13,8 +13,7 @@ struct AzimuthElevation{
 
 enum ChangeType{
     FORBIDDEN_ZONE_CHANGED,
-    LOG_FREQUENCY_CHANGED,
-    ALARM_TYPE_CHANGED,
+    LOG_FREQUENCY_ALARM_CHANGED,
     RESTRT
 };
 
@@ -58,7 +57,7 @@ int sendToClients(AzimuthElevation* azimutElevation);
 // Dispalays AzimuthElevation structure on screen
 // @param azimutElevation pointer to AzimuthElevation structure
 // @return 0 if success, -1 if error
-int displayAE(AzimuthElevation* azimutElevation);
+void displayAE(AzimuthElevation* azimutElevation);
 
 // Writes AzimuthElevation structure to log file, with timestamp in CSV format
 // @param azimutElevation pointer to AzimuthElevation structure
@@ -69,13 +68,6 @@ int writeAEtoLog(AzimuthElevation* azimutElevation);
 // @param newConfiguration from user
 // @return 0 if correct, -1 if error
 // @note Different error codes can be added
-int checkFileFormat(char* newConfiguration);
-
-// Writes new forbidden zones configuration
-// @param azimutElevation pointer to AzimuthElevation structure array
-// @param numberOfForbiddenZones number of forbidden zones
-// @param forbiddenZonesSizes array of sizes of forbidden zones
-// @return 0 if success, -1 if error
 // The format of the file is as follows:
 // 1. line: Azimuth Elevation
 // 2. line: Azimuth Elevation
@@ -89,39 +81,32 @@ int checkFileFormat(char* newConfiguration);
 // Each forbidden zone is separated by empty line
 // Each forbidden zone contains at least 3 points
 // Lines starting with # are ignored
-int writeNewForbiddenConfig(AzimuthElevation* azimutElevation, int numberOfForbiddenZones, int* forbiddenZonesSizes);
+int checkFileFormat(const char* newConfiguration);
 
+// Writes new forbidden zones configuration
+// @param zones as written by user as const char* type
+// @return 0 if success, -1 if error
+int writeNewForbiddenConfig(const char* zones);
 
 // Reads forbidden zones configuration
-// @param azimutElevation pointer to AzimuthElevation structure array to store forbidden zones
-// @param forbiddenZonesSizes pointer to array of sizes of forbidden zones
+// stores configuration azimuth and elvation values from user to global variable
 // @return number of forbiden zones, -1 if error
-int loadForbiddenZones(AzimuthElevation* azimutElevation, int* forbiddenZonesSizes);
+int loadForbiddenZones();
 
-// Writes new log frequency configuration
-// @param logFrequency new log frequency
-// @param clientUpdateFrequency new fryquency of client updates via WS
+// Writes new log frequency configuration and alarm settings
+// @param data has info on alarm and storing intervals settings
 // @return 0 if success, -1 if error
-int writeNewLogFrequency(int logFrequency, int clientUpdateFrequency);
+int writeConfigAlarmAndIntervals(const char* data);
 
 // Reads log frequency configuration
+// Reads alarm type configuration
 // @param logFrequency pointer to store log frequency
 // @param clientUpdateFrequency pointer to store frequency of client updates via WS
-// @return 0 if success, -1 if error
-int loadLogFrequency(int* logFrequency, int* clientUpdateFrequency);
-
-// Writes new alarm type configuration
-// @param alarm indicates if alarm should start audiovisual signal when triggered
-// @param motors indicates if motors should be disabled when alarm is triggered
-// @return 0 if success, -1 if error
-int writeNewAlarmType(bool alarm, bool motors);
-
-// Reads alarm type configuration
 // @param alarm pointer to store if alarm should start audiovisual signal when triggered
 // @param motors pointer to store if motors should be disabled when alarm is triggered
+// @param log_indicator indicates if logging is turned on or off
 // @return 0 if success, -1 if error
-int loadAlarmType(bool* alarm, bool* motors);
-
+int loadConfigAlarmAndIntervals(unsigned int* logFrequency, unsigned int* clientUpdateFrequency,bool* alarm, bool* motors,bool* log_indicator);
 
 // Writes change of configuration to log file, with timestamp in CSV format
 // @param changeType type of change
@@ -160,17 +145,15 @@ int reenable();
 // @return time in seconds
 time_t getRealTime();
 
-// Retrievs time from system
-// @return time in seconds
-time_t getTime();
-
 // Restarts system
 // @return 0 if success, -1 if error
 int restart();
 
 // Restarts inertial unit
 // @return 0 if success, -1 if error
-int restartInertialUnit();
+// @param azimuth value indicates calibration of azimuth on inertial unit
+    // if its -1 it stays the same and sensor just resets
+int restartInertialUnit(double azimuth = -1);
 
 // Setup HTTP server
 // @return 0 if success, -1 if error
@@ -204,4 +187,3 @@ int reenable(){
     enableMotors();
     return 0;
 }
-

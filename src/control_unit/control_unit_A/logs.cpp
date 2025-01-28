@@ -174,7 +174,7 @@ int writeConfigAlarmAndIntervals(const char* data) {
   return 0;
 }
 
-int writeConfigZones(const char* zones) {
+int writeNewForbiddenConfig(const char* zones) {
   const char* forbiddenConfigFileName = "MyZones.txt";
   File myFile = SD.open(forbiddenConfigFileName, O_WRITE | O_CREAT | O_TRUNC);
   if (!myFile) {

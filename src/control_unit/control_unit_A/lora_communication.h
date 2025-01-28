@@ -16,6 +16,8 @@
 
 void initializeLoRa();
 
+// Reads data from inertial unit and stores them in AzimuthElevation structure
+// @return pointer to AzimuthElevation structure
 AzimuthElevation* readFromInertialUnit();
 
 int restartInertialUnit(double azimuth = -1);

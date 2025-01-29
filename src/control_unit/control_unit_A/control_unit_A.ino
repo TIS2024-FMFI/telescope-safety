@@ -33,6 +33,8 @@ void setup() {
   #if DISPLAY_A
   setupButtons();
   setupSD();
+  setupSettings();
+  setupStaticFiles();
   #endif
 
   #if SERVERS
@@ -52,7 +54,6 @@ boolean reset_flag=true;
 
 void loop() {
   #if DISPLAY_A
-  setupSettings();
   loopButtons();
   #endif
 

@@ -3,24 +3,107 @@
 #include "logs.h"
 #include <SD.h>
 #include "forbidden_zones_config_parse.h"
+#include "lora_communication.h"
 
 #define DEBUG 1
 String mainHTML;
 String mainJS;
 String CSS;
 String confJS;
-String confHTML;
+String confHTML1;
+String confHTML2;
+String confHTML3;
+String confHTML4;
+String confHTML5;
+String confHTML6;
+String confHTML7;
+
 
 int restart();
-
+int loadConf(const char* filePath);
 
 
 void setupStaticFiles(){
+  loadConf("/www/config.html");
   mainHTML = loadFile("/www/index.html");
-  confHTML = loadFile("/www/config.html");
   CSS = loadFile("/www/style.html");
   mainJS = loadFile("/www/main.js");
   confJS = loadFile("/www/config.js");
+}
+
+int loadConf(const char* filePath){
+  File file = SD.open(filePath, FILE_READ);
+  if (!file) {
+    return -1; 
+  }
+  
+
+  //load until zone_field
+  confHTML1.reserve(100);
+  while (1){
+    confHTML1.concat(file.read());
+    if (confHTML1.endsWith(ZONE_CONFIG_FIELD)){
+      break;
+    }
+  }
+  confHTML1.concat(file.readStringUntil('>'));  
+  confHTML1.concat(">");
+
+  // load intil alarm
+  confHTML2.reserve(100);
+  while (1){
+    confHTML2.concat(file.read());
+    if (confHTML2.endsWith(ALARM_CHECKBOX)){
+      break;
+    }
+  }
+  confHTML2.concat(file.readStringUntil(' '));
+  confHTML1.concat(" ");
+
+  // load intil RELE
+  confHTML3.reserve(100);
+  while (1){
+    confHTML3.concat(file.read());
+    if (confHTML3.endsWith(MOTORS_CHECKBOX)){
+      break;
+    }
+  }
+  confHTML3.concat(file.readStringUntil(' '));
+  confHTML1.concat(" ");
+
+
+  confHTML4.reserve(100);
+  while (1){
+    confHTML4.concat(file.read());
+    if (confHTML4.endsWith(UPDATE_INTERVAL_FIELD)){
+      break;
+    }
+  }
+  confHTML4.concat(file.readStringUntil(' '));
+  confHTML1.concat(" ");
+
+  confHTML5.reserve(100);
+  while (1){
+    confHTML5.concat(file.read());
+    if (confHTML5.endsWith(LOG_INTERVAL_FIELD)){
+      break;
+    }
+  }
+  confHTML5.concat(file.readStringUntil(' '));
+  confHTML1.concat(" ");
+
+  confHTML6.reserve(100);
+  while (1){
+    confHTML6.concat(file.read());
+    if (confHTML6.endsWith(TURN_OFF_LOGS_CHECKBOX)){
+      break;
+    }
+  }
+  confHTML6.concat(file.readStringUntil(' '));
+ confHTML1.concat(" ");
+
+  confHTML7 = file.streamRemaining();
+  return 0;
 }
 
 
@@ -85,19 +168,17 @@ void handleFormPOST() {
     write.concat(server.arg(UPDATE_INTERVAL_FIELD));
     write.concat(";");
     if (server.arg(ALARM_CHECKBOX)){
-      write.concat("1");
+      write.concat("1;");
     }
     else{
-      write.concat("0");
+      write.concat("0;");
     }
-    write.concat(";");
     if(server.arg(MOTORS_CHECKBOX)){
-      write.concat("1");
+      write.concat("1;");
     }
     else{
-      write.concat("0");
+      write.concat("0;");
     }
-    write.concat(";");
     if(server.arg(TURN_OFF_LOGS_CHECKBOX)){
       write.concat("1");
     }
@@ -106,12 +187,18 @@ void handleFormPOST() {
     }
     if (writeConfigAlarmAndIntervals(write.c_str())){
       writeChangeToLog(LOG_FREQUENCY_AND_ALARM_TYPE_CHANGED, clientIP);
+      settings.update_frequency = server.arg(UPDATE_INTERVAL_FIELD).toInt();
+      settings.log_frequency = server.arg(LOG_INTERVAL_FIELD).toInt();
+      settings.alarm = bool(server.arg(ALARM_CHECKBOX).toInt());
+      settings.rele = bool(server.arg(MOTORS_CHECKBOX).toInt());
+      settings.logging = bool(server.arg(TURN_OFF_LOGS_CHECKBOX).toInt());
     }
 
   }
   else if (server.arg(RESTART_BUTTON)){
-    writeChangeToLog(RESTART, clientIP);
-    restart();
+    if (restart()){
+      writeChangeToLog(RESTART, clientIP);
+    }
   }
   handleFormPage();
 }
@@ -119,8 +206,31 @@ void handleFormPOST() {
 
 
 void handleFormPage(){
-  // This needs some more work
-  server.send(200, "text/html", confHTML);
+  String response = confHTML1;
+  // If this takes to much time we should keep somewhere saved the zones String config
+  response.concat(loadFile("/conf/zones.txt"));
+  response.concat(confHTML2);
+  if (settings.alarm){
+    response.concat("checked ");
+  }
+  response.concat(confHTML3);
+  if (settings.rele){
+    response.concat("checked ");
+  }
+  response.concat(confHTML4);
+  response.concat("value=\"");
+  response.concat(settings.update_frequency);
+  response.concat("\" ");
+  response.concat(confHTML5);
+  response.concat("value=\"");
+  response.concat(settings.log_frequency);
+  response.concat("\" ");
+  response.concat(confHTML6);
+  if (settings.logging){
+    response.concat("checked ");
+  }
+  response.concat(confHTML7);
+  server.send(200, "text/html", response);
 }
 
 void handleCSS(){
@@ -142,5 +252,5 @@ void handleJSForm(){
 // Restarts system
 // @return 0 if success, -1 if error
 int restart(){
-  return -1;
+  return restartInertialUnit(-1);
 }

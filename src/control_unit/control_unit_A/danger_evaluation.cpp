@@ -1,5 +1,4 @@
 #include "danger_evaluation.h"
-#include "common_structs.h"
 
 const int RELE = 27;
 
@@ -37,7 +36,7 @@ bool isPointInPolygon(AzimuthElevation* azimutElevation, const ForbiddenZone& po
 
 // Skontroluje, či bod patrí do niektorej zakázanej zóny
 int checkForbiddenZone(AzimuthElevation* azimutElevation) {
-  for (const auto& zone : systemForbiddenZones) {
+  for (const auto& zone : settings.systemForbiddenZones) {
     if (isPointInPolygon(azimutElevation, zone)) {
       enteredForbiddenZone(azimutElevation);
       return -1;

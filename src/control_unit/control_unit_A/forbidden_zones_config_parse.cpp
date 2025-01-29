@@ -78,7 +78,7 @@ int checkFileFormat(const char* newConfiguration) {
     }
 
     // Update the global forbidden zones
-    systemForbiddenZones = std::move(temp_zones);
+    settings.systemForbiddenZones = std::move(temp_zones);
     return 0; // Success
 }
 

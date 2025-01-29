@@ -8,17 +8,17 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 #include <LEAmDNS.h>
 #include "httpHandlers.h"
 #include "servers.h"
+#include "logs.h"
 
 Settings settings;
 
-#define SERVERS 0
-#define DISPLAY_A 0
-#define INERCIAL 0
+#define SERVERS 1
+#define DISPLAY_A 1
+#define INERCIAL 1
 
 // Functions
 void setupEthernet();
 void setupSettings();
-int restart();
 
 
 void setup() {
@@ -108,12 +108,6 @@ void setupEthernet(){
   }
   Serial.print("IP address: ");
   Serial.println(eth.localIP());
-}
-
-// Restarts system
-// @return 0 if success, -1 if error
-int restart(){
-  return -1;
 }
 
 void setupSettings(){

@@ -7,7 +7,7 @@
 #include <cstdio>
 
 // Checks if file format is correct
-// also serve for parsing the forbidden zones into data structure
+// also serves for parsing the forbidden zones into data structure
 // @param newConfiguration from user, or loaded from file
 // @return 0 if correct, -1 if zone has fewer than three points, -2 if line has wrong format
 // @note Different error codes can be added
@@ -32,4 +32,5 @@ double calculateAngle(const AzimuthElevation& point, const AzimuthElevation& cen
 
 // Parsing alarm type, logging status, log frequency and update frequency from file to global variable settings
 // @param newConfiguration loaded from file
+// returns -1 if unsuccessful and 0 if successful
 int setUpAlarmAndIntervals(const char* newConfiguration);

@@ -63,17 +63,17 @@ n+1. line: Azimuth Elevation
 
 
 ## Diagramy:
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/stavovy_diagram.png?raw=true)
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/component_diagram.png?raw=true)
+![alt text](images/stavovy_diagram.png)
+![alt text](images/component_diagram.png)
 
 
 ## Návrh používateľského rozhrania:
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/index_bez_upozornenia.png?raw=true)
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/index_s_upozornenim.png?raw=true)
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/prihlasenie.png?raw=true)
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/konfiguracia1.png?raw=true)
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/konfiguracia2.png?raw=true)
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/konfiguracia3.png?raw=true)
+![alt text](images/index_bez_upozornenia.png)
+![alt text](images/index_s_upozornenim.png)
+![alt text](images/prihlasenie.png)
+![alt text](images/konfiguracia1.png)
+![alt text](images/konfiguracia2.png)
+![alt text](images/konfiguracia3.png)
 
 ## Plán implementácie:
 

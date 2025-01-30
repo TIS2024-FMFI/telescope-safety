@@ -195,3 +195,30 @@ char* loadFile(const char* filePath) {
   return fileContent;
 }
 
+int loadSettings(){
+  char* fileData = loadFile(forbiddenConfigFilePath);
+  if (fileData) {
+    int result = setUpZones(fileData);
+    free(fileData);
+    if(result!=0){
+      Serial.println("Unexpected error while setting up the zones from file.");
+      return -1;
+    }
+  }
+  else{
+    return -1;
+  }
+  fileData = loadFile(ConfigFilePath);
+  if (fileData) {
+    int result = setUpAlarmAndIntervals(fileData);
+    free(fileData);
+    if(result!=0){
+      Serial.println("Unexpected error while setting up the alarm and intervals from file.");
+      return -1;
+    }
+  }
+  else{
+    return -1;
+  }
+  return 0;
+}

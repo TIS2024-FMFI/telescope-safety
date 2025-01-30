@@ -135,7 +135,8 @@ String websocketAnswer(String& acceptKey) {
 
 
 String extractKey(WiFiClient& client){
-  String request = "";
+  String request;
+  request.reserve(100);
   const int timeout = 500; // 500ms timeout
   unsigned long startMillis = millis();
   bool keyExtraction = false;
@@ -143,7 +144,7 @@ String extractKey(WiFiClient& client){
   while (client.connected() && (millis() - startMillis < timeout)) {
     while (client.available()) {
       char c = client.read();
-      request += c;
+      request.concat(c);
       if (keyExtraction && request.endsWith("\r\n")){
         return request.substring(request.lastIndexOf(" "), request.lastIndexOf("\r"));
       }

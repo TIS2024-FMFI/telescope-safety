@@ -6,14 +6,6 @@
 #include <cmath>
 #include <cstdio>
 
-// Zakázaná zóna (polygón)
-using ForbiddenZone = std::vector<AzimuthElevation>;
-
-// Všetky zakázané zóny
-using ForbiddenZones = std::vector<ForbiddenZone>;
-
-extern ForbiddenZones systemForbiddenZones;
-
 // Checks if file format is correct
 // also serve for parsing the forbidden zones into data structure
 // @param newConfiguration from user

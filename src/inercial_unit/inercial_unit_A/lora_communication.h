@@ -17,8 +17,13 @@
 
 void initializeLoRa();
 
+// Sends AzimuthElevation structure to control unit
+// @param azimutElevation pointer to AzimuthElevation structure
+// @return 0 if success, -1 if error
 int sendToControlUnit(AzimuthElevation* azimuthElevation);
 
+// Receiving message from control unit to restart
+// @return 0 if success, -1 if error
 int readFromControlUnit();
 
 #endif // LORA_COMMUNICATION_H

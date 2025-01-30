@@ -7,8 +7,11 @@ const int _MOSI = 7;
 const int _CS = 5;
 const int _SCK = 6;
 
-const char *logConfigFileName = "Log_configuration.csv";
-const char *logCollisionFileName = "Log_collisions.csv";
+const char *logConfigFilePath = "/logs/events/Log_configuration.csv";
+const char *logCollisionFilePath = "/logs/events/Log_collisions.csv";
+const char *logFilePathPrefix = "/logs/Log-";
+const char* ConfigFilePath = "/conf/AlarmAndIntervalsConfig.txt";
+const char* forbiddenConfigFilePath = "/conf/zones.txt";
 
 
 void setupSD() {
@@ -45,9 +48,9 @@ int writeHeaderIfNeeded(String filename, const char *header) {
 // @return 0, ak úspech, -1, ak chyba
 int writeAEtoLog(AzimuthElevation *azimuthElevation) {
   Serial.println("Zapisujem log.");
-  String logFileName = "Log-";
-  logFileName += dateToString(getRealTime());
-  logFileName += ".csv";
+  String logFileName = logFilePathPrefix;
+  logFileName.concat(dateToString(getRealTime()));
+  logFileName.concat(".csv");
   if (writeHeaderIfNeeded(logFileName, "Timestamp;Azimuth;Elevation;") != 0) {
     return -1;
   }
@@ -72,11 +75,11 @@ int writeAEtoLog(AzimuthElevation *azimuthElevation) {
 // @param changeType type of change
 // @return 0 if success, -1 if error
 int writeChangeToLog(ChangeType changeType, const char *ip) {
-  if (writeHeaderIfNeeded(logConfigFileName, "Timestamp;ChangeType;IP;") != 0) {
+  if (writeHeaderIfNeeded(logConfigFilePath, "Timestamp;ChangeType;IP;") != 0) {
     return -1;
   }
 
-  File myFile = SD.open(logConfigFileName, FILE_WRITE);
+  File myFile = SD.open(logConfigFilePath, FILE_WRITE);
   if (!myFile) {
     return -1;
   }
@@ -111,11 +114,11 @@ int writeChangeToLog(ChangeType changeType, const char *ip) {
 // @param azimuthElevation pointer to AzimuthElevation structure
 // @return 0 if success, -1 if error
 int writeAlarmToLog(AzimuthElevation *azimuthElevation) {
-  if (writeHeaderIfNeeded(logCollisionFileName, "Timestamp;Azimuth;Elevation;") != 0) {
+  if (writeHeaderIfNeeded(logCollisionFilePath, "Timestamp;Azimuth;Elevation;") != 0) {
     return -1;
   }
 
-  File myFile = SD.open(logCollisionFileName, FILE_WRITE);
+  File myFile = SD.open(logCollisionFilePath, FILE_WRITE);
   if (!myFile) {
     return -1;
   }
@@ -132,8 +135,7 @@ int writeAlarmToLog(AzimuthElevation *azimuthElevation) {
 }
 
 int writeConfigAlarmAndIntervals(Settings settings) {
-  const char* ConfigFileName = "AlarmAndIntervalsConfig.txt";
-  File myFile = SD.open(ConfigFileName, O_WRITE | O_CREAT | O_TRUNC);
+  File myFile = SD.open(ConfigFilePath, O_WRITE | O_CREAT | O_TRUNC);
   if (!myFile) {
     return -1;
   }
@@ -158,8 +160,7 @@ int writeConfigAlarmAndIntervals(Settings settings) {
 }
 
 int writeNewForbiddenConfig(const char* zones) {
-  const char* forbiddenConfigFileName = "MyZones.txt";
-  File myFile = SD.open(forbiddenConfigFileName, O_WRITE | O_CREAT | O_TRUNC);
+  File myFile = SD.open(forbiddenConfigFilePath, O_WRITE | O_CREAT | O_TRUNC);
   if (!myFile) {
     return -1;
   }

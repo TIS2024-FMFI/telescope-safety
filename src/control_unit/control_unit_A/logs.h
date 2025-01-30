@@ -6,6 +6,12 @@ extern const int _MOSI;
 extern const int _CS;
 extern const int _SCK;
 
+extern const char *logConfigFilePath;
+extern const char *logCollisionFilePath;
+extern const char *logFilePathPrefix;
+extern const char* ConfigFilePath;
+extern const char* forbiddenConfigFilePath;
+
 
 int writeHeaderIfNeeded(String filename, const char *header);
 

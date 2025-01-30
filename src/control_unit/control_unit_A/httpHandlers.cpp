@@ -163,35 +163,13 @@ void handleFormPOST() {
     }
   }
   else if (server.arg(ALARM_CONFIG_BUTTON)){
-    String write = server.arg(LOG_INTERVAL_FIELD);
-    write.concat(";");
-    write.concat(server.arg(UPDATE_INTERVAL_FIELD));
-    write.concat(";");
-    if (server.arg(ALARM_CHECKBOX)){
-      write.concat("1;");
-    }
-    else{
-      write.concat("0;");
-    }
-    if(server.arg(MOTORS_CHECKBOX)){
-      write.concat("1;");
-    }
-    else{
-      write.concat("0;");
-    }
-    if(server.arg(TURN_OFF_LOGS_CHECKBOX)){
-      write.concat("1");
-    }
-    else{
-      write.concat("0");
-    }
-    if (writeConfigAlarmAndIntervals(write.c_str())){
+    settings.update_frequency = server.arg(UPDATE_INTERVAL_FIELD).toInt();
+    settings.log_frequency = server.arg(LOG_INTERVAL_FIELD).toInt();
+    settings.alarm = bool(server.arg(ALARM_CHECKBOX).toInt());
+    settings.rele = bool(server.arg(MOTORS_CHECKBOX).toInt());
+    settings.logging = bool(server.arg(TURN_OFF_LOGS_CHECKBOX).toInt());
+    if (writeConfigAlarmAndIntervals(settings)){
       writeChangeToLog(LOG_FREQUENCY_AND_ALARM_TYPE_CHANGED, clientIP);
-      settings.update_frequency = server.arg(UPDATE_INTERVAL_FIELD).toInt();
-      settings.log_frequency = server.arg(LOG_INTERVAL_FIELD).toInt();
-      settings.alarm = bool(server.arg(ALARM_CHECKBOX).toInt());
-      settings.rele = bool(server.arg(MOTORS_CHECKBOX).toInt());
-      settings.logging = bool(server.arg(TURN_OFF_LOGS_CHECKBOX).toInt());
     }
 
   }

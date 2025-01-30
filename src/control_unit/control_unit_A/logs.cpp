@@ -131,41 +131,27 @@ int writeAlarmToLog(AzimuthElevation *azimuthElevation) {
   return 0;
 }
 
-int writeConfigAlarmAndIntervals(const char* data) {
+int writeConfigAlarmAndIntervals(Settings settings) {
   const char* ConfigFileName = "AlarmAndIntervalsConfig.txt";
   File myFile = SD.open(ConfigFileName, O_WRITE | O_CREAT | O_TRUNC);
   if (!myFile) {
     return -1;
   }
 
-  char* inputCopy = strdup(data);
-  if (!inputCopy) {
-    myFile.close();
-    return -1;
-  }
-
-  char* audiovisual = strtok(inputCopy, ";");
-  char* shutDown = strtok(NULL, ";");
-  char* updateInterval = strtok(NULL, ";");
-  char* logInterval = strtok(NULL, ";");
-  char* logs = strtok(NULL, ";");
-
   myFile.print("Audiovizualne upozornenie:");
-  myFile.println(audiovisual);
+  myFile.println(settings.alarm);
   
   myFile.print("Odpojenie systemu:");
-  myFile.println(shutDown);
+  myFile.println(settings.rele);
 
   myFile.print("Interval aktualizacii:");
-  myFile.println(updateInterval);
+  myFile.println(settings.update_frequency);
 
   myFile.print("Interval logovania:");
-  myFile.println(logInterval);
+  myFile.println(settings.log_frequency);
 
   myFile.print("Vypnut logovanie:");
-  myFile.println(logs);
-
-  free(inputCopy);
+  myFile.println(settings.logging);
 
   myFile.close();
   return 0;

@@ -23,7 +23,8 @@ void setupSettings();
 
 void setup() {
   Serial.begin(9600);                   // initialize serial
-  delay(100);
+  //delay(100);
+  while (!Serial);
   Serial.println("Started Serial");
   
   #if INERCIAL
@@ -44,42 +45,59 @@ void setup() {
   timeClient.update();
   Serial.println(timeToString(getRealTime()));
   #endif
+
 }
 
 long lastSendTime = 0;        // last send time
 int interval = 20000;          // interval between sends
 boolean reset_flag=true;
-
+int send = 0;
 
 
 void loop() {
   #if DISPLAY_A
   loopButtons();
   #endif
-
   #if SERVERS
   server.handleClient();
   MDNS.update();
   websocketLoop();
   timeClient.update();
   #endif
-
   #if INERCIAL
-  if (!reset_flag || millis() - lastSendTime > interval) {
-    if (restartInertialUnit(132.0) != 0){
-      reset_flag=false;
-    }
-    else{
-      lastSendTime = millis();            // timestamp the message
-      reset_flag=true;
-    }
-  }
+  // if (!reset_flag || millis() - lastSendTime > interval) {
+  //   if (restartInertialUnit(132.0) != 0){
+  //     reset_flag=false;
+  //   }
+  //   else{
+  //     lastSendTime = millis();            // timestamp the message
+  //     reset_flag=true;
+  //   }
+  // }
 
   AzimuthElevation* data = readFromInertialUnit();
     if (data) {
-        Serial.println(F("Processed incoming message."));
+      if (send == 0 || send%100 == 0) {
+        displayAE(data);
+        send = 0;
+      }
+      send++;
+        //Serial.println(F("Processed incoming message."));
     }
   #endif
+
+  if (toNano.available()) {
+    String azimuthStr = toNano.readStringUntil('\n');
+    int firstSpace = azimuthStr.indexOf(' ');
+    int secondSpace = azimuthStr.indexOf(' ', firstSpace + 1);
+    DegreesMinutesSeconds azimuthDMS;
+    azimuthDMS.degrees = azimuthStr.substring(0, firstSpace).toInt();
+    azimuthDMS.minutes = azimuthStr.substring(firstSpace + 1, secondSpace).toInt();
+    azimuthDMS.seconds = azimuthStr.substring(secondSpace + 1).toInt();
+    double azimuth = convertToDecimalDegrees(azimuthDMS);
+    restartInertialUnit(azimuth);
+    send = 99;
+  }
 
   //testing_parsation_and_evaluation();
 
@@ -113,4 +131,12 @@ void setupEthernet(){
 
 void setupSettings(){
   loadSettings();
+}
+
+void displayAE(AzimuthElevation* ae) {
+  DegreesMinutesSeconds azimuth = convertToDMS(ae->azimuth, false);
+  DegreesMinutesSeconds elevation = convertToDMS(ae->elevation, true);
+  char aeSend[20];
+  sprintf(aeSend, "%d %d %d\n%d %d %d\n", azimuth.degrees, azimuth.minutes, azimuth.seconds, elevation.degrees, elevation.minutes, elevation.seconds);
+  toNano.write(aeSend);
 }

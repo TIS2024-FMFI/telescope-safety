@@ -1,4 +1,6 @@
 #include <SoftwareSerial.h>
+#include "common_structs.h"
+#include "lora_communication.h"
 
 // GPIO piny
 #define TX_PIN 14  // GP14 ako TX // CIERNY
@@ -26,3 +28,5 @@ extern SoftwareSerial toNano;
 
 void setupButtons();
 void loopButtons();
+DegreesMinutesSeconds convertToDMS(double decimalDegrees, bool isElevation);
+double convertToDecimalDegrees(DegreesMinutesSeconds dms);

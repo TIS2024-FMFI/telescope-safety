@@ -1,5 +1,4 @@
 #include "display.h"
-//#include "lora_communication.h"
 
 extern UTFTGLUE myGLCD;
 
@@ -13,10 +12,6 @@ void setup()
 
   settingsScreen = false;
   indexOfCurrentChangingNumber = 0;
-
-  ae = {45.132, 30.343};
-  newae = ae;
-  displayAE(ae);
 }
 
 void loop()
@@ -26,11 +21,12 @@ void loop()
     if (command == "BUTTON1" && !settingsScreen) {
       settingsScreen = true;
       indexOfCurrentChangingNumber = 0;
-      newae = ae;
+      newAzimuth = azimuth;
+      newElevation = elevation;
       showSettings();
     } else if (command == "BUTTON1" && settingsScreen) {
       settingsScreen = false;
-      displayAE(ae);
+      displayAE(azimuth, elevation);
     } else if (command == "BUTTON2" && settingsScreen) {
       indexOfCurrentChangingNumber = (indexOfCurrentChangingNumber + 1) % 3;
       displayNumbers();
@@ -39,13 +35,30 @@ void loop()
     } else if (command == "BUTTON4" && settingsScreen) {
       decrementNumber();
     } else if (command == "SEND" && settingsScreen) {
-      ae = newae; //poslat newae
-      DegreesMinutesSeconds azimuth = convertToDMS(newae.azimuth);
-      char send[8];
-      sprintf(send, "%d %d %d\n", azimuth.degrees, azimuth.minutes, azimuth.seconds);
+      char send[20];
+      sprintf(send, "%d %d %d\n", newAzimuth.degrees, newAzimuth.minutes, newAzimuth.seconds);
       toPico.write(send);
       settingsScreen = false;
-      displayAE(ae);
+      displayAE(azimuth, elevation);
+    } else if (command != "BUTTON1" && command != "BUTTON2" && command != "BUTTON3" && command != "BUTTON4" && command != "SEND"){
+      String elevationStr = toPico.readStringUntil('\n');
+      int firstSpace = command.indexOf(' ');
+      int secondSpace = command.indexOf(' ', firstSpace + 1);
+      azimuth.degrees = command.substring(0, firstSpace).toInt();
+      azimuth.minutes = command.substring(firstSpace + 1, secondSpace).toInt();
+      azimuth.seconds = command.substring(secondSpace + 1).toInt();
+
+      firstSpace = elevationStr.indexOf(' ');
+      secondSpace = elevationStr.indexOf(' ', firstSpace + 1);
+      elevation.degrees = elevationStr.substring(0, firstSpace).toInt();
+      elevation.minutes = elevationStr.substring(firstSpace + 1, secondSpace).toInt();
+      elevation.seconds = elevationStr.substring(secondSpace + 1).toInt();
+
+      azimuth = {azimuth.degrees, azimuth.minutes, azimuth.seconds};
+      elevation = {elevation.degrees, elevation.minutes, elevation.seconds};
+      if (!settingsScreen){
+        displayAE(azimuth, elevation);
+      }
     }
   }
 }

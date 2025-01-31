@@ -46,10 +46,6 @@ void loopButtons() {
   button3State = gpio_get(BUTTON3_PIN);
   button4State = gpio_get(BUTTON4_PIN);
 
-  if (toNano.available()) {
-    String data = toNano.readStringUntil('\n');
-    Serial.println(data); 
-  }
   if (button1State && !lastButton1State) {
     toNano.write("BUTTON1\n");
   } else if (button2State) {
@@ -79,3 +75,47 @@ void loopButtons() {
   lastButton3State = button3State;
   lastButton4State = button4State;
 }
+
+DegreesMinutesSeconds convertToDMS(double decimalDegrees, bool isElevation) {
+    DegreesMinutesSeconds dms;
+
+    bool isNegative = decimalDegrees < 0;
+
+    decimalDegrees = fabs(decimalDegrees);
+
+    dms.degrees = (int)decimalDegrees;
+    double fractionalPart = decimalDegrees - dms.degrees;
+    double totalMinutes = fractionalPart * 60.0;
+    dms.minutes = (int)totalMinutes;
+    double totalSeconds = (totalMinutes - dms.minutes) * 60.0;
+    dms.seconds = (int)round(totalSeconds);
+
+    if (dms.seconds == 60) {
+        dms.seconds = 0;
+        dms.minutes += 1;
+    }
+
+    if (dms.minutes == 60) {
+        dms.minutes = 0;
+        dms.degrees += 1;
+    }
+
+    if (isElevation && isNegative) {
+        dms.degrees = -dms.degrees; 
+    }
+
+    return dms;
+}
+
+
+double convertToDecimalDegrees(DegreesMinutesSeconds dms) {
+  double decimalDegrees = dms.degrees + (dms.minutes / 60.0f) + (dms.seconds / 3600.0f);
+  if (decimalDegrees < 0.0f) {
+    decimalDegrees += 360.0f;
+  }
+  if (decimalDegrees >= 360.0f) {
+    decimalDegrees -= 360.0f;
+  }
+  return decimalDegrees;
+}
+

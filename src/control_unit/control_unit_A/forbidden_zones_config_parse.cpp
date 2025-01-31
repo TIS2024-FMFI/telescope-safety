@@ -3,7 +3,7 @@
 
 ForbiddenZones systemForbiddenZones;
 
-int checkFileFormat(const char* newConfiguration) {
+int setUpZones(const char* newConfiguration) {
     std::string_view config(newConfiguration);
     std::string_view::size_type current = 0;
     std::string_view::size_type end = 0;
@@ -78,7 +78,7 @@ int checkFileFormat(const char* newConfiguration) {
     }
 
     // Update the global forbidden zones
-    systemForbiddenZones = std::move(temp_zones);
+    settings.systemForbiddenZones = std::move(temp_zones);
     return 0; // Success
 }
 
@@ -105,4 +105,55 @@ void sortZoneClockwise(ForbiddenZone& zone) {
 // Helper function to calculate the polar angle relative to the centroid
 double calculateAngle(const AzimuthElevation& point, const AzimuthElevation& centroid) {
     return atan2(point.elevation - centroid.elevation, point.azimuth - centroid.azimuth);
+}
+
+int setUpAlarmAndIntervals(const char* newConfiguration) {
+    std::string_view config(newConfiguration);
+    std::string_view::size_type current = 0;
+    std::string_view::size_type end = 0;
+
+    while (current < config.size()) {
+        // Find the end of the line
+        end = config.find('\n', current);
+        if (end == std::string_view::npos) {
+            end = config.size();
+        }
+
+        std::string_view line = config.substr(current, end - current);
+        current = end + 1; // Move to the next line
+
+        // Trim leading and trailing spaces
+        while (!line.empty() && (line.front() == ' ' || line.front() == '\t')) {
+            line.remove_prefix(1);
+        }
+        while (!line.empty() && (line.back() == ' ' || line.back() == '\t')) {
+            line.remove_suffix(1);
+        }
+
+        // Parse key-value pairs
+        int tempValue;
+        if (line.starts_with("Audiovizualne upozornenie:")) {
+            if (sscanf(line.data(), "Audiovizualne upozornenie: %d", &tempValue) == 1) {
+                settings.alarm = (tempValue != 0); // Convert to boolean
+            }
+        } else if (line.starts_with("Odpojenie systemu:")) {
+            if (sscanf(line.data(), "Odpojenie systemu: %d", &tempValue) == 1) {
+                settings.rele = (tempValue != 0); // Convert to boolean
+            }
+        } else if (line.starts_with("Interval aktualizacii:")) {
+            if (sscanf(line.data(), "Interval aktualizacii: %u", &settings.update_frequency) != 1) {
+                Serial.println("Invalid update frequency format.");
+            }
+        } else if (line.starts_with("Interval logovania:")) {
+            if (sscanf(line.data(), "Interval logovania: %u", &settings.log_frequency) != 1) {
+                Serial.println("Invalid log frequency format.");
+            }
+        } else if (line.starts_with("Vypnut logovanie:")) {
+            if (sscanf(line.data(), "Vypnut logovanie: %d", &tempValue) == 1) {
+                settings.logging = (tempValue != 0); // Convert to boolean
+            }
+        }
+    }
+
+    return 0;
 }

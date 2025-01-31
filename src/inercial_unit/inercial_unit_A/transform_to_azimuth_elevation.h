@@ -10,6 +10,9 @@ struct AzimuthElevation {
     double elevation;
 };
 
+// Converts RollPitchYaw structure to AzimuthElevation structure
+// @param rollPitchYaw pointer to RollPitchYaw structure
+// @return pointer to AzimuthElevation structure
 AzimuthElevation* fromRPYtoAzimuthElevation(RollPitchYaw* rollPitchYaw);
 
 #endif // CALCULATE_AZIMUTH_ELEVATION_H

@@ -20,6 +20,9 @@ struct RollPitchYaw {
 extern double yawOffset;
 
 void initializeSensor();
+
+// Reads data from sensor and stores them in RollPitchYaw structure
+// @return pointer to RollPitchYaw structure
 RollPitchYaw* readFromSensor();
 
 #endif // GAIN_ROLL_PITCH_YAW_H

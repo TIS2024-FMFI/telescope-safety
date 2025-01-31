@@ -63,17 +63,17 @@ n+1. line: Azimuth Elevation
 
 
 ## Diagramy:
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/stavovy_diagram.png?raw=true)
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/component_diagram.png?raw=true)
+![alt text](images/stavovy_diagram.png)
+![alt text](images/component_diagram.png)
 
 
 ## Návrh používateľského rozhrania:
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/index_bez_upozornenia.png?raw=true)
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/index_s_upozornenim.png?raw=true)
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/prihlasenie.png?raw=true)
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/konfiguracia1.png?raw=true)
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/konfiguracia2.png?raw=true)
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/konfiguracia3.png?raw=true)
+![alt text](images/index_bez_upozornenia.png)
+![alt text](images/index_s_upozornenim.png)
+![alt text](images/prihlasenie.png)
+![alt text](images/konfiguracia1.png)
+![alt text](images/konfiguracia2.png)
+![alt text](images/konfiguracia3.png)
 
 ## Plán implementácie:
 
@@ -100,8 +100,7 @@ program na vypísanie dát na displej<br>
 program v html, css a javascript jazyku pre stránky používateľského rozhrania(konfiguračná stránka, informačná stránka)
 
 ## Návrh implementácie:
-```c
-struct Time{
+```cstruct Time{
   int year;
   int month;
   int day;
@@ -109,7 +108,6 @@ struct Time{
   int minutes;
   int seconds;
 };
-
 
 struct RollPitchYaw{
     float roll;
@@ -182,8 +180,9 @@ void displayAE(AzimuthElevation* azimutElevation);
 int writeAEtoLog(AzimuthElevation* azimutElevation);
 
 // Checks if file format is correct
-// @param newConfiguration from user
-// @return 0 if correct, -1 if error
+// also serves for parsing the forbidden zones into data structure
+// @param newConfiguration from user, or loaded from file
+// @return 0 if correct, -1 if zone has less than three points, -2 if bad line format
 // @note Different error codes can be added
 // The format of the file is as follows:
 // 1. line: Azimuth Elevation
@@ -198,32 +197,35 @@ int writeAEtoLog(AzimuthElevation* azimutElevation);
 // Each forbidden zone is separated by empty line
 // Each forbidden zone contains at least 3 points
 // Lines starting with # are ignored
-int checkFileFormat(const char* newConfiguration);
+int setUpZones(const char* newConfiguration);
+
+// Parsing alarm type, logging status, log frequency and update frequency from file to global variable settings
+// @param newConfiguration loaded from file
+// returns -1 if unsuccessful and 0 if successful
+int setUpAlarmAndIntervals(const char* newConfiguration);
 
 // Writes new forbidden zones configuration
 // @param zones as written by user as const char* type
 // @return 0 if success, -1 if error
 int writeNewForbiddenConfig(const char* zones);
 
-// Reads forbidden zones configuration
-// stores configuration azimuth and elvation values from user to global variable
-// @return number of forbiden zones, -1 if error
-int loadForbiddenZones();
-
 // Writes new log frequency configuration and alarm settings
 // @param data has info on alarm and storing intervals settings
 // @return 0 if success, -1 if error
 int writeConfigAlarmAndIntervals(const char* data);
 
+// Reads forbidden zones configuration
+// stores forbidden zones to global variable "settings.systemForbiddenZones"
 // Reads log frequency configuration
+// stores log frequency to global variable "settings.log_frequency"
 // Reads alarm type configuration
-// @param logFrequency pointer to store log frequency
-// @param clientUpdateFrequency pointer to store frequency of client updates via WS
-// @param alarm pointer to store if alarm should start audiovisual signal when triggered
-// @param motors pointer to store if motors should be disabled when alarm is triggered
-// @param log_indicator indicates if logging is turned on or off
+// stores alarm type configuration to global variables "settings.alarm" and "settings.rele"
+// Reads logging configuration
+// stores logging configuration to global variable "settings.logging"
+// Reads update frequency configuration
+// stores update frequency configuration to global variable "settings.update_frequency"
 // @return 0 if success, -1 if error
-int loadConfigAlarmAndIntervals(unsigned int* logFrequency, unsigned int* clientUpdateFrequency,bool* alarm, bool* motors,bool* log_indicator);
+int loadSettings();
 
 // Writes change of configuration to log file, with timestamp in CSV format
 // @param changeType type of change

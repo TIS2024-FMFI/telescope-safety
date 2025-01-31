@@ -1,10 +1,17 @@
 #include "common_structs.h"
+#include "forbidden_zones_config_parse.h"
 #include "time.h"
 
 extern const int _MISO;
 extern const int _MOSI;
 extern const int _CS;
 extern const int _SCK;
+
+extern const char *logConfigFilePath;
+extern const char *logCollisionFilePath;
+extern const char *logFilePathPrefix;
+extern const char* ConfigFilePath;
+extern const char* forbiddenConfigFilePath;
 
 
 int writeHeaderIfNeeded(String filename, const char *header);
@@ -26,7 +33,7 @@ int writeAlarmToLog(AzimuthElevation *azimuthElevation);
 // Writes new log frequency configuration and alarm settings
 // @param data has info on alarm and storing intervals settings
 // @return 0 if success, -1 if error
-int writeConfigAlarmAndIntervals(const char* data);
+int writeConfigAlarmAndIntervals(Settings settings);
 
 // Writes new forbidden zones configuration
 // @param zones as written by user as const char* type
@@ -34,19 +41,17 @@ int writeConfigAlarmAndIntervals(const char* data);
 int writeNewForbiddenConfig(const char* zones);
 
 // Reads forbidden zones configuration
-// stores configuration azimuth and elvation values from user to global variable
-// @return number of forbiden zones, -1 if error
-int loadForbiddenZones(); //to be done
-
+// stores forbidden zones to global variable "settings.systemForbiddenZones"
 // Reads log frequency configuration
+// stores log frequency to global variable "settings.log_frequency"
 // Reads alarm type configuration
-// @param logFrequency pointer to store log frequency
-// @param clientUpdateFrequency pointer to store frequency of client updates via WS
-// @param alarm pointer to store if alarm should start audiovisual signal when triggered
-// @param motors pointer to store if motors should be disabled when alarm is triggered
-// @param log_indicator indicates if logging is turned on or off
+// stores alarm type configuration to global variables "settings.alarm" and "settings.rele"
+// Reads logging configuration
+// stores logging configuration to global variable "settings.logging"
+// Reads update frequency configuration
+// stores update frequency configuration to global variable "settings.update_frequency"
 // @return 0 if success, -1 if error
-int loadConfigAlarmAndIntervals(unsigned int* logFrequency, unsigned int* clientUpdateFrequency,bool* alarm, bool* motors,bool* log_indicator); //to be done
+int loadSettings(); //to be done
 
 char* loadFile(const char* filePath);
 

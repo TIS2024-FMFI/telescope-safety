@@ -1,6 +1,11 @@
 #include <WebServer.h>
 
 extern WebServer server;
+extern const char *confPageFilePath;
+extern const char *confJSFilePath;
+extern const char *mainPageFilePath;
+extern const char *mainJSFilePath;
+extern const char *stylesCSSFilePath;
 
 void handleNotFound();
 void handleFormPOST();

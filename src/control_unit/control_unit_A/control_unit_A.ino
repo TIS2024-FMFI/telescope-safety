@@ -34,6 +34,8 @@ void setup() {
   #if DISPLAY_A
   setupButtons();
   setupSD();
+  setupSettings();
+  setupStaticFiles();
   #endif
 
   #if SERVERS
@@ -54,7 +56,6 @@ int send = 0;
 
 void loop() {
   #if DISPLAY_A
-  //setupSettings();
   loopButtons();
   #endif
   #if SERVERS
@@ -129,6 +130,7 @@ void setupEthernet(){
 }
 
 void setupSettings(){
+  loadSettings();
 }
 
 void displayAE(AzimuthElevation* ae) {

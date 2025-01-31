@@ -112,4 +112,5 @@ void setupEthernet(){
 }
 
 void setupSettings(){
+  loadSettings();
 }

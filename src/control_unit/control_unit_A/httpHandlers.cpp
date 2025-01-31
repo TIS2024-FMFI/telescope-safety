@@ -6,9 +6,17 @@
 #include "lora_communication.h"
 
 #define DEBUG 1
+
+const char *confPageFilePath = "/www/config.html";
+const char *confJSFilePath = "/www/config.js";
+const char *mainPageFilePath = "/www/index.html";
+const char *mainJSFilePath = "/www/main.js";
+const char *stylesCSSFilePath = "/www/styles.css";
+
+
 String mainHTML;
 String mainJS;
-String CSS;
+String stylesCSS;
 String confJS;
 String confHTML1;
 String confHTML2;
@@ -24,11 +32,11 @@ int loadConf(const char* filePath);
 
 
 void setupStaticFiles(){
-  loadConf("/www/config.html");
-  mainHTML = loadFile("/www/index.html");
-  CSS = loadFile("/www/style.html");
-  mainJS = loadFile("/www/main.js");
-  confJS = loadFile("/www/config.js");
+  loadConf(confPageFilePath);
+  mainHTML = loadFile(mainPageFilePath);
+  stylesCSS = loadFile(stylesCSSFilePath);
+  mainJS = loadFile(mainJSFilePath);
+  confJS = loadFile(confJSFilePath);
 }
 
 int loadConf(const char* filePath){
@@ -163,35 +171,13 @@ void handleFormPOST() {
     }
   }
   else if (server.arg(ALARM_CONFIG_BUTTON)){
-    String write = server.arg(LOG_INTERVAL_FIELD);
-    write.concat(";");
-    write.concat(server.arg(UPDATE_INTERVAL_FIELD));
-    write.concat(";");
-    if (server.arg(ALARM_CHECKBOX)){
-      write.concat("1;");
-    }
-    else{
-      write.concat("0;");
-    }
-    if(server.arg(MOTORS_CHECKBOX)){
-      write.concat("1;");
-    }
-    else{
-      write.concat("0;");
-    }
-    if(server.arg(TURN_OFF_LOGS_CHECKBOX)){
-      write.concat("1");
-    }
-    else{
-      write.concat("0");
-    }
-    if (writeConfigAlarmAndIntervals(write.c_str())){
+    settings.update_frequency = server.arg(UPDATE_INTERVAL_FIELD).toInt();
+    settings.log_frequency = server.arg(LOG_INTERVAL_FIELD).toInt();
+    settings.alarm = bool(server.arg(ALARM_CHECKBOX).toInt());
+    settings.rele = bool(server.arg(MOTORS_CHECKBOX).toInt());
+    settings.logging = bool(server.arg(TURN_OFF_LOGS_CHECKBOX).toInt());
+    if (writeConfigAlarmAndIntervals(settings)){
       writeChangeToLog(LOG_FREQUENCY_AND_ALARM_TYPE_CHANGED, clientIP);
-      settings.update_frequency = server.arg(UPDATE_INTERVAL_FIELD).toInt();
-      settings.log_frequency = server.arg(LOG_INTERVAL_FIELD).toInt();
-      settings.alarm = bool(server.arg(ALARM_CHECKBOX).toInt());
-      settings.rele = bool(server.arg(MOTORS_CHECKBOX).toInt());
-      settings.logging = bool(server.arg(TURN_OFF_LOGS_CHECKBOX).toInt());
     }
 
   }
@@ -208,7 +194,7 @@ void handleFormPOST() {
 void handleFormPage(){
   String response = confHTML1;
   // If this takes to much time we should keep somewhere saved the zones String config
-  response.concat(loadFile("/conf/zones.txt"));
+  response.concat(loadFile(forbiddenConfigFilePath));
   response.concat(confHTML2);
   if (settings.alarm){
     response.concat("checked ");
@@ -234,7 +220,7 @@ void handleFormPage(){
 }
 
 void handleCSS(){
-  server.send(200, "text/css", CSS);
+  server.send(200, "text/css", stylesCSS);
 }
 
 void handleMainPage() {

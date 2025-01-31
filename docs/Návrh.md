@@ -63,17 +63,17 @@ n+1. line: Azimuth Elevation
 
 
 ## Diagramy:
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/stavovy_diagram.png?raw=true)
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/component_diagram.png?raw=true)
+![alt text](images/stavovy_diagram.png)
+![alt text](images/component_diagram.png)
 
 
 ## Návrh používateľského rozhrania:
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/index_bez_upozornenia.png?raw=true)
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/index_s_upozornenim.png?raw=true)
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/prihlasenie.png?raw=true)
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/konfiguracia1.png?raw=true)
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/konfiguracia2.png?raw=true)
-![alt text](https://github.com/TIS2024-FMFI/telescope-safety/blob/software-design-document/docs/images/konfiguracia3.png?raw=true)
+![alt text](images/index_bez_upozornenia.png)
+![alt text](images/index_s_upozornenim.png)
+![alt text](images/prihlasenie.png)
+![alt text](images/konfiguracia1.png)
+![alt text](images/konfiguracia2.png)
+![alt text](images/konfiguracia3.png)
 
 ## Plán implementácie:
 
@@ -180,8 +180,9 @@ void displayAE(AzimuthElevation* azimutElevation);
 int writeAEtoLog(AzimuthElevation* azimutElevation);
 
 // Checks if file format is correct
-// @param newConfiguration from user
-// @return 0 if correct, -1 if error
+// also serves for parsing the forbidden zones into data structure
+// @param newConfiguration from user, or loaded from file
+// @return 0 if correct, -1 if zone has less than three points, -2 if bad line format
 // @note Different error codes can be added
 // The format of the file is as follows:
 // 1. line: Azimuth Elevation
@@ -196,7 +197,12 @@ int writeAEtoLog(AzimuthElevation* azimutElevation);
 // Each forbidden zone is separated by empty line
 // Each forbidden zone contains at least 3 points
 // Lines starting with # are ignored
-int checkFileFormat(const char* newConfiguration);
+int setUpZones(const char* newConfiguration);
+
+// Parsing alarm type, logging status, log frequency and update frequency from file to global variable settings
+// @param newConfiguration loaded from file
+// returns -1 if unsuccessful and 0 if successful
+int setUpAlarmAndIntervals(const char* newConfiguration);
 
 // Writes new forbidden zones configuration
 // @param zones as written by user as const char* type

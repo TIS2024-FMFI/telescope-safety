@@ -1,10 +1,17 @@
 #include "common_structs.h"
+#include "forbidden_zones_config_parse.h"
 #include "time.h"
 
 extern const int _MISO;
 extern const int _MOSI;
 extern const int _CS;
 extern const int _SCK;
+
+extern const char *logConfigFilePath;
+extern const char *logCollisionFilePath;
+extern const char *logFilePathPrefix;
+extern const char* ConfigFilePath;
+extern const char* forbiddenConfigFilePath;
 
 
 int writeHeaderIfNeeded(String filename, const char *header);
@@ -26,7 +33,7 @@ int writeAlarmToLog(AzimuthElevation *azimuthElevation);
 // Writes new log frequency configuration and alarm settings
 // @param data has info on alarm and storing intervals settings
 // @return 0 if success, -1 if error
-int writeConfigAlarmAndIntervals(const char* data);
+int writeConfigAlarmAndIntervals(Settings settings);
 
 // Writes new forbidden zones configuration
 // @param zones as written by user as const char* type

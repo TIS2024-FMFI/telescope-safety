@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
+#include <Arduino.h>
 
 // Checks if file format is correct
 // also serves for parsing the forbidden zones into data structure

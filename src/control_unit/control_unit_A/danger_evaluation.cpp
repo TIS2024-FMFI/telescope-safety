@@ -60,7 +60,7 @@ void testing_parsation_and_evaluation() {
         "35.0 45.0\n"
         "40.0 35.0\n";
 
-    int configResult = checkFileFormat(testConfig);
+    int configResult = setUpZones(testConfig);
     if (configResult == 0) {
         Serial.print("Configuration parsed successfully!\n");
         control_danger_flag = true;

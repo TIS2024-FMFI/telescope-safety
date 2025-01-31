@@ -166,7 +166,7 @@ void handleFormPOST() {
 
   if (server.arg(ZONE_CONFIG_BUTTON)){
     const char* newZones = server.arg(ZONE_CONFIG_FIELD).c_str();
-    if (checkFileFormat(newZones) && writeNewForbiddenConfig(newZones)){
+    if (setUpZones(newZones) && writeNewForbiddenConfig(newZones)){
       writeChangeToLog(FORBIDDEN_ZONE_CHANGED, clientIP);
     }
   }

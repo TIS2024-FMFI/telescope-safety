@@ -132,23 +132,23 @@ int setUpAlarmAndIntervals(const char* newConfiguration) {
 
         // Parse key-value pairs
         int tempValue;
-        if (line.starts_with("Audiovizualne upozornenie:")) {
-            if (sscanf(line.data(), "Audiovizualne upozornenie: %d", &tempValue) == 1) {
-                settings.alarm = (tempValue != 0); // Convert to boolean
-            }
-        } else if (line.starts_with("Odpojenie systemu:")) {
+        if (line.rfind("Audiovizualne upozornenie:", 0) == 0) {
+          if (sscanf(line.data(), "Audiovizualne upozornenie: %d", &tempValue) == 1) {
+            settings.alarm = (tempValue != 0);
+          }
+        } else if (line.rfind("Odpojenie systemu:", 0) == 0) {
             if (sscanf(line.data(), "Odpojenie systemu: %d", &tempValue) == 1) {
                 settings.rele = (tempValue != 0); // Convert to boolean
             }
-        } else if (line.starts_with("Interval aktualizacii:")) {
+        } else if (line.rfind("Interval aktualizacii:",0) == 0) {
             if (sscanf(line.data(), "Interval aktualizacii: %u", &settings.update_frequency) != 1) {
                 Serial.println("Invalid update frequency format.");
             }
-        } else if (line.starts_with("Interval logovania:")) {
+        } else if (line.rfind("Interval logovania:",0) == 0) {
             if (sscanf(line.data(), "Interval logovania: %u", &settings.log_frequency) != 1) {
                 Serial.println("Invalid log frequency format.");
             }
-        } else if (line.starts_with("Vypnut logovanie:")) {
+        } else if (line.rfind("Vypnut logovanie:",0) == 0) {
             if (sscanf(line.data(), "Vypnut logovanie: %d", &tempValue) == 1) {
                 settings.logging = (tempValue != 0); // Convert to boolean
             }

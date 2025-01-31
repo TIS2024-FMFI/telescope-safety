@@ -40,7 +40,7 @@ void loop()
       toPico.write(send);
       settingsScreen = false;
       displayAE(azimuth, elevation);
-    } else if (command != "BUTTON1" && command != "BUTTON2" && command != "BUTTON3" && command != "BUTTON4" && command != "SEND" && !settingsScreen){
+    } else if (command != "BUTTON1" && command != "BUTTON2" && command != "BUTTON3" && command != "BUTTON4" && command != "SEND"){
       String elevationStr = toPico.readStringUntil('\n');
       int firstSpace = command.indexOf(' ');
       int secondSpace = command.indexOf(' ', firstSpace + 1);
@@ -56,7 +56,9 @@ void loop()
 
       azimuth = {azimuth.degrees, azimuth.minutes, azimuth.seconds};
       elevation = {elevation.degrees, elevation.minutes, elevation.seconds};
-      displayAE(azimuth, elevation);
+      if (!settingsScreen){
+        displayAE(azimuth, elevation);
+      }
     }
   }
 }

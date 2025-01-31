@@ -38,13 +38,16 @@ void displayAE(DegreesMinutesSeconds azimuth, DegreesMinutesSeconds elevation) {
   myGLCD.setFont(BigFont);
   myGLCD.print("Azimut: ", 105, 130);
   myGLCD.print(degrees, 225, 130);
-  myGLCD.print(minutes, 280, 130);
-  myGLCD.print(seconds, 330, 130);
+  myGLCD.print(minutes, 290, 130);
+  myGLCD.print(seconds, 340, 130);
 
-  char elevationText[50];
-  sprintf(elevationText, "Elevacia: %d~ %d' %d\"", elevation.degrees, elevation.minutes, elevation.seconds);
-
-  myGLCD.print(elevationText, CENTER, 180);
+  sprintf(degrees, "%d~", elevation.degrees);
+  sprintf(minutes, "%d'", elevation.minutes);
+  sprintf(seconds, "%d\"", elevation.seconds);
+  myGLCD.print("Elevacia: ", 90, 180);
+  myGLCD.print(degrees, 235, 180);
+  myGLCD.print(minutes, 300, 180);
+  myGLCD.print(seconds, 350, 180);
 }
 
 
@@ -90,18 +93,21 @@ void showSettings() {
   if (indexOfCurrentChangingNumber == 1){
     myGLCD.setBackColor(0, 0, 0);
   }
-  myGLCD.print(minutes, 280, 130);
+  myGLCD.print(minutes, 290, 130);
   myGLCD.setBackColor(100, 50, 0);
   if (indexOfCurrentChangingNumber == 2){
     myGLCD.setBackColor(0, 0, 0);
   }
-  myGLCD.print(seconds, 330, 130);
+  myGLCD.print(seconds, 340, 130);
   myGLCD.setBackColor(100, 50, 0);
 
-  char elevationText[50];
-  sprintf(elevationText, "Elevacia: %d~ %d' %d\"", newElevation.degrees, newElevation.minutes, newElevation.seconds);
-
-  myGLCD.print(elevationText, CENTER, 180);
+  sprintf(degrees, "%d~", elevation.degrees);
+  sprintf(minutes, "%d'", elevation.minutes);
+  sprintf(seconds, "%d\"", elevation.seconds);
+  myGLCD.print("Elevacia: ", 90, 180);
+  myGLCD.print(degrees, 235, 180);
+  myGLCD.print(minutes, 300, 180);
+  myGLCD.print(seconds, 350, 180);
 }
 
 void displayNumbers() {
@@ -124,21 +130,36 @@ void displayNumbers() {
   if (indexOfCurrentChangingNumber == 1){
     myGLCD.setBackColor(0, 0, 0);
   }
-  myGLCD.print(minutes, 280, 130);
+  myGLCD.print(minutes, 290, 130);
   myGLCD.setBackColor(100, 50, 0);
   if (indexOfCurrentChangingNumber == 2){
     myGLCD.setBackColor(0, 0, 0);
   }
-  myGLCD.print(seconds, 330, 130);
+  myGLCD.print(seconds, 340, 130);
 }
 
 void incrementNumber() {
   if (indexOfCurrentChangingNumber == 0) {
     newAzimuth.degrees++;
+    if (newAzimuth.degrees >= 360) newAzimuth.degrees = 0;
   } else if (indexOfCurrentChangingNumber == 1) {
     newAzimuth.minutes++;
+    if (newAzimuth.minutes >= 60) {
+      newAzimuth.minutes = 0;
+      newAzimuth.degrees++;
+      if (newAzimuth.degrees >= 360) newAzimuth.degrees = 0;
+    }
   } else if (indexOfCurrentChangingNumber == 2) {
     newAzimuth.seconds++;
+    if (newAzimuth.seconds >= 60) {
+      newAzimuth.seconds = 0;
+      newAzimuth.minutes++;
+      if (newAzimuth.minutes >= 60) {
+        newAzimuth.minutes = 0;
+        newAzimuth.degrees++;
+        if (newAzimuth.degrees >= 360) newAzimuth.degrees = 0;
+      }
+    }
   }
   displayNumbers();
 }
@@ -146,10 +167,25 @@ void incrementNumber() {
 void decrementNumber() {
   if (indexOfCurrentChangingNumber == 0) {
     newAzimuth.degrees--;
+    if (newAzimuth.degrees < 0) newAzimuth.degrees = 359;
   } else if (indexOfCurrentChangingNumber == 1) {
     newAzimuth.minutes--;
+    if (newAzimuth.minutes < 0) { 
+      newAzimuth.minutes = 59;
+      newAzimuth.degrees--;
+      if (newAzimuth.degrees < 0) newAzimuth.degrees = 359;
+    }
   } else if (indexOfCurrentChangingNumber == 2) {
     newAzimuth.seconds--;
+    if (newAzimuth.seconds < 0) { 
+      newAzimuth.seconds = 59;
+      newAzimuth.minutes--;
+      if (newAzimuth.minutes < 0) {
+        newAzimuth.minutes = 59;
+        newAzimuth.degrees--;
+        if (newAzimuth.degrees < 0) newAzimuth.degrees = 359;
+      }
+    }
   }
   displayNumbers();
 }

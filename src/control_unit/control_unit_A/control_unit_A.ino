@@ -76,7 +76,7 @@ void loop() {
 
   AzimuthElevation* data = readFromInertialUnit();
     if (data) {
-      if (send == 0 || send%10 == 0) {
+      if (send == 0 || send%100 == 0) {
         DegreesMinutesSeconds azimuth = convertToDMS(data->azimuth, false);
         DegreesMinutesSeconds elevation = convertToDMS(data->elevation, true);
         char ae[20];
@@ -98,10 +98,6 @@ void loop() {
     azimuthDMS.minutes = azimuthStr.substring(firstSpace + 1, secondSpace).toInt();
     azimuthDMS.seconds = azimuthStr.substring(secondSpace + 1).toInt();
     double azimuth = convertToDecimalDegrees(azimuthDMS);
-    Serial.println("Posielam");
-    Serial.println(azimuthStr);
-    Serial.println(azimuthDMS.degrees);
-    Serial.println(azimuth);
     while (restartInertialUnit(azimuth) != 0);
     send = 99;
   }

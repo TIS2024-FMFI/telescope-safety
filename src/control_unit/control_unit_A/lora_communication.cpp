@@ -47,7 +47,7 @@ AzimuthElevation* readFromInertialUnit() {
     }
 
     // Výpis prijatých údajov
-    Serial.println("Received data from inertial unit: " + incoming);
+    //Serial.println("Received data from inertial unit: " + incoming);
 
     // Očakávaný formát: "Azimuth: <value>, Elevation: <value>"
     int azimuthIndex = incoming.indexOf("Azimuth: ");

@@ -43,31 +43,38 @@ int writeHeaderIfNeeded(String filename, const char *header) {
   return 0;
 }
 
+unsigned long lastLog = 0;
+const int secendsToMilis = 1000;
+
 // Funkcia zapisuje AzimuthElevation do log súboru
 // @param azimuthElevation - ukazovateľ na štruktúru AzimuthElevation
 // @return 0, ak úspech, -1, ak chyba
 int writeAEtoLog(AzimuthElevation *azimuthElevation) {
-  Serial.println("Zapisujem log.");
-  String logFileName = logFilePathPrefix;
-  logFileName.concat(dateToString(getRealTime()));
-  logFileName.concat(".csv");
-  if (writeHeaderIfNeeded(logFileName, "Timestamp;Azimuth;Elevation;") != 0) {
-    return -1;
+  if (settings.logging && millis() - lastLog >= (settings.log_frequency * secendsToMilis)){
+    lastLog = millis();
+
+    Serial.println("Zapisujem log.");
+    String logFileName = logFilePathPrefix;
+    logFileName.concat(dateToString(getRealTime()));
+    logFileName.concat(".csv");
+    if (writeHeaderIfNeeded(logFileName, "Timestamp;Azimuth;Elevation;") != 0) {
+      return -1;
+    }
+
+    File myFile = SD.open(logFileName, FILE_WRITE);
+    if (!myFile) {
+      return -1;
+    }
+
+    myFile.print(timeToString(getRealTime()));
+    myFile.print(";");
+    myFile.print(azimuthElevation->azimuth, 2);
+    myFile.print(";");
+    myFile.print(azimuthElevation->elevation, 2);
+    myFile.println(";");
+
+    myFile.close();
   }
-
-  File myFile = SD.open(logFileName, FILE_WRITE);
-  if (!myFile) {
-    return -1;
-  }
-
-  myFile.print(timeToString(getRealTime()));
-  myFile.print(";");
-  myFile.print(azimuthElevation->azimuth, 2);
-  myFile.print(";");
-  myFile.print(azimuthElevation->elevation, 2);
-  myFile.println(";");
-
-  myFile.close();
   return 0;
 }
 
@@ -221,4 +228,4 @@ int loadSettings(){
     return -1;
   }
   return 0;
-}
+}

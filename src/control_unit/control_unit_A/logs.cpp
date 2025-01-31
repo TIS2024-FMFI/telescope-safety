@@ -50,8 +50,8 @@ const int secendsToMilis = 1000;
 // @param azimuthElevation - ukazovateľ na štruktúru AzimuthElevation
 // @return 0, ak úspech, -1, ak chyba
 int writeAEtoLog(AzimuthElevation *azimuthElevation) {
-  if (settings.logging && milis() - lastLog >= (setting.log_frequency * secendsToMilis)){
-    lastLog = milis();
+  if (settings.logging && millis() - lastLog >= (settings.log_frequency * secendsToMilis)){
+    lastLog = millis();
 
     Serial.println("Zapisujem log.");
     String logFileName = logFilePathPrefix;

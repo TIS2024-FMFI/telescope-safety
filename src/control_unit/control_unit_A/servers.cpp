@@ -24,12 +24,13 @@ int setupHTTPServer(){
   return 0;
 }
 
-int lastUpdate = 0;
+int lastUpdateClients = 0;
 const int secendsToMilis = 1000;
 
 
 int sendToClients(AzimuthElevation* azimuthElevation) {
-  if (websocketClients.size() && millis() - lastUpdate >= (settings.update_frequency * secendsToMilis)){
+  if (websocketClients.size() && millis() - lastUpdateClients >= (settings.update_frequency * secendsToMilis)){
+    lastUpdateClients = millis();
     String message;
     message.reserve(45);
     message.concat("{\"azimuth\":");

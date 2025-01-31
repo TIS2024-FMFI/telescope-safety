@@ -77,11 +77,7 @@ void loop() {
   AzimuthElevation* data = readFromInertialUnit();
     if (data) {
       if (send == 0 || send%100 == 0) {
-        DegreesMinutesSeconds azimuth = convertToDMS(data->azimuth, false);
-        DegreesMinutesSeconds elevation = convertToDMS(data->elevation, true);
-        char ae[20];
-        sprintf(ae, "%d %d %d\n%d %d %d\n", azimuth.degrees, azimuth.minutes, azimuth.seconds, elevation.degrees, elevation.minutes, elevation.seconds);
-        toNano.write(ae);
+        displayAE(data);
         send = 0;
       }
       send++;
@@ -133,4 +129,12 @@ void setupEthernet(){
 }
 
 void setupSettings(){
+}
+
+void displayAE(AzimuthElevation* ae) {
+  DegreesMinutesSeconds azimuth = convertToDMS(ae->azimuth, false);
+  DegreesMinutesSeconds elevation = convertToDMS(ae->elevation, true);
+  char aeSend[20];
+  sprintf(aeSend, "%d %d %d\n%d %d %d\n", azimuth.degrees, azimuth.minutes, azimuth.seconds, elevation.degrees, elevation.minutes, elevation.seconds);
+  toNano.write(aeSend);
 }

@@ -98,7 +98,7 @@ void loop() {
     azimuthDMS.minutes = azimuthStr.substring(firstSpace + 1, secondSpace).toInt();
     azimuthDMS.seconds = azimuthStr.substring(secondSpace + 1).toInt();
     double azimuth = convertToDecimalDegrees(azimuthDMS);
-    while (restartInertialUnit(azimuth) != 0);
+    restartInertialUnit(azimuth);
     send = 99;
   }
 

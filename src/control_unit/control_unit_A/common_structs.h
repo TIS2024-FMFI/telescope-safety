@@ -8,6 +8,12 @@ struct AzimuthElevation {
     double elevation;
 };
 
+struct DegreesMinutesSeconds {
+    int degrees;
+    int minutes;
+    int seconds;
+};
+
 // Zakázaná zóna (polygón)
 using ForbiddenZone = std::vector<AzimuthElevation>;
 

@@ -106,11 +106,11 @@ int enableMotors(){
 
 void setupAlarm(){
   pinMode(ALARM, OUTPUT);
-  digitalWrite(RELE, 1);
+  digitalWrite(ALARM, 1);
 }
 
 int stopAlarm(){
-  if (settings.rele){
+  if (settings.alarm){
     digitalWrite(ALARM, 0);
     return 0;
   }

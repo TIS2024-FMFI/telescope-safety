@@ -47,6 +47,8 @@ void setup() {
   Serial.println(timeToString(getRealTime()));
   #endif
 
+  setupAlarm();
+  setupMotors();
 }
 
 long lastSendTime = 0;        // last send time

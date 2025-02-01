@@ -109,15 +109,15 @@ void setupAlarm(){
   digitalWrite(ALARM, 1);
 }
 
-int stopAlarm(){
+int startAlarm(){
   if (settings.alarm){
-    digitalWrite(ALARM, 0);
+    digitalWrite(ALARM, 1);
     return 0;
   }
   return 1;
 }
 
-int startAlarm(){
-  digitalWrite(ALARM, 1);
+int stopAlarm(){
+  digitalWrite(ALARM, 0);
   return 0;
 }

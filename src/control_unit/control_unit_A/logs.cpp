@@ -53,7 +53,6 @@ int writeAEtoLog(AzimuthElevation *azimuthElevation) {
   if (settings.logging && millis() - lastLog >= (settings.log_frequency * secendsToMilis)){
     lastLog = millis();
 
-    Serial.println("Zapisujem log.");
     String logFileName = logFilePathPrefix;
     logFileName.concat(dateToString(getRealTime()));
     logFileName.concat(".csv");

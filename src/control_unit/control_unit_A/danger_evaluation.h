@@ -37,3 +37,5 @@ int enableMotors(); //to be done
 int reenable(); //to be done
 
 void setupMotors();
+
+void setupAlarm();

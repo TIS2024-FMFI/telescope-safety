@@ -12,7 +12,7 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 
 Settings settings;
 
-#define SERVERS 1
+#define SERVERS 0
 #define DISPLAY_A 1
 #define INERCIAL 1
 

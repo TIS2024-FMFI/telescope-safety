@@ -1,6 +1,7 @@
 #include "danger_evaluation.h"
 
 const int RELE = 27;
+const int ALARM = 28;
 
 int enteredForbiddenZone(AzimuthElevation* azimutElevation){
     //writeAlarmToLog(azimutElevation);
@@ -100,5 +101,23 @@ int disableMotors(){
 
 int enableMotors(){
   digitalWrite(RELE, 1);
+  return 0;
+}
+
+void setupAlarm(){
+  pinMode(ALARM, OUTPUT);
+  digitalWrite(RELE, 1);
+}
+
+int stopAlarm(){
+  if (settings.rele){
+    digitalWrite(ALARM, 0);
+    return 0;
+  }
+  return 1;
+}
+
+int startAlarm(){
+  digitalWrite(ALARM, 1);
   return 0;
 }

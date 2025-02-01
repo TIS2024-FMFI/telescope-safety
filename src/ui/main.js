@@ -55,7 +55,7 @@ function retry() {
         }
         catch (e) { }
     }
-    setTimeout(retry, 5000);
+    setTimeout(retry, 10000);   // 10 seconds
 }
 
 retry();

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Konfigurácia</title>
     <link rel="stylesheet" href="styles.css">
-    <!--<script src="scripts.js" defer></script> -->
+    <script src="config.js" defer></script>
 </head>
 <body>
     <header>
@@ -16,27 +16,27 @@
             <button type="button" onclick="window.location.href='index.html'" class="back-button">Späť na hlavnú stránku</button>
         </div>
 
-        <form method="POST" onsubmit="confirmSubmit(event)">
+        <form method="POST">
             <section>
                 <div class="center">
-                    <button type="submit" id="shutdown-button" class="large-button" name="restart" value="restart">Reštartovať systém</button>
+                    <button type="button" id="restart-button" class="large-button" name="restart" value="restart">Reštartovať systém</button>
                 </div>
             </section>
         </form>
 
-        <form method="POST" onsubmit="confirmSubmit(event)">
+        <form method="POST">
             <section class="settings">
                 <h2>Zakázané polohy</h2>
                 <textarea id="forbidden-positions" name="config_zones_field" rows="5"></textarea>
                 <div class="center">
-                    <button type="submit" class="small-button" name="config_zones" value="config_zones">Uložiť zakázané oblasti</button>
+                    <button id="zones-settings" type="button" class="small-button" name="config_zones" value="config_zones">Uložiť zakázané oblasti</button>
                 </div>
             </section>
         </form>
 
         <hr class="divider">
 
-        <form method="POST" onsubmit="confirmSubmit(event)">
+        <form method="POST">
             <section class="settings">
                 <h2>Levely alarmu</h2>
                 <div class="checkbox-group">
@@ -60,14 +60,14 @@
                 </label>
 
                 <div class="center">
-                    <button type="submit" class="small-button" name="config_alarm" value="config_alarm">Uložiť alarmy a intervaly</button>
+                    <button id="alarm-settings" type="button" class="small-button" name="config_alarm" value="config_alarm">Uložiť alarmy a intervaly</button>
                 </div>
             </section>
         </form>
 
         <hr class="divider">
 
-        <form method="POST" onsubmit="confirmSubmit(event)">
+        <form method="POST">
             <section class="downloads">
                 <h2>Stiahnutie logov</h2>
                 <div>
@@ -78,7 +78,7 @@
                     <input type="date" id="log-to" name="logs_to_date">
                 </div>
                 <div class="center">
-                    <button type="submit" id="download-logs" class="small-button" name="download_logs" value="download_logs">Stiahnuť logy</button>
+                    <button type="button" id="download-logs" class="small-button" name="download_logs" value="download_logs">Stiahnuť logy</button>
                 </div>
             </section>
         </form>
@@ -89,7 +89,7 @@
             <section class="downloads">
                 <h2>Stiahnutie udalostí</h2>
                 <div class="center">
-                    <button type="submit" id="download-events" class="small-button" name="download_events" value="download_events">Stiahnuť udalosti</button>
+                    <button type="button" id="download-events" class="small-button" name="download_events" value="download_events">Stiahnuť udalosti</button>
                 </div>
             </section>
         </form>

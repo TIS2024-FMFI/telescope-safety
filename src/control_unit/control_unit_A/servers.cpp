@@ -24,48 +24,46 @@ int setupHTTPServer(){
   return 0;
 }
 
+int lastUpdateClients = 0;
+const int secendsToMilis = 1000;
+
 
 int sendToClients(AzimuthElevation* azimuthElevation) {
-  auto start = millis();
-  String message;
-  message.reserve(45);
-  message.concat("{\"azimuth\":");
-  message.concat(String(azimuthElevation->azimuth, 2));
-  message.concat(",\"elevation\":");
-  message.concat(String(azimuthElevation->elevation, 2));
-  message.concat("}");
+  if (websocketClients.size() && millis() - lastUpdateClients >= (settings.update_frequency * secendsToMilis)){
+    lastUpdateClients = millis();
+    String message;
+    message.reserve(45);
+    message.concat("{\"azimuth\":");
+    message.concat(String(azimuthElevation->azimuth, 2));
+    message.concat(",\"elevation\":");
+    message.concat(String(azimuthElevation->elevation, 2));
+    message.concat("}");
 
-  size_t payloadLength = message.length();
+    size_t payloadLength = message.length();
 
-  std::vector<uint8_t> frame;
-  frame.push_back(0x81);
+    std::vector<uint8_t> frame;
+    frame.push_back(0x81);
 
-  if (payloadLength <= 125) {
-    frame.push_back(payloadLength);
-  } else if (payloadLength <= 65535) {
-    frame.push_back(126);
-    frame.push_back((payloadLength >> 8) & 0xFF);
-    frame.push_back(payloadLength & 0xFF);
-  } else {
-    frame.push_back(127);
-    for (int i = 7; i >= 0; --i) {
-      frame.push_back((payloadLength >> (i * 8)) & 0xFF);
+    if (payloadLength <= 125) {
+      frame.push_back(payloadLength);
+    } else if (payloadLength <= 65535) {
+      frame.push_back(126);
+      frame.push_back((payloadLength >> 8) & 0xFF);
+      frame.push_back(payloadLength & 0xFF);
+    } else {
+      frame.push_back(127);
+      for (int i = 7; i >= 0; --i) {
+        frame.push_back((payloadLength >> (i * 8)) & 0xFF);
+      }
+    }
+    frame.insert(frame.end(), message.begin(), message.end());
+
+    for (WiFiClient client : websocketClients) {
+      if (client.connected()) {
+        client.write(frame.data(), frame.size());
+      }
     }
   }
-  frame.insert(frame.end(), message.begin(), message.end());
-  auto end = millis();
-  Serial.printf("Generating WS message took: %lu\n", end-start);
-
-  start = millis();
-  for (WiFiClient client : websocketClients) {
-    if (client.connected()) {
-      client.write(frame.data(), frame.size());
-    }
-  }
-  end = millis();
-
-  Serial.printf("Sending WS message took: %lu\n", end-start);
-
   return 0;
 }
 

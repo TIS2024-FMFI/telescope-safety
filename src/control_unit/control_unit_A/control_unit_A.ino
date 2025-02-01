@@ -19,6 +19,7 @@ Settings settings;
 // Functions
 void setupEthernet();
 void setupSettings();
+void displayAE(AzimuthElevation* ae);
 
 
 void setup() {
@@ -133,10 +134,16 @@ void setupSettings(){
   loadSettings();
 }
 
+int lastUpdateDisplay = 0;
+const int secendsToMilis = 1000;
+
 void displayAE(AzimuthElevation* ae) {
-  DegreesMinutesSeconds azimuth = convertToDMS(ae->azimuth, false);
-  DegreesMinutesSeconds elevation = convertToDMS(ae->elevation, true);
-  char aeSend[20];
-  sprintf(aeSend, "%d %d %d\n%d %d %d\n", azimuth.degrees, azimuth.minutes, azimuth.seconds, elevation.degrees, elevation.minutes, elevation.seconds);
-  toNano.write(aeSend);
+  if ((millis() - lastUpdateDisplay) >= (settings.update_frequency * secendsToMilis)){
+    lastUpdateDisplay = millis();
+    DegreesMinutesSeconds azimuth = convertToDMS(ae->azimuth, false);
+    DegreesMinutesSeconds elevation = convertToDMS(ae->elevation, true);
+    char aeSend[20];
+    sprintf(aeSend, "%d %d %d\n%d %d %d\n", azimuth.degrees, azimuth.minutes, azimuth.seconds, elevation.degrees, elevation.minutes, elevation.seconds);
+    toNano.write(aeSend);
+  }
 }

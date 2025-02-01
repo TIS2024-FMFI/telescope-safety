@@ -9,7 +9,7 @@ const int _SCK = 6;
 
 const char *logConfigFilePath = "/logs/events/Log_configuration.csv";
 const char *logCollisionFilePath = "/logs/events/Log_collisions.csv";
-const char *logFilePathPrefix = "/logs/Log-";
+const char *logFilePathPrefix = "/logs/Log_";
 const char* ConfigFilePath = "/conf/AlarmAndIntervalsConfig.txt";
 const char* forbiddenConfigFilePath = "/conf/zones.txt";
 
@@ -228,4 +228,4 @@ int loadSettings(){
     return -1;
   }
   return 0;
-}
+}

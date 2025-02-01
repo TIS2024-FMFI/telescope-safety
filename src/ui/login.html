@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overenie hesla</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="scripts.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Overenie hesla</h1>
+    </header>
+    <main>
+        <section class="position">
+            <form onsubmit="checkPassword(event)" class="settings">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <label for="password" style="margin-bottom: 0.5rem;">Zadajte heslo:</label>
+                    <input type="password" id="password" name="password" required style="margin-bottom: 1rem;">
+                </div>
+                <div class="center">
+                    <button type="submit" class="small-button">Potvrdiť</button>
+                </div>
+            </form>
+            <p id="error-message" style="color: red; margin-top: 1rem; text-align: center;"></p>
+        </section>
+    </main>
+</body>
+</html>

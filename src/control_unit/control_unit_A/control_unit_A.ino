@@ -12,7 +12,7 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 
 Settings settings;
 
-#define SERVERS 1
+#define SERVERS 0
 #define DISPLAY_A 1
 #define INERCIAL 1
 
@@ -47,6 +47,8 @@ void setup() {
   Serial.println(timeToString(getRealTime()));
   #endif
 
+  setupAlarm();
+  setupMotors();
 }
 
 long lastSendTime = 0;        // last send time

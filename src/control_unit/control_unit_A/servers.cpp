@@ -15,7 +15,7 @@ int setupHTTPServer(){
   server.on("/config", HTTP_GET, handleFormPage);
   server.on("/config", HTTP_POST, handleFormPOST);
   server.on("/styles.css", handleCSS);
-  server.on("/form.js", handleJSForm);
+  server.on("/config.js", handleJSForm);
   server.on("/main.js", handleJSMain);
   server.on("/download", handleFileDownload);
   server.onNotFound(handleNotFound);
@@ -144,7 +144,7 @@ String extractKey(WiFiClient& client){
       char c = client.read();
       request.concat(c);
       if (keyExtraction && request.endsWith("\r\n")){
-        return request.substring(request.lastIndexOf(" "), request.lastIndexOf("\r"));
+        return request.substring(request.lastIndexOf(" ") + 1, request.lastIndexOf("\r"));
       }
       else if (request.endsWith("Sec-WebSocket-Key: ")){
         keyExtraction = true;

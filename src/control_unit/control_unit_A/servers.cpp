@@ -3,6 +3,9 @@
 #include <SimpleHOTP.h>
 #include <ESP8266mDNS.h>
 
+#include <W55RP20lwIP.h> // Include library for the right board
+extern Wiznet55rp20lwIP eth;
+
 std::list<WiFiClient> websocketClients;
 WiFiServer webSocket(81);
 String GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";

@@ -120,7 +120,7 @@ void setupEthernet(){
   while (eth.status() != WL_CONNECTED) {
     if (lastTry - millis() >= timeOut){
       Serial.println("Connection time out");
-      break
+      break;
     }
     delay(100);
     Serial.print(".");

@@ -29,7 +29,9 @@ const int secendsToMilis = 1000;
 
 
 int sendToClients(AzimuthElevation* azimuthElevation) {
-  if (websocketClients.size() && millis() - lastUpdateClients >= (settings.update_frequency * secendsToMilis)){
+  if (eth.status() == WL_CONNECTED &&   //probably will be connected, when clients are connected but to be sure
+      websocketClients.size() &&
+      millis() - lastUpdateClients >= (settings.update_frequency * secendsToMilis)){
     lastUpdateClients = millis();
     String message;
     message.reserve(45);

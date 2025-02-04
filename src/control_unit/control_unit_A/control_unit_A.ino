@@ -51,9 +51,6 @@ void setup() {
   setupMotors();
 }
 
-long lastSendTime = 0;        // last send time
-int interval = 20000;          // interval between sends
-boolean reset_flag=true;
 int send = 0;
 
 
@@ -62,22 +59,19 @@ void loop() {
   loopButtons();
   #endif
   #if SERVERS
-  server.handleClient();
-  MDNS.update();
-  websocketLoop();
-  timeClient.update();
-  #endif
-  #if INERCIAL
-  // if (!reset_flag || millis() - lastSendTime > interval) {
-  //   if (restartInertialUnit(132.0) != 0){
-  //     reset_flag=false;
-  //   }
-  //   else{
-  //     lastSendTime = millis();            // timestamp the message
-  //     reset_flag=true;
-  //   }
+  if (eth.status() == WL_CONNECTED){
+    server.handleClient();
+    MDNS.update();
+    websocketLoop();
+    timeClient.update();
+  }       // neets to be tested, if the connection can be established automaticaly or has to be call setup again
+  // else {
+  //   setupEthernet();
   // }
+  #endif
 
+
+  #if INERCIAL
   AzimuthElevation* data = readFromInertialUnit();
     if (data) {
       if (send == 0 || send%100 == 0) {
@@ -85,7 +79,6 @@ void loop() {
         send = 0;
       }
       send++;
-        //Serial.println(F("Processed incoming message."));
     }
   #endif
 
@@ -109,6 +102,10 @@ void loop() {
 
 
 // Functions
+
+
+int timeOut = 400;
+
 void setupEthernet(){
   Serial.println("Starting ETH");
   // Start the Ethernet port
@@ -118,16 +115,22 @@ void setupEthernet(){
       delay(1000);
     }
   }
+  unsigned long lastTry = millis();
 
   // Wait for connection
-  while (!eth.connected()) {
-    Serial.print("_");
-    delay(500);
-  }
   while (eth.status() != WL_CONNECTED) {
-    delay(500);
+    if (lastTry - millis() >= timeOut){
+      Serial.println("Connection time out");
+      break
+    }
+    delay(100);
     Serial.print(".");
   }
+
+  // while (!eth.connected()) {
+  //   Serial.print("_");
+  //   delay(100);
+  // }
   Serial.print("IP address: ");
   Serial.println(eth.localIP());
 }

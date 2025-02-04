@@ -32,8 +32,8 @@ int loadConf(const char* filePath);
 
 
 void setupStaticFiles(){
-  loadConf(confPageFilePath);
   mainHTML = loadFile(mainPageFilePath);
+  loadConf(confPageFilePath);
   stylesCSS = loadFile(stylesCSSFilePath);
   mainJS = loadFile(mainJSFilePath);
   confJS = loadFile(confJSFilePath);
@@ -42,14 +42,20 @@ void setupStaticFiles(){
 int loadConf(const char* filePath){
   File file = SD.open(filePath, FILE_READ);
   if (!file) {
+    Serial.println("umrel som");
     return -1; 
   }
   
-
+  Serial.println("ide sa na to!");
   //load until zone_field
   confHTML1.reserve(100);
   while (1){
-    confHTML1.concat(file.read());
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML1.concat(c);
     if (confHTML1.endsWith(ZONE_CONFIG_FIELD)){
       break;
     }
@@ -60,57 +66,83 @@ int loadConf(const char* filePath){
   // load intil alarm
   confHTML2.reserve(100);
   while (1){
-    confHTML2.concat(file.read());
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML2.concat(c);
     if (confHTML2.endsWith(ALARM_CHECKBOX)){
       break;
     }
   }
   confHTML2.concat(file.readStringUntil(' '));
-  confHTML1.concat(" ");
+  confHTML2.concat(" ");
 
   // load intil RELE
   confHTML3.reserve(100);
   while (1){
-    confHTML3.concat(file.read());
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML3.concat(c);
     if (confHTML3.endsWith(MOTORS_CHECKBOX)){
       break;
     }
   }
   confHTML3.concat(file.readStringUntil(' '));
-  confHTML1.concat(" ");
+  confHTML3.concat(" ");
 
 
   confHTML4.reserve(100);
   while (1){
-    confHTML4.concat(file.read());
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML4.concat(c);
     if (confHTML4.endsWith(UPDATE_INTERVAL_FIELD)){
       break;
     }
   }
   confHTML4.concat(file.readStringUntil(' '));
-  confHTML1.concat(" ");
+  confHTML4.concat(" ");
 
   confHTML5.reserve(100);
   while (1){
-    confHTML5.concat(file.read());
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML5.concat(c);
     if (confHTML5.endsWith(LOG_INTERVAL_FIELD)){
       break;
     }
   }
   confHTML5.concat(file.readStringUntil(' '));
-  confHTML1.concat(" ");
+  confHTML5.concat(" ");
 
   confHTML6.reserve(100);
   while (1){
-    confHTML6.concat(file.read());
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML6.concat(c);
     if (confHTML6.endsWith(TURN_OFF_LOGS_CHECKBOX)){
       break;
     }
   }
   confHTML6.concat(file.readStringUntil(' '));
- confHTML1.concat(" ");
+  confHTML6.concat(" ");
 
-  confHTML7 = file.streamRemaining();
+  confHTML7 = file.readString();
+
   return 0;
 }
 
@@ -154,6 +186,7 @@ void handleFileDownload() {
 
 
 void handleFormPOST() {
+  Serial.println("I got POST");
   #if DEBUG
   String message = "";
   for (uint8_t i = 0; i < server.args(); i++) {
@@ -163,26 +196,35 @@ void handleFormPOST() {
   #endif
 
   const char *clientIP = server.client().remoteIP().toString().c_str();
-
-  if (server.arg(ZONE_CONFIG_BUTTON)){
-    const char* newZones = server.arg(ZONE_CONFIG_FIELD).c_str();
-    if (setUpZones(newZones) && writeNewForbiddenConfig(newZones)){
+  //Serial.print("Check: ");
+  //Serial.println(server.arg(ZONE_CONFIG_BUTTON));
+  if (server.arg(ZONE_CONFIG_BUTTON) != ""){
+    Serial.println("POST zones");
+    String xx = server.arg(ZONE_CONFIG_FIELD);
+    xx.replace("\r\n","\n");
+    const char* newZones = xx.c_str();
+    if (setUpZones(newZones) == 0 && writeNewForbiddenConfig(newZones) == 0){
+      Serial.println("Written zones");
       writeChangeToLog(FORBIDDEN_ZONE_CHANGED, clientIP);
     }
   }
-  else if (server.arg(ALARM_CONFIG_BUTTON)){
+  else if (server.arg(ALARM_CONFIG_BUTTON) != ""){
+    Serial.println("POST alarm");
     settings.update_frequency = server.arg(UPDATE_INTERVAL_FIELD).toInt();
     settings.log_frequency = server.arg(LOG_INTERVAL_FIELD).toInt();
     settings.alarm = bool(server.arg(ALARM_CHECKBOX).toInt());
     settings.rele = bool(server.arg(MOTORS_CHECKBOX).toInt());
     settings.logging = bool(server.arg(TURN_OFF_LOGS_CHECKBOX).toInt());
-    if (writeConfigAlarmAndIntervals(settings)){
+    if (writeConfigAlarmAndIntervals(settings) == 0){
+      Serial.println("Written alarm");
       writeChangeToLog(LOG_FREQUENCY_AND_ALARM_TYPE_CHANGED, clientIP);
     }
 
   }
-  else if (server.arg(RESTART_BUTTON)){
-    if (restart()){
+  else if (server.arg(RESTART_BUTTON) != ""){
+    Serial.println("POST restart");
+    if (restart() == 0){
+      Serial.println("restarting...");
       writeChangeToLog(RESTART, clientIP);
     }
   }

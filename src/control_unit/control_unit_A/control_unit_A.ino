@@ -12,7 +12,7 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 
 Settings settings;
 
-#define SERVERS 0
+#define SERVERS 1
 #define DISPLAY_A 1
 #define INERCIAL 1
 
@@ -53,8 +53,7 @@ void setup() {
 
 int send = 0;
 
-
-void loop() {
+void loop(){
   #if DISPLAY_A
   loopButtons();
   #endif
@@ -137,6 +136,7 @@ void setupEthernet(){
 
 void setupSettings(){
   loadSettings();
+  Serial.println("jupi2");
 }
 
 int lastUpdateDisplay = 0;

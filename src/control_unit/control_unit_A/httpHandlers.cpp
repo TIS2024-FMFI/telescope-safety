@@ -6,6 +6,7 @@
 #include "lora_communication.h"
 
 #define DEBUG 1
+#define PRELOAD 1
 
 const char *confPageFilePath = "/www/config.html";
 const char *confJSFilePath = "/www/config.js";
@@ -13,6 +14,8 @@ const char *mainPageFilePath = "/www/index.html";
 const char *mainJSFilePath = "/www/main.js";
 const char *stylesCSSFilePath = "/www/styles.css";
 
+
+#if PRELOAD
 
 String mainHTML;
 String mainJS;
@@ -26,19 +29,13 @@ String confHTML5;
 String confHTML6;
 String confHTML7;
 
+#endif
+
 
 int restart();
-int loadConf(const char* filePath);
 
 
-void setupStaticFiles(){
-  mainHTML = loadFile(mainPageFilePath);
-  loadConf(confPageFilePath);
-  stylesCSS = loadFile(stylesCSSFilePath);
-  mainJS = loadFile(mainJSFilePath);
-  confJS = loadFile(confJSFilePath);
-}
-
+#if PRELOAD
 int loadConf(const char* filePath){
   File file = SD.open(filePath, FILE_READ);
   if (!file) {
@@ -146,6 +143,140 @@ int loadConf(const char* filePath){
   return 0;
 }
 
+#else
+
+String loadConf(const char* filePath){
+  String response;
+  response.reserve(3950);
+  File file = SD.open(filePath, FILE_READ);
+  if (!file) {
+    Serial.println("umrel som");
+    return ""; 
+  }
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(ZONE_CONFIG_FIELD)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil('>'));  
+  response.concat(">");
+  char* zones = loadFile(forbiddenConfigFilePath);
+  response.concat(zones);
+  free(zones);
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(ALARM_CHECKBOX)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil(' '));
+  response.concat(" ");
+
+  if (settings.alarm){
+    response.concat("checked ");
+  }
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(MOTORS_CHECKBOX)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil(' '));
+  response.concat(" ");
+
+  if (settings.rele){
+    response.concat("checked ");
+  }
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(UPDATE_INTERVAL_FIELD)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil(' '));
+  response.concat(" ");
+
+  response.concat("value=\"");
+  response.concat(settings.update_frequency);
+  response.concat("\" ");  
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(LOG_INTERVAL_FIELD)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil(' '));
+  response.concat(" ");
+
+  response.concat("value=\"");
+  response.concat(settings.log_frequency);
+  response.concat("\" ");
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(TURN_OFF_LOGS_CHECKBOX)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil(' '));
+  response.concat(" ");
+
+  if (settings.logging){
+    response.concat("checked ");
+  }
+
+  response.concat(file.readString());
+
+  return response;
+}
+
+#endif
+
+void setupStaticFiles(){
+  #if PRELOAD
+  mainHTML = loadFile(mainPageFilePath);
+  stylesCSS = loadFile(stylesCSSFilePath);
+  mainJS = loadFile(mainJSFilePath);
+  confJS = loadFile(confJSFilePath);
+  loadConf(confPageFilePath);
+  #endif
+}
+
 
 // Functions
 void handleNotFound() {
@@ -234,6 +365,7 @@ void handleFormPOST() {
 
 
 void handleFormPage(){
+  #if PRELOAD
   String response = confHTML1;
   // If this takes to much time we should keep somewhere saved the zones String config
   response.concat(loadFile(forbiddenConfigFilePath));
@@ -258,23 +390,51 @@ void handleFormPage(){
     response.concat("checked ");
   }
   response.concat(confHTML7);
+  #else
+  String response = loadConf(confPageFilePath);
+  #endif
   server.send(200, "text/html", response);
 }
 
 void handleCSS(){
+  #if PRELOAD
   server.send(200, "text/css", stylesCSS);
+  #else
+  char* response = loadFile(stylesCSSFilePath);
+  server.send(200, "text/css", response);
+  free(response);
+  #endif
 }
 
 void handleMainPage() {
+  #if PRELOAD
   server.send(200, "text/html", mainHTML);
+  #else
+  char* response = loadFile(mainPageFilePath);
+  server.send(200, "text/html", response);
+  free(response);
+  #endif
 }
 
 void handleJSMain(){
+  #if PRELOAD
   server.send(200, "text/javascript", mainJS);
+  #else
+  char* response = loadFile(mainJSFilePath);
+  server.send(200, "text/javascript", response);
+  free(response);
+  #endif
 }
 
 void handleJSForm(){
+  #if PRELOAD
   server.send(200, "text/javascript", confJS);
+  #else
+  char* response = loadFile(confJSFilePath);
+  server.send(200, "text/javascript", response);
+  free(response);
+  #endif
+  
 }
 
 // Restarts system

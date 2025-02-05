@@ -5,6 +5,9 @@
 #include <SPI.h>
 #include <LoRa.h>
 #include "common_structs.h"
+#include "danger_evaluation.h"
+#include "servers.h"
+#include "logs.h"
 
 // Konfigurácia LoRa
 #define LORA_CS_PIN 13
@@ -25,5 +28,9 @@ AzimuthElevation* readFromInertialUnit();
 // @param azimuth value indicates calibration of azimuth on inertial unit
   // if its -1 it stays the same and sensor just resets
 int restartInertialUnit(double azimuth = -1);
+
+void displayAE(AzimuthElevation* ae);
+
+void doOperations();
 
 #endif // LORA_COMMUNICATION_H

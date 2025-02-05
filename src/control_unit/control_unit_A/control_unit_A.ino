@@ -50,9 +50,8 @@ void setup() {
   setupMotors();
 }
 
-int send = 0;
 
-void loop(){
+void loop() {
   #if DISPLAY_A
   loopButtons();
   #endif
@@ -65,16 +64,8 @@ void loop(){
   }
   #endif
 
+  doOperations();
 
-  #if INERCIAL
-  AzimuthElevation* data = readFromInertialUnit();
-    if (data) {
-      if (send == 0 || send%100 == 0) {
-        displayAE(data);
-        send = 0;
-      }
-      send++;
-    }
   #endif
 
   if (toNano.available()) {
@@ -87,7 +78,6 @@ void loop(){
     azimuthDMS.seconds = azimuthStr.substring(secondSpace + 1).toInt();
     double azimuth = convertToDecimalDegrees(azimuthDMS);
     restartInertialUnit(azimuth);
-    send = 99;
   }
 }
 
@@ -126,18 +116,4 @@ void setupEthernet(){
 void setupSettings(){
   loadSettings();
   Serial.println("jupi2");
-}
-
-int lastUpdateDisplay = 0;
-const int secendsToMilis = 1000;
-
-void displayAE(AzimuthElevation* ae) {
-  if ((millis() - lastUpdateDisplay) >= (settings.update_frequency * secendsToMilis)){
-    lastUpdateDisplay = millis();
-    DegreesMinutesSeconds azimuth = convertToDMS(ae->azimuth, false);
-    DegreesMinutesSeconds elevation = convertToDMS(ae->elevation, true);
-    char aeSend[20];
-    sprintf(aeSend, "%d %d %d\n%d %d %d\n", azimuth.degrees, azimuth.minutes, azimuth.seconds, elevation.degrees, elevation.minutes, elevation.seconds);
-    toNano.write(aeSend);
-  }
 }

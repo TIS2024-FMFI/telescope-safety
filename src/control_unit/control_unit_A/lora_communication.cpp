@@ -121,3 +121,31 @@ int restartInertialUnit(double azimuth) {
     Serial.println("Acknowledgment not received.");
     return -1; // Failure after retries
 }
+
+int lastUpdateDisplay = 0;
+const int secendsToMilis = 1000;
+
+void displayAE(AzimuthElevation* ae) {
+  if ((millis() - lastUpdateDisplay) >= (settings.update_frequency * secendsToMilis)){
+    lastUpdateDisplay = millis();
+    DegreesMinutesSeconds azimuth = convertToDMS(ae->azimuth, false);
+    DegreesMinutesSeconds elevation = convertToDMS(ae->elevation, true);
+    char aeSend[20];
+    sprintf(aeSend, "%d %d %d\n%d %d %d\n", azimuth.degrees, azimuth.minutes, azimuth.seconds, elevation.degrees, elevation.minutes, elevation.seconds);
+    toNano.write(aeSend);
+  }
+}
+
+void doOperations(){
+  AzimuthElevation* data = readFromInertialUnit();
+    if (data) {
+      if(checkForbiddenZone(data)==0){
+        displayAE(data);
+        sendToClients(data);
+        writeAEtoLog(data);
+      }
+      else(
+        writeAlarmtoLog(data);
+      )
+    }
+}

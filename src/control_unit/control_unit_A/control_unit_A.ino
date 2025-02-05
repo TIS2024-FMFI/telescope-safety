@@ -135,6 +135,3 @@ void setupEthernet(){
 void setupSettings(){
   loadSettings();
 }
-
-int lastUpdateDisplay = 0;
-const int secendsToMilis = 1000;

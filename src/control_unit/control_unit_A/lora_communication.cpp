@@ -122,6 +122,9 @@ int restartInertialUnit(double azimuth) {
     return -1; // Failure after retries
 }
 
+int lastUpdateDisplay = 0;
+const int secendsToMilis = 1000;
+
 void displayAE(AzimuthElevation* ae) {
   if ((millis() - lastUpdateDisplay) >= (settings.update_frequency * secendsToMilis)){
     lastUpdateDisplay = millis();

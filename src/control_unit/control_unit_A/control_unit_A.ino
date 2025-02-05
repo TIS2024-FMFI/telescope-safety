@@ -65,6 +65,8 @@ void loop() {
     timeClient.update();
   }
   #endif
+  
+  #if INERCIAL
 
   #if INERCIAL
   doOperations();

@@ -65,7 +65,6 @@ void loop() {
     timeClient.update();
   }
   #endif
-
   #if INERCIAL
   doOperations();
   #endif
@@ -81,7 +80,9 @@ void loop() {
     double azimuth = convertToDecimalDegrees(azimuthDMS);
     restartInertialUnit(azimuth);
   }
+
 }
+
 
 
 

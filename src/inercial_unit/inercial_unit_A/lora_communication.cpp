@@ -69,6 +69,18 @@ int readFromControlUnit() {
     while (command != nullptr) {
         String cmdStr = String(command);
 
+        if (cmdStr.startsWith("SET_CALIBRATION_MATRIX:")) {
+            double newMatrix[3][3];
+            sscanf(cmdStr.c_str(), "SET_CALIBRATION_MATRIX:%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf",
+                   &newMatrix[0][0], &newMatrix[0][1], &newMatrix[0][2],
+                   &newMatrix[1][0], &newMatrix[1][1], &newMatrix[1][2],
+                   &newMatrix[2][0], &newMatrix[2][1], &newMatrix[2][2]);
+
+            setCorrectionMatrix(newMatrix);  
+            Serial.println("Calibration matrix updated.");
+            ackSent++;
+        }
+
         if (cmdStr.startsWith("RESTART_INERTIAL_UNIT:")) {
             String azimuthStr = cmdStr.substring(22);
             azimuthStr.trim();

@@ -1,3 +1,5 @@
+#ifndef HTTP_HANDLERS_H
+#define HTTP_HANDLERS_H
 #include <WebServer.h>
 
 extern WebServer server;
@@ -32,3 +34,5 @@ void setupStaticFiles();
 #define DOWNLOAD_LOGS_BUTTON "download_logs"
 #define DOWNLOAD_LOGS_FROM_DATEFIELD "logs_from_date"
 #define DOWNLOAD_LOGS_TO_DATEFIELD "logs_to_date"
+
+#endif

@@ -1,3 +1,5 @@
+#ifndef PARSER_H
+#define PARSER_H
 
 #include "common_structs.h"
 #include <vector>
@@ -35,3 +37,5 @@ double calculateAngle(const AzimuthElevation& point, const AzimuthElevation& cen
 // @param newConfiguration loaded from file
 // returns -1 if unsuccessful and 0 if successful
 int setUpAlarmAndIntervals(const char* newConfiguration);
+
+#endif

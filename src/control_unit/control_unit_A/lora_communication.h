@@ -1,4 +1,3 @@
-
 #ifndef LORA_COMMUNICATION_H
 #define LORA_COMMUNICATION_H
 

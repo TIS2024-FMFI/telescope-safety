@@ -1,3 +1,6 @@
+#ifndef SERVERS_H
+#define SERVERS_H
+
 #include "common_structs.h"
 #include <list>
 #include <WiFiClient.h>
@@ -38,3 +41,4 @@ void websocketLoop();
 void websocketDisconnectInactive();
 void websocketConnectIncomming();
 
+#endif

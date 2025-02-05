@@ -1,3 +1,5 @@
+#ifndef DANGER_EVALUATION_H
+#define DANGER_EVALUATION_H
 #include "forbidden_zones_config_parse.h"
 #include "logs.h"
 #include <Arduino.h>
@@ -39,3 +41,5 @@ int reenable(); //to be done
 void setupMotors();
 
 void setupAlarm();
+
+#endif

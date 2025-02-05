@@ -1,3 +1,6 @@
+#ifndef BUTTONS_H
+#define BUTTONS_H
+
 #include <SoftwareSerial.h>
 #include "common_structs.h"
 #include "lora_communication.h"
@@ -30,3 +33,5 @@ void setupButtons();
 void loopButtons();
 DegreesMinutesSeconds convertToDMS(double decimalDegrees, bool isElevation);
 double convertToDecimalDegrees(DegreesMinutesSeconds dms);
+
+#endif

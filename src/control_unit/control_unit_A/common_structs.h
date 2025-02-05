@@ -3,6 +3,12 @@
 
 #include <vector>
 
+struct TransformMatrix {
+  int row0[3];
+  int row1[3];
+  int row2[3];
+}
+
 struct AzimuthElevation {
     double azimuth;
     double elevation;
@@ -36,5 +42,6 @@ struct Settings {
 };
 
 extern Settings settings;
+extern TranformMatrix matrix;
 
 #endif

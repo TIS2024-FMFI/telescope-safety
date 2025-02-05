@@ -11,6 +11,7 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 #include "logs.h"
 
 Settings settings;
+TranformMatrix matrix;
 
 #define SERVERS 1
 #define DISPLAY_A 1
@@ -119,5 +120,8 @@ void setupEthernet(){
 
 void setupSettings(){
   loadSettings();
+  matrix.row0 = {0, 0, 0};
+  matrix.row1 = {0, 0, 0};
+  matrix.row3 = {0, 0, 0};
   Serial.println("jupi2");
 }

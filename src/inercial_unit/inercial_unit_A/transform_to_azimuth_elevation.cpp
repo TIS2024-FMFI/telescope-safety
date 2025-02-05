@@ -1,6 +1,12 @@
 
 #include "transform_to_azimuth_elevation.h"
 
+double R_correction[3][3] = {
+    {1, 0, 0},
+    {0, 1, 0},
+    {0, 0, 1}
+};
+
 AzimuthElevation* fromRPYtoAzimuthElevation(RollPitchYaw* rollPitchYaw) {
     static AzimuthElevation result = { NAN, NAN };
 
@@ -13,6 +19,16 @@ AzimuthElevation* fromRPYtoAzimuthElevation(RollPitchYaw* rollPitchYaw) {
     double roll = rollPitchYaw->roll * M_PI / 180.0;
     double pitch = rollPitchYaw->pitch * M_PI / 180.0;
     double yaw = rollPitchYaw->yaw * M_PI / 180.0;
+
+    // Referenčný vektor pred aplikáciou yaw-pitch-roll transformácie
+    double refVec[3] = {1, 0, 0}; // Predpokladaný vektor dopredu
+
+    double correctedVec[3] = {0, 0, 0};
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            correctedVec[i] += R_correction[i][j] * refVec[j];
+        }
+    }
 
     // Rotačné matice pre yaw, pitch a roll
     double R_yaw[3][3] = {
@@ -55,10 +71,10 @@ AzimuthElevation* fromRPYtoAzimuthElevation(RollPitchYaw* rollPitchYaw) {
         }
     }
 
-    // Aplikácia rotačnej matice na referenčný vektor [1, 0, 0]
-    double x = R[0][0];
-    double y = R[1][0];
-    double z = R[2][0];
+    // Aplikácia transformačnej matice na opravený vektor
+    double x = R[0][0] * correctedVec[0] + R[0][1] * correctedVec[1] + R[0][2] * correctedVec[2];
+    double y = R[1][0] * correctedVec[0] + R[1][1] * correctedVec[1] + R[1][2] * correctedVec[2];
+    double z = R[2][0] * correctedVec[0] + R[2][1] * correctedVec[1] + R[2][2] * correctedVec[2];
 
     // Výpočet azimutu
     result.azimuth = atan2(y, x) * 180.0 / M_PI;

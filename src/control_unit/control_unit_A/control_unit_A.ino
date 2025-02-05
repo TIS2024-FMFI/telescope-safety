@@ -54,7 +54,6 @@ void setup() {
 long lastSendTime = 0;        // last send time
 int interval = 20000;          // interval between sends
 boolean reset_flag=true;
-int send = 0;
 
 
 void loop() {
@@ -79,7 +78,6 @@ void loop() {
   // }
 
   doOperations();
-  
   #endif
 
   if (toNano.available()) {
@@ -92,7 +90,6 @@ void loop() {
     azimuthDMS.seconds = azimuthStr.substring(secondSpace + 1).toInt();
     double azimuth = convertToDecimalDegrees(azimuthDMS);
     restartInertialUnit(azimuth);
-    send = 99;
   }
 
   //testing_parsation_and_evaluation();
@@ -128,6 +125,3 @@ void setupEthernet(){
 void setupSettings(){
   loadSettings();
 }
-
-int lastUpdateDisplay = 0;
-const int secendsToMilis = 1000;

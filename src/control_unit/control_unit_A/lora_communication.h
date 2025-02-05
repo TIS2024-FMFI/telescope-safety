@@ -7,6 +7,7 @@
 #include "danger_evaluation.h"
 #include "servers.h"
 #include "logs.h"
+#include "buttons.h"
 
 // Konfigurácia LoRa
 #define LORA_CS_PIN 13

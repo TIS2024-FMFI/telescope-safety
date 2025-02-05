@@ -139,10 +139,10 @@ void displayAE(AzimuthElevation* ae) {
 
 void doOperations(){
   AzimuthElevation* data = readFromInertialUnit();
-    if (data) {
-      checkForbiddenZone(data);
-      displayAE(data);
-      sendToClients(data);
-      writeAEtoLog(data);
-    }
+  if (data) {
+    checkForbiddenZone(data);
+    displayAE(data);
+    sendToClients(data);
+    writeAEtoLog(data);
+  }
 }

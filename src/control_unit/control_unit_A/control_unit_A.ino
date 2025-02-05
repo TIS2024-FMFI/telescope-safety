@@ -11,7 +11,8 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 #include "logs.h"
 
 Settings settings;
-TranformMatrix matrix;
+int TransformMatrix[3][3];
+
 
 #define SERVERS 1
 #define DISPLAY_A 1

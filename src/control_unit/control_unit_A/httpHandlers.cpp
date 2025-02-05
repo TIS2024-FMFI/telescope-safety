@@ -28,6 +28,15 @@ String confHTML4;
 String confHTML5;
 String confHTML6;
 String confHTML7;
+String confHTML8;
+String confHTML9;
+String confHTML10;
+String confHTML11;
+String confHTML12;
+String confHTML13;
+String confHTML14;
+String confHTML15;
+String confHTML16;
 
 #endif
 
@@ -60,8 +69,6 @@ int loadConf(const char* filePath){
   confHTML1.concat(file.readStringUntil('>'));  
   confHTML1.concat(">");
 
-  // load intil alarm
-  confHTML2.reserve(100);
   while (1){
     int ch = file.read();
     if (ch == -1){
@@ -69,15 +76,13 @@ int loadConf(const char* filePath){
     }
     char c = ch;
     confHTML2.concat(c);
-    if (confHTML2.endsWith(ALARM_CHECKBOX)){
+    if (confHTML2.endsWith(MATRIX00)){
       break;
     }
   }
-  confHTML2.concat(file.readStringUntil(' '));
+  confHTML2.concat(file.readStringUntil(' '));  
   confHTML2.concat(" ");
 
-  // load intil RELE
-  confHTML3.reserve(100);
   while (1){
     int ch = file.read();
     if (ch == -1){
@@ -85,15 +90,13 @@ int loadConf(const char* filePath){
     }
     char c = ch;
     confHTML3.concat(c);
-    if (confHTML3.endsWith(MOTORS_CHECKBOX)){
+    if (confHTML3.endsWith(MATRIX01)){
       break;
     }
   }
-  confHTML3.concat(file.readStringUntil(' '));
+  confHTML3.concat(file.readStringUntil(' '));  
   confHTML3.concat(" ");
 
-
-  confHTML4.reserve(100);
   while (1){
     int ch = file.read();
     if (ch == -1){
@@ -101,14 +104,13 @@ int loadConf(const char* filePath){
     }
     char c = ch;
     confHTML4.concat(c);
-    if (confHTML4.endsWith(UPDATE_INTERVAL_FIELD)){
+    if (confHTML4.endsWith(MATRIX02)){
       break;
     }
   }
-  confHTML4.concat(file.readStringUntil(' '));
+  confHTML4.concat(file.readStringUntil(' '));  
   confHTML4.concat(" ");
 
-  confHTML5.reserve(100);
   while (1){
     int ch = file.read();
     if (ch == -1){
@@ -116,14 +118,13 @@ int loadConf(const char* filePath){
     }
     char c = ch;
     confHTML5.concat(c);
-    if (confHTML5.endsWith(LOG_INTERVAL_FIELD)){
+    if (confHTML5.endsWith(MATRIX10)){
       break;
     }
   }
-  confHTML5.concat(file.readStringUntil(' '));
+  confHTML5.concat(file.readStringUntil(' '));  
   confHTML5.concat(" ");
 
-  confHTML6.reserve(100);
   while (1){
     int ch = file.read();
     if (ch == -1){
@@ -131,14 +132,148 @@ int loadConf(const char* filePath){
     }
     char c = ch;
     confHTML6.concat(c);
-    if (confHTML6.endsWith(TURN_OFF_LOGS_CHECKBOX)){
+    if (confHTML6.endsWith(MATRIX11)){
       break;
     }
   }
-  confHTML6.concat(file.readStringUntil(' '));
+  confHTML6.concat(file.readStringUntil(' '));  
   confHTML6.concat(" ");
 
-  confHTML7 = file.readString();
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML7.concat(c);
+    if (confHTML7.endsWith(MATRIX12)){
+      break;
+    }
+  }
+  confHTML7.concat(file.readStringUntil(' '));  
+  confHTML7.concat(" ");
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML8.concat(c);
+    if (confHTML8.endsWith(MATRIX20)){
+      break;
+    }
+  }
+  confHTML8.concat(file.readStringUntil(' '));  
+  confHTML8.concat(" ");
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML9.concat(c);
+    if (confHTML9.endsWith(MATRIX21)){
+      break;
+    }
+  }
+  confHTML9.concat(file.readStringUntil(' '));  
+  confHTML9.concat(" ");
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML10.concat(c);
+    if (confHTML10.endsWith(MATRIX22)){
+      break;
+    }
+  }
+  confHTML10.concat(file.readStringUntil(' '));  
+  confHTML10.concat(" ");
+
+  // load intil alarm
+  confHTML11.reserve(100);
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML11.concat(c);
+    if (confHTML11.endsWith(ALARM_CHECKBOX)){
+      break;
+    }
+  }
+  confHTML11.concat(file.readStringUntil(' '));
+  confHTML11.concat(" ");
+
+  // load intil RELE
+  confHTML12.reserve(100);
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML12.concat(c);
+    if (confHTML12.endsWith(MOTORS_CHECKBOX)){
+      break;
+    }
+  }
+  confHTML12.concat(file.readStringUntil(' '));
+  confHTML12.concat(" ");
+
+
+  confHTML13.reserve(100);
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML13.concat(c);
+    if (confHTML13.endsWith(UPDATE_INTERVAL_FIELD)){
+      break;
+    }
+  }
+  confHTML13.concat(file.readStringUntil(' '));
+  confHTML13.concat(" ");
+
+  confHTML14.reserve(100);
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML14.concat(c);
+    if (confHTML14.endsWith(LOG_INTERVAL_FIELD)){
+      break;
+    }
+  }
+  confHTML14.concat(file.readStringUntil(' '));
+  confHTML14.concat(" ");
+
+  confHTML15.reserve(100);
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML15.concat(c);
+    if (confHTML15.endsWith(TURN_OFF_LOGS_CHECKBOX)){
+      break;
+    }
+  }
+  confHTML15.concat(file.readStringUntil(' '));
+  confHTML15.concat(" ");
+
+  confHTML16 = file.readString();
 
   return 0;
 }
@@ -169,6 +304,161 @@ String loadConf(const char* filePath){
   char* zones = loadFile(forbiddenConfigFilePath);
   response.concat(zones);
   free(zones);
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(MATRIX00)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil(' '));  
+  response.concat(" ");
+  response.concat("value=\"");
+  response.concat(TransformMatrix[0][0]);
+  response.concat("\" ");
+
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(MATRIX01)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil(' '));  
+  response.concat(" ");
+  response.concat("value=\"");
+  response.concat(TransformMatrix[0][1]);
+  response.concat("\" ");
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(MATRIX02)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil(' '));  
+  response.concat(" ");
+  response.concat("value=\"");
+  response.concat(TransformMatrix[0][2]);
+  response.concat("\" ");
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(MATRIX10)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil(' '));  
+  response.concat(" ");
+  response.concat("value=\"");
+  response.concat(TransformMatrix[1][0]);
+  response.concat("\" ");
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(MATRIX11)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil(' '));  
+  response.concat(" ");
+  response.concat("value=\"");
+  response.concat(TransformMatrix[1][1]);
+  response.concat("\" ");
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(MATRIX12)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil(' '));  
+  response.concat(" ");
+  response.concat("value=\"");
+  response.concat(TransformMatrix[1][2]);
+  response.concat("\" ");
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(MATRIX20)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil(' '));  
+  response.concat(" ");
+  response.concat("value=\"");
+  response.concat(TransformMatrix[2][0]);
+  response.concat("\" ");
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(MATRIX21)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil(' '));  
+  response.concat(" ");
+  response.concat("value=\"");
+  response.concat(TransformMatrix[2][1]);
+  response.concat("\" ");
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(MATRIX22)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil(' '));  
+  response.concat(" ");
+  response.concat("value=\"");
+  response.concat(TransformMatrix[2][2]);
+  response.concat("\" ");
+
 
   while (1){
     int ch = file.read();
@@ -339,6 +629,20 @@ void handleFormPOST() {
       writeChangeToLog(FORBIDDEN_ZONE_CHANGED, clientIP);
     }
   }
+  else if (server.arg(MATRIX_CONFIG_BUTTON) != "") {
+    TransformMatrix[0][0] = server.arg(MATRIX00).toInt();
+    TransformMatrix[0][1] = server.arg(MATRIX01).toInt();
+    TransformMatrix[0][2] = server.arg(MATRIX02).toInt();
+    TransformMatrix[1][0] = server.arg(MATRIX10).toInt();
+    TransformMatrix[1][1] = server.arg(MATRIX11).toInt();
+    TransformMatrix[1][2] = server.arg(MATRIX12).toInt();
+    TransformMatrix[2][0] = server.arg(MATRIX20).toInt();
+    TransformMatrix[2][1] = server.arg(MATRIX21).toInt();
+    TransformMatrix[2][2] = server.arg(MATRIX22).toInt();
+    if (saveMatrix() == 0) {
+      writeChangeToLog(TRANSFORM_MATRIX_CHANGED, clientIP);
+    }
+  }
   else if (server.arg(ALARM_CONFIG_BUTTON) != ""){
     Serial.println("POST alarm");
     settings.update_frequency = server.arg(UPDATE_INTERVAL_FIELD).toInt();
@@ -369,27 +673,67 @@ void handleFormPage(){
   String response = confHTML1;
   // If this takes to much time we should keep somewhere saved the zones String config
   response.concat(loadFile(forbiddenConfigFilePath));
+
   response.concat(confHTML2);
-  if (settings.alarm){
-    response.concat("checked ");
-  }
+  response.concat("value=\"");
+  response.concat(TransformMatrix[0][0]);
+  response.concat("\" ");
+
   response.concat(confHTML3);
-  if (settings.rele){
-    response.concat("checked ");
-  }
+  response.concat("value=\"");
+  response.concat(TransformMatrix[0][1]);
+  response.concat("\" ");
   response.concat(confHTML4);
   response.concat("value=\"");
-  response.concat(settings.update_frequency);
+  response.concat(TransformMatrix[0][2]);
   response.concat("\" ");
   response.concat(confHTML5);
   response.concat("value=\"");
-  response.concat(settings.log_frequency);
+  response.concat(TransformMatrix[1][0]);
   response.concat("\" ");
   response.concat(confHTML6);
+  response.concat("value=\"");
+  response.concat(TransformMatrix[1][1]);
+  response.concat("\" ");
+  response.concat(confHTML7);
+  response.concat("value=\"");
+  response.concat(TransformMatrix[1][2]);
+  response.concat("\" ");
+  response.concat(confHTML8);
+  response.concat("value=\"");
+  response.concat(TransformMatrix[2][0]);
+  response.concat("\" ");
+  response.concat(confHTML9);
+  response.concat("value=\"");
+  response.concat(TransformMatrix[2][1]);
+  response.concat("\" ");
+  response.concat(confHTML10);
+  response.concat("value=\"");
+  response.concat(TransformMatrix[2][2]);
+  response.concat("\" ");
+  
+
+  response.concat(confHTML11);
+  if (settings.alarm){
+    response.concat("checked ");
+  }
+  response.concat(confHTML12);
+  if (settings.rele){
+    response.concat("checked ");
+  }
+  response.concat(confHTML13);
+  response.concat("value=\"");
+  response.concat(settings.update_frequency);
+  response.concat("\" ");
+  response.concat(confHTML14);
+  response.concat("value=\"");
+  response.concat(settings.log_frequency);
+  response.concat("\" ");
+  response.concat(confHTML15);
   if (settings.logging){
     response.concat("checked ");
   }
-  response.concat(confHTML7);
+  response.concat(confHTML16);
   #else
   String response = loadConf(confPageFilePath);
   #endif

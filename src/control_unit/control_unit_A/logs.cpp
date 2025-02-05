@@ -12,6 +12,7 @@ const char *logCollisionFilePath = "/logs/events/Log_collisions.csv";
 const char *logFilePathPrefix = "/logs/Log_";
 const char* ConfigFilePath = "/conf/AlarmAndIntervalsConfig.txt";
 const char* forbiddenConfigFilePath = "/conf/zones.txt";
+const char* matrixFilePath = "/conf/Matrix.txt";
 
 
 void setupSD() {
@@ -100,6 +101,9 @@ int writeChangeToLog(ChangeType changeType, const char *ip) {
       break;
     case LOG_FREQUENCY_AND_ALARM_TYPE_CHANGED:
       myFile.print("LOG_FREQUENCY_AND_ALARM_TYPE_CHANGED");
+      break;
+    case TRANSFORM_MATRIX_CHANGED:
+      myFile.print("TRANSFORM_MATRIX_CHANGED");
       break;
     case RESTART:
       myFile.print("RESTART");
@@ -232,3 +236,24 @@ int loadSettings(){
   Serial.println("uspech");
   return 0;
 }
+
+int saveMatrix() {
+  File myFile = SD.open(matrixFilePath, O_WRITE | O_CREAT | O_TRUNC);
+  if (!myFile) {
+    return -1;
+  }
+
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      myFile.print(TransformMatrix[i][j]);
+      if (j < 2) {
+        myFile.print(";");
+      }
+    }
+    myFile.println(); 
+  }
+
+  myFile.close();
+  return 0;
+}
+

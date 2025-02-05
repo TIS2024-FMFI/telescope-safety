@@ -28,6 +28,23 @@ function bind() {
 
         document.getElementById("azimut").innerText = `${data.azimuth}°`;
         document.getElementById("elevacia").innerText = `${data.elevation}°`;
+
+        if (data.error){
+            const alert = document.getElementsByClassName("alert")[0];
+            alert.className = "alert alert--error";
+
+            const alertText = document.getElementsByClassName("alert__text")[0];
+            alertText.innerText = `Error: ${data.error}`;
+        }
+
+        if (data.warning){
+            const alert = document.getElementsByClassName("alert")[0];
+            alert.className = "alert alert--warning";
+
+            const alertText = document.getElementsByClassName("alert__text")[0];
+            alertText.innerText = `Warning: ${data.warning}`;
+        }
+
     }
 
     ws.onclose = function (event) {

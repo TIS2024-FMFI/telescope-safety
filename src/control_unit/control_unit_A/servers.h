@@ -29,8 +29,10 @@ int setupServers();
 
 // Sends AzimuthElevation structure to all conected clients via WS
 // @param azimutElevation pointer to AzimuthElevation structure
+// @param error error message
+// @param warning warning message
 // @return 0 if success, -1 if error
-int sendToClients(AzimuthElevation* azimutElevation);
+int sendToClients(AzimuthElevation* azimutElevation, String error = "", String warning = "");
 
 String extractKey(WiFiClient& client);
 String getAcceptKey(String& key);

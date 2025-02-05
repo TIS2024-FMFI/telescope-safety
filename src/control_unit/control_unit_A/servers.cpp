@@ -31,7 +31,7 @@ int lastUpdateClients = 0;
 const int secendsToMilis = 1000;
 
 
-int sendToClients(AzimuthElevation* azimuthElevation) {
+int sendToClients(AzimuthElevation* azimutElevation, String error = "", String warning = "") {
   if (eth.status() == WL_CONNECTED &&   //probably will be connected, when clients are connected but to be sure
       websocketClients.size() &&
       millis() - lastUpdateClients >= (settings.update_frequency * secendsToMilis)){
@@ -42,6 +42,14 @@ int sendToClients(AzimuthElevation* azimuthElevation) {
     message.concat(String(azimuthElevation->azimuth, 2));
     message.concat(",\"elevation\":");
     message.concat(String(azimuthElevation->elevation, 2));
+    if (error != ""){
+      message.concat(",\"error\":");
+      message.concat(error);
+    }
+    if (warning != ""){
+      message.concat(",\"warning\":");
+      message.concat(warning);
+    }
     message.concat("}");
 
     size_t payloadLength = message.length();

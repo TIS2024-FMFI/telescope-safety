@@ -78,15 +78,8 @@ void loop() {
   //   }
   // }
 
-  AzimuthElevation* data = readFromInertialUnit();
-    if (data) {
-      if (send == 0 || send%100 == 0) {
-        displayAE(data);
-        send = 0;
-      }
-      send++;
-        //Serial.println(F("Processed incoming message."));
-    }
+  doOperations();
+  
   #endif
 
   if (toNano.available()) {

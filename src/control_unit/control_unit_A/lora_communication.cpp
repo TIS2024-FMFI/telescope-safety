@@ -136,10 +136,13 @@ void displayAE(AzimuthElevation* ae) {
 void doOperations(){
   AzimuthElevation* data = readFromInertialUnit();
     if (data) {
-      if (send == 0 || send%100 == 0) {
+      if(checkForbiddenZone(data)==0){
         displayAE(data);
-        send = 0;
+        sendToClients(data);
+        writeAEtoLog(data);
       }
-      send++;
+      else(
+        writeAlarmtoLog(data);
+      )
     }
 }

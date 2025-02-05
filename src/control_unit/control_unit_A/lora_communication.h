@@ -5,6 +5,9 @@
 #include <SPI.h>
 #include <LoRa.h>
 #include "common_structs.h"
+#include "danger_evaluation.h"
+#include "servers.h"
+#include "logs.h"
 
 // Konfigurácia LoRa
 #define LORA_CS_PIN 13

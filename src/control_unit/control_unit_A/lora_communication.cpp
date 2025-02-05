@@ -144,8 +144,8 @@ void doOperations(){
         sendToClients(data);
         writeAEtoLog(data);
       }
-      else(
-        writeAlarmtoLog(data);
-      )
+      else{
+        writeAlarmToLog(data);
+    }
     }
 }

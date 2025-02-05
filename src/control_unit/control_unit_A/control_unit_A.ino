@@ -67,16 +67,6 @@ void loop() {
   timeClient.update();
   #endif
   #if INERCIAL
-  // if (!reset_flag || millis() - lastSendTime > interval) {
-  //   if (restartInertialUnit(132.0) != 0){
-  //     reset_flag=false;
-  //   }
-  //   else{
-  //     lastSendTime = millis();            // timestamp the message
-  //     reset_flag=true;
-  //   }
-  // }
-
   doOperations();
   #endif
 

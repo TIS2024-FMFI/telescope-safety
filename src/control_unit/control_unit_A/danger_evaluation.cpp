@@ -4,9 +4,9 @@ const int RELE = 27;
 const int ALARM = 28;
 
 int enteredForbiddenZone(AzimuthElevation* azimutElevation){
-    //writeAlarmToLog(azimutElevation);
-    //startAlarm();
-    //disableMotors();
+    writeAlarmToLog(azimutElevation);
+    startAlarm();
+    disableMotors();
     return 0;
 }
 
@@ -106,7 +106,7 @@ int enableMotors(){
 
 void setupAlarm(){
   pinMode(ALARM, OUTPUT);
-  digitalWrite(ALARM, 1);
+  digitalWrite(ALARM, 0);
 }
 
 int startAlarm(){

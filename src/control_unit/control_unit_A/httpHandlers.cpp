@@ -6,7 +6,7 @@
 #include "lora_communication.h"
 
 #define DEBUG 1
-#define PRELOAD 1
+#define PRELOAD 0
 
 const char *confPageFilePath = "/www/config.html";
 const char *confJSFilePath = "/www/config.js";

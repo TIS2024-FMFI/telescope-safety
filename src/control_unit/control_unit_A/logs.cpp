@@ -24,6 +24,7 @@ void setupSD() {
     Serial.println("nie je dobre inicializovana SD");
     return;
   }
+  Serial.println("jupi");
 }
 
 // Funkcia na kontrolu a zápis hlavičky do súboru
@@ -212,6 +213,7 @@ int loadSettings(){
     }
   }
   else{
+    Serial.println("neexistuje subor");
     return -1;
   }
   fileData = loadFile(ConfigFilePath);
@@ -224,7 +226,9 @@ int loadSettings(){
     }
   }
   else{
+    Serial.println("neexistuje subor");
     return -1;
   }
+  Serial.println("uspech");
   return 0;
 }

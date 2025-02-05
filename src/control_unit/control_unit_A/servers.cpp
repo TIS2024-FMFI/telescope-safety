@@ -3,6 +3,9 @@
 #include <SimpleHOTP.h>
 #include <ESP8266mDNS.h>
 
+#include <W55RP20lwIP.h> // Include library for the right board
+extern Wiznet55rp20lwIP eth;
+
 std::list<WiFiClient> websocketClients;
 WiFiServer webSocket(81);
 String GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
@@ -15,7 +18,7 @@ int setupHTTPServer(){
   server.on("/config", HTTP_GET, handleFormPage);
   server.on("/config", HTTP_POST, handleFormPOST);
   server.on("/styles.css", handleCSS);
-  server.on("/form.js", handleJSForm);
+  server.on("/config.js", handleJSForm);
   server.on("/main.js", handleJSMain);
   server.on("/download", handleFileDownload);
   server.onNotFound(handleNotFound);
@@ -29,7 +32,9 @@ const int secendsToMilis = 1000;
 
 
 int sendToClients(AzimuthElevation* azimuthElevation) {
-  if (websocketClients.size() && millis() - lastUpdateClients >= (settings.update_frequency * secendsToMilis)){
+  if (eth.status() == WL_CONNECTED &&   //probably will be connected, when clients are connected but to be sure
+      websocketClients.size() &&
+      millis() - lastUpdateClients >= (settings.update_frequency * secendsToMilis)){
     lastUpdateClients = millis();
     String message;
     message.reserve(45);
@@ -144,7 +149,7 @@ String extractKey(WiFiClient& client){
       char c = client.read();
       request.concat(c);
       if (keyExtraction && request.endsWith("\r\n")){
-        return request.substring(request.lastIndexOf(" "), request.lastIndexOf("\r"));
+        return request.substring(request.lastIndexOf(" ") + 1, request.lastIndexOf("\r"));
       }
       else if (request.endsWith("Sec-WebSocket-Key: ")){
         keyExtraction = true;

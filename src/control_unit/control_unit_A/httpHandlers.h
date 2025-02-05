@@ -35,4 +35,17 @@ void setupStaticFiles();
 #define DOWNLOAD_LOGS_FROM_DATEFIELD "logs_from_date"
 #define DOWNLOAD_LOGS_TO_DATEFIELD "logs_to_date"
 
+
+#define MATRIX_CONFIG_BUTTON "config_matrix"
+
+#define MATRIX00 "matrix[0][0]"
+#define MATRIX01 "matrix[0][1]"
+#define MATRIX02 "matrix[0][2]"
+#define MATRIX10 "matrix[1][0]"
+#define MATRIX11 "matrix[1][1]"
+#define MATRIX12 "matrix[1][2]"
+#define MATRIX20 "matrix[2][0]"
+#define MATRIX21 "matrix[2][1]"
+#define MATRIX22 "matrix[2][2]"
+
 #endif

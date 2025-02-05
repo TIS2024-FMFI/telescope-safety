@@ -19,10 +19,12 @@
         <form method="POST" onsubmit="confirmSubmitRestart(event)">
             <section>
                 <div class="center">
-                    <button type="submit" id="restart-button" class="large-button" name="restart" value="restart">Reštartovať systém</button>
+                    <button type="submit" id="restart-button" class="large-button" name="restart" value="restart">Reštartovať senzor</button>
                 </div>
             </section>
         </form>
+
+        <hr class="divider">
 
         <form method="POST" onsubmit="confirmSubmit(event)">
             <section class="settings">
@@ -33,6 +35,36 @@
                 </div>
             </section>
         </form>
+
+        <hr class="divider">
+
+        <form method="POST" onsubmit="confirmSubmit(event)">
+            <section class="settings">
+                <div class="center">
+                    <table class="matrix" border='1'>
+                        <tr>
+                            <td><input type='number' name='matrix[0][0]' required></td>
+                            <td><input type='number' name='matrix[0][1]' required></td>
+                            <td><input type='number' name='matrix[0][2]' required></td>
+                        </tr>
+                        <tr>
+                            <td><input type='number' name='matrix[1][0]' required></td>
+                            <td><input type='number' name='matrix[1][1]' required></td>
+                            <td><input type='number' name='matrix[1][2]' required></td>
+                        </tr>
+                        <tr>
+                            <td><input type='number' name='matrix[2][0]' required></td>
+                            <td><input type='number' name='matrix[2][1]' required></td>
+                            <td><input type='number' name='matrix[2][2]' required></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="center">
+                    <button type="submit" class="small-button" name="config_matrix" value="config_matrix">Uložiť tranformačnú maticu</button>
+                </div>
+            </section>
+        </form>
+
 
         <hr class="divider">
 
@@ -50,10 +82,10 @@
 
                 <h2>Intervaly</h2>
                 <label for="update-interval">Interval aktualizácií (sekundy):</label>
-                <input type="number" id="update-interval" name="update_interval" min="1">
+                <input type="number" id="update-interval" name="update_interval" min="1" required>
 
                 <label for="log-interval">Interval logovania (sekundy):</label>
-                <input type="number" id="log-interval" name="log_interval" min="1">
+                <input type="number" id="log-interval" name="log_interval" min="1" required>
 
                 <label>
                     <input type="checkbox" id="disable-logging" name="disable_logging" value="1"> Vypnúť logovanie

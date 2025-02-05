@@ -69,8 +69,6 @@ void loop() {
   #endif
   
   #if INERCIAL
-
-  #if INERCIAL
   doOperations();
   #endif
 
@@ -121,8 +119,10 @@ void setupEthernet(){
 
 void setupSettings(){
   loadSettings();
-  matrix.row0 = {0, 0, 0};
-  matrix.row1 = {0, 0, 0};
-  matrix.row3 = {0, 0, 0};
+  for (int i = 0; i < 3; i++) {
+    for (int ii = 0; ii < 3; ii++){
+      TransformMatrix[i][ii] = 0;
+    }
+  }
   Serial.println("jupi2");
 }

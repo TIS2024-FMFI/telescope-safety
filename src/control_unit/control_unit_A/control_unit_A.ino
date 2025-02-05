@@ -12,7 +12,7 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 
 Settings settings;
 
-#define SERVERS 0
+#define SERVERS 1
 #define DISPLAY_A 1
 #define INERCIAL 1
 
@@ -24,7 +24,6 @@ void displayAE(AzimuthElevation* ae);
 
 void setup() {
   Serial.begin(9600);                   // initialize serial
-  //delay(100);
   while (!Serial);
   Serial.println("Started Serial");
   
@@ -51,33 +50,22 @@ void setup() {
   setupMotors();
 }
 
-long lastSendTime = 0;        // last send time
-int interval = 20000;          // interval between sends
-boolean reset_flag=true;
-
 
 void loop() {
   #if DISPLAY_A
   loopButtons();
   #endif
   #if SERVERS
-  server.handleClient();
-  MDNS.update();
-  websocketLoop();
-  timeClient.update();
+  if (eth.status() == WL_CONNECTED){
+    server.handleClient();
+    MDNS.update();
+    websocketLoop();
+    timeClient.update();
+  }
   #endif
-  #if INERCIAL
-  // if (!reset_flag || millis() - lastSendTime > interval) {
-  //   if (restartInertialUnit(132.0) != 0){
-  //     reset_flag=false;
-  //   }
-  //   else{
-  //     lastSendTime = millis();            // timestamp the message
-  //     reset_flag=true;
-  //   }
-  // }
 
   doOperations();
+
   #endif
 
   if (toNano.available()) {
@@ -91,14 +79,15 @@ void loop() {
     double azimuth = convertToDecimalDegrees(azimuthDMS);
     restartInertialUnit(azimuth);
   }
-
-  //testing_parsation_and_evaluation();
-
 }
 
 
 
 // Functions
+
+
+int timeOut = 400;
+
 void setupEthernet(){
   Serial.println("Starting ETH");
   // Start the Ethernet port
@@ -108,20 +97,23 @@ void setupEthernet(){
       delay(1000);
     }
   }
+  unsigned long lastTry = millis();
 
   // Wait for connection
-  while (!eth.connected()) {
-    Serial.print("_");
-    delay(500);
-  }
   while (eth.status() != WL_CONNECTED) {
-    delay(500);
+    if (millis() - lastTry >= timeOut){
+      Serial.println("Connection time out");
+      break;
+    }
+    delay(100);
     Serial.print(".");
   }
+
   Serial.print("IP address: ");
   Serial.println(eth.localIP());
 }
 
 void setupSettings(){
   loadSettings();
+  Serial.println("jupi2");
 }

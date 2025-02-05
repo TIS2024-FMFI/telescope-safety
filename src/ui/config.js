@@ -1,9 +1,18 @@
 // Funkcia na potvrdenie odoslania formulára
 function confirmSubmit(event) {
-    event.preventDefault();
     const confirmed = confirm("Naozaj chcete uložiť tieto zmeny?");
+    if (!confirmed) {
+        event.preventDefault();
+    }
+}
+
+function confirmSubmitRestart(event) {
+    const confirmed = confirm('Systém sa vypne. Chcete pokračovať?');
     if (confirmed) {
-        event.target.submit();
+        alert('Systém bude vypnutý.');
+    } else {
+        event.preventDefault();
+        alert('Vypnutie systému bolo zrušené.');
     }
 }
 
@@ -25,28 +34,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById("forbidden-positions").setAttribute("placeholder", 
         "# Zakázaná oblasť č. 1\n90 45\n40 38\n78 66"
     );
-
-    const restartButton = document.getElementById('restart-button');
-    if (restartButton) {
-        restartButton.addEventListener('click', () => {
-            const confirmed = confirm('Systém sa vypne. Chcete pokračovať?');
-            if (confirmed) {
-                alert('Systém bude vypnutý.');
-            } else {
-                alert('Vypnutie systému bolo zrušené.');
-            }
-        });
-    }
-
-    const saveZonesButton = document.getElementById('zones-settings');
-    if (saveZonesButton) {
-        saveZonesButton.addEventListener('click', confirmSubmit);
-    }
-
-    const saveAlarmButton = document.getElementById('alarm-settings');
-    if (saveAlarmButton) {
-        saveAlarmButton.addEventListener('click', confirmSubmit);
-    }
 
     const downloadLogsButton = document.getElementById('download-logs');
     if (downloadLogsButton) {

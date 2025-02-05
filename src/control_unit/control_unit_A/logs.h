@@ -1,3 +1,6 @@
+#ifndef LOGS_H
+#define LOGS_H
+
 #include "common_structs.h"
 #include "forbidden_zones_config_parse.h"
 #include "time.h"
@@ -56,3 +59,4 @@ int loadSettings(); //to be done
 char* loadFile(const char* filePath);
 
 void setupSD();
+#endif

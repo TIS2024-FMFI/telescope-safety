@@ -55,6 +55,8 @@ void loop() {
   #if DISPLAY_A
   loopButtons();
   #endif
+
+
   #if SERVERS
   if (eth.status() == WL_CONNECTED){
     server.handleClient();
@@ -64,8 +66,8 @@ void loop() {
   }
   #endif
 
+  #if INERCIAL
   doOperations();
-
   #endif
 
   if (toNano.available()) {

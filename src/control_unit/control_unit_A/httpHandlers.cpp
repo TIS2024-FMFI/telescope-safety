@@ -639,7 +639,9 @@ void handleFormPOST() {
     TransformMatrix[2][0] = server.arg(MATRIX20).toInt();
     TransformMatrix[2][1] = server.arg(MATRIX21).toInt();
     TransformMatrix[2][2] = server.arg(MATRIX22).toInt();
-
+    if (saveMatrix() == 0) {
+      writeChangeToLog(TRANSFORM_MATRIX_CHANGED, clientIP);
+    }
   }
   else if (server.arg(ALARM_CONFIG_BUTTON) != ""){
     Serial.println("POST alarm");

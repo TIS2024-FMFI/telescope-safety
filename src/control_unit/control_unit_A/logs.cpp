@@ -102,6 +102,9 @@ int writeChangeToLog(ChangeType changeType, const char *ip) {
     case LOG_FREQUENCY_AND_ALARM_TYPE_CHANGED:
       myFile.print("LOG_FREQUENCY_AND_ALARM_TYPE_CHANGED");
       break;
+    case TRANSFORM_MATRIX_CHANGED:
+      myFile.print("TRANSFORM_MATRIX_CHANGED");
+      break;
     case RESTART:
       myFile.print("RESTART");
       break;

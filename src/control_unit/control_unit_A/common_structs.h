@@ -25,6 +25,7 @@ using ForbiddenZones = std::vector<ForbiddenZone>;
 enum ChangeType {
     FORBIDDEN_ZONE_CHANGED,
     LOG_FREQUENCY_AND_ALARM_TYPE_CHANGED,
+    TRANSFORM_MATRIX_CHANGED,
     RESTART
 };
 

@@ -121,3 +121,25 @@ int restartInertialUnit(double azimuth) {
     Serial.println("Acknowledgment not received.");
     return -1; // Failure after retries
 }
+
+void displayAE(AzimuthElevation* ae) {
+  if ((millis() - lastUpdateDisplay) >= (settings.update_frequency * secendsToMilis)){
+    lastUpdateDisplay = millis();
+    DegreesMinutesSeconds azimuth = convertToDMS(ae->azimuth, false);
+    DegreesMinutesSeconds elevation = convertToDMS(ae->elevation, true);
+    char aeSend[20];
+    sprintf(aeSend, "%d %d %d\n%d %d %d\n", azimuth.degrees, azimuth.minutes, azimuth.seconds, elevation.degrees, elevation.minutes, elevation.seconds);
+    toNano.write(aeSend);
+  }
+}
+
+void doOperations(){
+  AzimuthElevation* data = readFromInertialUnit();
+    if (data) {
+      if (send == 0 || send%100 == 0) {
+        displayAE(data);
+        send = 0;
+      }
+      send++;
+    }
+}

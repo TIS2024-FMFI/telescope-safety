@@ -26,4 +26,8 @@ AzimuthElevation* readFromInertialUnit();
   // if its -1 it stays the same and sensor just resets
 int restartInertialUnit(double azimuth = -1);
 
+void displayAE(AzimuthElevation* ae);
+
+void doOperations();
+
 #endif // LORA_COMMUNICATION_H

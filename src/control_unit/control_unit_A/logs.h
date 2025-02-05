@@ -59,4 +59,9 @@ int loadSettings(); //to be done
 char* loadFile(const char* filePath);
 
 void setupSD();
+
+// Save transform matrix to file
+// @return 0 if success, -1 if error
+int saveMatrix();
+
 #endif

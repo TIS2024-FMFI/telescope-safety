@@ -232,3 +232,24 @@ int loadSettings(){
   Serial.println("uspech");
   return 0;
 }
+
+int saveMatrix() {
+  File myFile = SD.open(matrixFilePath, O_WRITE | O_CREAT | O_TRUNC);
+  if (!myFile) {
+    return -1;
+  }
+
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      myFile.print(TransformMatrix[i][j]);
+      if (j < 2) {
+        myFile.print(";");
+      }
+    }
+    myFile.println(); 
+  }
+
+  myFile.close();
+  return 0;
+}
+

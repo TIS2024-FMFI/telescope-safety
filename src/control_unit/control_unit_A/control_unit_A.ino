@@ -54,7 +54,6 @@ void setup() {
 long lastSendTime = 0;        // last send time
 int interval = 20000;          // interval between sends
 boolean reset_flag=true;
-int send = 0;
 
 
 void loop() {
@@ -80,12 +79,8 @@ void loop() {
 
   AzimuthElevation* data = readFromInertialUnit();
     if (data) {
-      if (send == 0 || send%100 == 0) {
-        displayAE(data);
-        send = 0;
-      }
-      send++;
-        //Serial.println(F("Processed incoming message."));
+      displayAE(data);
+      //Serial.println(F("Processed incoming message."));
     }
   #endif
 
@@ -99,7 +94,6 @@ void loop() {
     azimuthDMS.seconds = azimuthStr.substring(secondSpace + 1).toInt();
     double azimuth = convertToDecimalDegrees(azimuthDMS);
     restartInertialUnit(azimuth);
-    send = 99;
   }
 
   //testing_parsation_and_evaluation();

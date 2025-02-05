@@ -24,7 +24,6 @@ void displayAE(AzimuthElevation* ae);
 
 void setup() {
   Serial.begin(9600);                   // initialize serial
-  //delay(100);
   while (!Serial);
   Serial.println("Started Serial");
   
@@ -63,10 +62,7 @@ void loop(){
     MDNS.update();
     websocketLoop();
     timeClient.update();
-  }       // neets to be tested, if the connection can be established automaticaly or has to be call setup again
-  // else {
-  //   setupEthernet();
-  // }
+  }
   #endif
 
 
@@ -93,9 +89,6 @@ void loop(){
     restartInertialUnit(azimuth);
     send = 99;
   }
-
-  //testing_parsation_and_evaluation();
-
 }
 
 
@@ -118,7 +111,7 @@ void setupEthernet(){
 
   // Wait for connection
   while (eth.status() != WL_CONNECTED) {
-    if (lastTry - millis() >= timeOut){
+    if (millis() - lastTry >= timeOut){
       Serial.println("Connection time out");
       break;
     }
@@ -126,10 +119,6 @@ void setupEthernet(){
     Serial.print(".");
   }
 
-  // while (!eth.connected()) {
-  //   Serial.print("_");
-  //   delay(100);
-  // }
   Serial.print("IP address: ");
   Serial.println(eth.localIP());
 }

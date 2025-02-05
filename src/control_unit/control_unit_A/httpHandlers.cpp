@@ -6,6 +6,7 @@
 #include "lora_communication.h"
 
 #define DEBUG 1
+#define PRELOAD 0
 
 const char *confPageFilePath = "/www/config.html";
 const char *confJSFilePath = "/www/config.js";
@@ -13,6 +14,8 @@ const char *mainPageFilePath = "/www/index.html";
 const char *mainJSFilePath = "/www/main.js";
 const char *stylesCSSFilePath = "/www/styles.css";
 
+
+#if PRELOAD
 
 String mainHTML;
 String mainJS;
@@ -26,30 +29,30 @@ String confHTML5;
 String confHTML6;
 String confHTML7;
 
+#endif
+
 
 int restart();
-int loadConf(const char* filePath);
 
 
-void setupStaticFiles(){
-  loadConf(confPageFilePath);
-  mainHTML = loadFile(mainPageFilePath);
-  stylesCSS = loadFile(stylesCSSFilePath);
-  mainJS = loadFile(mainJSFilePath);
-  confJS = loadFile(confJSFilePath);
-}
-
+#if PRELOAD
 int loadConf(const char* filePath){
   File file = SD.open(filePath, FILE_READ);
   if (!file) {
+    Serial.println("umrel som");
     return -1; 
   }
   
-
+  Serial.println("ide sa na to!");
   //load until zone_field
   confHTML1.reserve(100);
   while (1){
-    confHTML1.concat(file.read());
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML1.concat(c);
     if (confHTML1.endsWith(ZONE_CONFIG_FIELD)){
       break;
     }
@@ -60,58 +63,218 @@ int loadConf(const char* filePath){
   // load intil alarm
   confHTML2.reserve(100);
   while (1){
-    confHTML2.concat(file.read());
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML2.concat(c);
     if (confHTML2.endsWith(ALARM_CHECKBOX)){
       break;
     }
   }
   confHTML2.concat(file.readStringUntil(' '));
-  confHTML1.concat(" ");
+  confHTML2.concat(" ");
 
   // load intil RELE
   confHTML3.reserve(100);
   while (1){
-    confHTML3.concat(file.read());
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML3.concat(c);
     if (confHTML3.endsWith(MOTORS_CHECKBOX)){
       break;
     }
   }
   confHTML3.concat(file.readStringUntil(' '));
-  confHTML1.concat(" ");
+  confHTML3.concat(" ");
 
 
   confHTML4.reserve(100);
   while (1){
-    confHTML4.concat(file.read());
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML4.concat(c);
     if (confHTML4.endsWith(UPDATE_INTERVAL_FIELD)){
       break;
     }
   }
   confHTML4.concat(file.readStringUntil(' '));
-  confHTML1.concat(" ");
+  confHTML4.concat(" ");
 
   confHTML5.reserve(100);
   while (1){
-    confHTML5.concat(file.read());
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML5.concat(c);
     if (confHTML5.endsWith(LOG_INTERVAL_FIELD)){
       break;
     }
   }
   confHTML5.concat(file.readStringUntil(' '));
-  confHTML1.concat(" ");
+  confHTML5.concat(" ");
 
   confHTML6.reserve(100);
   while (1){
-    confHTML6.concat(file.read());
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    confHTML6.concat(c);
     if (confHTML6.endsWith(TURN_OFF_LOGS_CHECKBOX)){
       break;
     }
   }
   confHTML6.concat(file.readStringUntil(' '));
- confHTML1.concat(" ");
+  confHTML6.concat(" ");
 
-  confHTML7 = file.streamRemaining();
+  confHTML7 = file.readString();
+
   return 0;
+}
+
+#else
+
+String loadConf(const char* filePath){
+  String response;
+  response.reserve(3950);
+  File file = SD.open(filePath, FILE_READ);
+  if (!file) {
+    Serial.println("umrel som");
+    return ""; 
+  }
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(ZONE_CONFIG_FIELD)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil('>'));  
+  response.concat(">");
+  char* zones = loadFile(forbiddenConfigFilePath);
+  response.concat(zones);
+  free(zones);
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(ALARM_CHECKBOX)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil(' '));
+  response.concat(" ");
+
+  if (settings.alarm){
+    response.concat("checked ");
+  }
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(MOTORS_CHECKBOX)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil(' '));
+  response.concat(" ");
+
+  if (settings.rele){
+    response.concat("checked ");
+  }
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(UPDATE_INTERVAL_FIELD)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil(' '));
+  response.concat(" ");
+
+  response.concat("value=\"");
+  response.concat(settings.update_frequency);
+  response.concat("\" ");  
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(LOG_INTERVAL_FIELD)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil(' '));
+  response.concat(" ");
+
+  response.concat("value=\"");
+  response.concat(settings.log_frequency);
+  response.concat("\" ");
+
+  while (1){
+    int ch = file.read();
+    if (ch == -1){
+      break;
+    }
+    char c = ch;
+    response.concat(c);
+    if (response.endsWith(TURN_OFF_LOGS_CHECKBOX)){
+      break;
+    }
+  }
+  response.concat(file.readStringUntil(' '));
+  response.concat(" ");
+
+  if (settings.logging){
+    response.concat("checked ");
+  }
+
+  response.concat(file.readString());
+
+  return response;
+}
+
+#endif
+
+void setupStaticFiles(){
+  #if PRELOAD
+  mainHTML = loadFile(mainPageFilePath);
+  stylesCSS = loadFile(stylesCSSFilePath);
+  mainJS = loadFile(mainJSFilePath);
+  confJS = loadFile(confJSFilePath);
+  loadConf(confPageFilePath);
+  #endif
 }
 
 
@@ -154,6 +317,7 @@ void handleFileDownload() {
 
 
 void handleFormPOST() {
+  Serial.println("I got POST");
   #if DEBUG
   String message = "";
   for (uint8_t i = 0; i < server.args(); i++) {
@@ -163,26 +327,35 @@ void handleFormPOST() {
   #endif
 
   const char *clientIP = server.client().remoteIP().toString().c_str();
-
-  if (server.arg(ZONE_CONFIG_BUTTON)){
-    const char* newZones = server.arg(ZONE_CONFIG_FIELD).c_str();
-    if (setUpZones(newZones) && writeNewForbiddenConfig(newZones)){
+  //Serial.print("Check: ");
+  //Serial.println(server.arg(ZONE_CONFIG_BUTTON));
+  if (server.arg(ZONE_CONFIG_BUTTON) != ""){
+    Serial.println("POST zones");
+    String xx = server.arg(ZONE_CONFIG_FIELD);
+    xx.replace("\r\n","\n");
+    const char* newZones = xx.c_str();
+    if (setUpZones(newZones) == 0 && writeNewForbiddenConfig(newZones) == 0){
+      Serial.println("Written zones");
       writeChangeToLog(FORBIDDEN_ZONE_CHANGED, clientIP);
     }
   }
-  else if (server.arg(ALARM_CONFIG_BUTTON)){
+  else if (server.arg(ALARM_CONFIG_BUTTON) != ""){
+    Serial.println("POST alarm");
     settings.update_frequency = server.arg(UPDATE_INTERVAL_FIELD).toInt();
     settings.log_frequency = server.arg(LOG_INTERVAL_FIELD).toInt();
     settings.alarm = bool(server.arg(ALARM_CHECKBOX).toInt());
     settings.rele = bool(server.arg(MOTORS_CHECKBOX).toInt());
     settings.logging = bool(server.arg(TURN_OFF_LOGS_CHECKBOX).toInt());
-    if (writeConfigAlarmAndIntervals(settings)){
+    if (writeConfigAlarmAndIntervals(settings) == 0){
+      Serial.println("Written alarm");
       writeChangeToLog(LOG_FREQUENCY_AND_ALARM_TYPE_CHANGED, clientIP);
     }
 
   }
-  else if (server.arg(RESTART_BUTTON)){
-    if (restart()){
+  else if (server.arg(RESTART_BUTTON) != ""){
+    Serial.println("POST restart");
+    if (restart() == 0){
+      Serial.println("restarting...");
       writeChangeToLog(RESTART, clientIP);
     }
   }
@@ -192,6 +365,7 @@ void handleFormPOST() {
 
 
 void handleFormPage(){
+  #if PRELOAD
   String response = confHTML1;
   // If this takes to much time we should keep somewhere saved the zones String config
   response.concat(loadFile(forbiddenConfigFilePath));
@@ -216,23 +390,51 @@ void handleFormPage(){
     response.concat("checked ");
   }
   response.concat(confHTML7);
+  #else
+  String response = loadConf(confPageFilePath);
+  #endif
   server.send(200, "text/html", response);
 }
 
 void handleCSS(){
+  #if PRELOAD
   server.send(200, "text/css", stylesCSS);
+  #else
+  char* response = loadFile(stylesCSSFilePath);
+  server.send(200, "text/css", response);
+  free(response);
+  #endif
 }
 
 void handleMainPage() {
+  #if PRELOAD
   server.send(200, "text/html", mainHTML);
+  #else
+  char* response = loadFile(mainPageFilePath);
+  server.send(200, "text/html", response);
+  free(response);
+  #endif
 }
 
 void handleJSMain(){
+  #if PRELOAD
   server.send(200, "text/javascript", mainJS);
+  #else
+  char* response = loadFile(mainJSFilePath);
+  server.send(200, "text/javascript", response);
+  free(response);
+  #endif
 }
 
 void handleJSForm(){
+  #if PRELOAD
   server.send(200, "text/javascript", confJS);
+  #else
+  char* response = loadFile(confJSFilePath);
+  server.send(200, "text/javascript", response);
+  free(response);
+  #endif
+  
 }
 
 // Restarts system

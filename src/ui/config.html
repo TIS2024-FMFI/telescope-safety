@@ -13,30 +13,30 @@
     </header>
     <main>
         <div class="center">
-            <button type="button" onclick="window.location.href='index.html'" class="back-button">Späť na hlavnú stránku</button>
+            <button type="button" onclick="window.location.href='/'" class="back-button">Späť na hlavnú stránku</button>
         </div>
 
-        <form method="POST">
+        <form method="POST" onsubmit="confirmSubmitRestart(event)">
             <section>
                 <div class="center">
-                    <button type="button" id="restart-button" class="large-button" name="restart" value="restart">Reštartovať systém</button>
+                    <button type="submit" id="restart-button" class="large-button" name="restart" value="restart">Reštartovať systém</button>
                 </div>
             </section>
         </form>
 
-        <form method="POST">
+        <form method="POST" onsubmit="confirmSubmit(event)">
             <section class="settings">
                 <h2>Zakázané polohy</h2>
                 <textarea id="forbidden-positions" name="config_zones_field" rows="5"></textarea>
                 <div class="center">
-                    <button id="zones-settings" type="button" class="small-button" name="config_zones" value="config_zones">Uložiť zakázané oblasti</button>
+                    <button id="zones-settings" type="submit" class="small-button" name="config_zones" value="config_zones">Uložiť zakázané oblasti</button>
                 </div>
             </section>
         </form>
 
         <hr class="divider">
 
-        <form method="POST">
+        <form method="POST" onsubmit="confirmSubmit(event)">
             <section class="settings">
                 <h2>Levely alarmu</h2>
                 <div class="checkbox-group">
@@ -60,7 +60,7 @@
                 </label>
 
                 <div class="center">
-                    <button id="alarm-settings" type="button" class="small-button" name="config_alarm" value="config_alarm">Uložiť alarmy a intervaly</button>
+                    <button id="alarm-settings" type="submit" class="small-button" name="config_alarm" value="config_alarm">Uložiť alarmy a intervaly</button>
                 </div>
             </section>
         </form>
@@ -85,7 +85,7 @@
 
         <hr class="divider">
 
-        <form method="POST" onsubmit="confirmSubmit(event)">
+        <form method="POST">
             <section class="downloads">
                 <h2>Stiahnutie udalostí</h2>
                 <div class="center">

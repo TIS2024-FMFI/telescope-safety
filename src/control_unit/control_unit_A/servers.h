@@ -32,7 +32,7 @@ int setupServers();
 // @param error error message
 // @param warning warning message
 // @return 0 if success, -1 if error
-int sendToClients(AzimuthElevation* azimutElevation, String error = "", String warning = "");
+int sendToClients(AzimuthElevation* azimuthElevation, String error = "", String warning = "");
 
 String extractKey(WiFiClient& client);
 String getAcceptKey(String& key);

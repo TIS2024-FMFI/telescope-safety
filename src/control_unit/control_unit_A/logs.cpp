@@ -12,6 +12,7 @@ const char *logCollisionFilePath = "/logs/events/Log_collisions.csv";
 const char *logFilePathPrefix = "/logs/Log_";
 const char* ConfigFilePath = "/conf/AlarmAndIntervalsConfig.txt";
 const char* forbiddenConfigFilePath = "/conf/zones.txt";
+const char* matrixFilePath = "/conf/Matrix.txt";
 
 
 void setupSD() {

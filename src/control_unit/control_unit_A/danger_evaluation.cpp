@@ -106,7 +106,7 @@ int enableMotors(){
 
 void setupAlarm(){
   pinMode(ALARM, OUTPUT);
-  digitalWrite(ALARM, 1);
+  digitalWrite(ALARM, 0);
 }
 
 int startAlarm(){

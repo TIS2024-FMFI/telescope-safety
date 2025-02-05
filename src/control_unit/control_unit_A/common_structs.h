@@ -1,5 +1,5 @@
-#ifndef COMMON_STRUCTS
-#define COMMON_STRUCTS
+#ifndef COMMON_STRUCTS_H
+#define COMMON_STRUCTS_H
 
 #include <vector>
 

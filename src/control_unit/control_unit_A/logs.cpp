@@ -113,7 +113,7 @@ int writeChangeToLog(ChangeType changeType, const char *ip) {
       break;
   }
   myFile.print(";");
-  myFile.print(ip, strlen(ip));
+  myFile.print(ip);
   myFile.println(";");
 
   myFile.close();

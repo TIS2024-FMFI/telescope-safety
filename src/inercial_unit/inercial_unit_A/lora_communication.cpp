@@ -45,7 +45,6 @@ int readFromControlUnit() {
     byte incomingLength = LoRa.read();   // Dĺžka správy
 
     String incoming = "";
-
     while (LoRa.available()) {
         incoming += (char)LoRa.read();
     }
@@ -61,46 +60,77 @@ int readFromControlUnit() {
     }
 
     // Výpis prijatých údajov
-    
     Serial.println("Received message from control unit: " + incoming);
-    
-    // Spracovanie príkazu "RESTART_INERTIAL_UNIT:<azimuth>"
-    if (incoming.startsWith("RESTART_INERTIAL_UNIT:")) {
-        String azimuthStr = incoming.substring(22);  // Extrahovanie azimutu
-        azimuthStr.trim();
-        double azimuth = azimuthStr.toDouble();
 
-        if (isnan(azimuth)) {
-            Serial.println("Error: Invalid azimuth value.");
-            return -1;
+    // Rozdelenie viacerých príkazov pomocou "|"
+    int ackSent = 0;
+    char *command = strtok((char*)incoming.c_str(), "|");
+
+    while (command != nullptr) {
+        String cmdStr = String(command);
+
+        if (cmdStr.startsWith("SET_CALIBRATION_MATRIX:")) {
+            double newMatrix[3][3];
+            sscanf(cmdStr.c_str(), "SET_CALIBRATION_MATRIX:%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf",
+                   &newMatrix[0][0], &newMatrix[0][1], &newMatrix[0][2],
+                   &newMatrix[1][0], &newMatrix[1][1], &newMatrix[1][2],
+                   &newMatrix[2][0], &newMatrix[2][1], &newMatrix[2][2]);
+
+            setCorrectionMatrix(newMatrix);  
+            Serial.println("Calibration matrix updated.");
+            ackSent++;
         }
 
-        // Resetovanie senzora
-        resetSensorPower();
+        if (cmdStr.startsWith("RESTART_INERTIAL_UNIT:")) {
+            String azimuthStr = cmdStr.substring(22);
+            azimuthStr.trim();
+            double azimuth = azimuthStr.toDouble();
 
-        RollPitchYaw* currentRPY = readFromSensor();
-        while (!currentRPY) {
-            currentRPY = readFromSensor();
+            if (isnan(azimuth) || azimuth == -1) {
+                Serial.println("Resetting sensor without changing azimuth...");
+                resetSensorPower();
+                RollPitchYaw* currentRPY = readFromSensor();
+                while (!currentRPY) {
+                    currentRPY = readFromSensor();
+                }
+                yawOffset = currentRPY->yaw; // Uloženie aktuálnej hodnoty yaw
+            } else {
+                Serial.print("Adjusting yaw to achieve azimuth: ");
+                Serial.println(azimuth);
+
+                // Reset senzora a nastavenie yawOffset
+                resetSensorPower();
+                RollPitchYaw* currentRPY = readFromSensor();
+                while (!currentRPY) {
+                    currentRPY = readFromSensor();
+                }
+                yawOffset = adjustYawToAzimuth(azimuth, currentRPY);
+            }
+            ackSent++;
         }
-        if (azimuth == -1) {
-            Serial.println("Resetting sensor without changing azimuth...");
-            yawOffset = currentRPY->yaw; // Uloženie aktuálnej hodnoty yaw
-        } else {
-            Serial.print("Adjusting yaw to achieve azimuth: ");
-            Serial.println(azimuth);
 
-            // Zmena yaw na dosiahnutie požadovaného azimutu
-            yawOffset = adjustYawToAzimuth(azimuth, currentRPY);
-        }
-
-        // **Send acknowledgment**
-        LoRa.beginPacket();
-        LoRa.print("ACK:RESTART_INERTIAL_UNIT"); // Acknowledgment message
-        LoRa.endPacket();
-        Serial.println("Acknowledgment sent to control unit.");
-        return 0;
+        command = strtok(nullptr, "|");  // Prechádzame na ďalší príkaz
     }
 
-    Serial.println("Unknown command received.");
-    return -1;
+    if (ackSent > 0) {
+        LoRa.beginPacket();
+        if (incoming.indexOf("RESTART_INERTIAL_UNIT") >= 0) {
+            LoRa.print("ACK:RESTART_INERTIAL_UNIT|");
+        }
+        if (incoming.indexOf("SET_CALIBRATION_MATRIX") >= 0) {
+            LoRa.print("ACK:SET_CALIBRATION_MATRIX");
+        }
+        LoRa.endPacket();
+        Serial.println("Acknowledgment sent.");
+    }
+
+    return ackSent > 0 ? 0 : -1;
+}
+
+void setCorrectionMatrix(double newMatrix[3][3]) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            R_correction[i][j] = newMatrix[i][j];
+        }
+    }
 }

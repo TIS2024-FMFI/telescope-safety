@@ -50,6 +50,30 @@ void setup() {
 
   setupAlarm();
   setupMotors();
+  
+  const char* testMatrix = "1;2;3\n4;5;6\n7;8;9\n";
+  
+  // Zavolanie setUpMatrix, ktorá načíta maticu zo stringu
+  setUpMatrix(testMatrix);
+
+  // Vypísanie načítanej matice na Serial Monitor
+  Serial.println("Načítaná matica:");
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      Serial.print(TransformMatrix[i][j]);
+      if (j < 2) {
+         Serial.print(";");
+      }
+    }
+    Serial.println();
+  }
+
+  int result = saveMatrix();
+  if(result == 0) {
+    Serial.println("Matica bola úspešne uložená.");
+  } else {
+    Serial.println("Chyba pri ukladaní matice.");
+  }
 }
 
 

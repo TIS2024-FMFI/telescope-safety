@@ -440,13 +440,13 @@ void handleFormPage(){
   response.concat(loadFile(forbiddenConfigFilePath));
 
   for (int i = 0; i < 3; i++){
-      for (int ii = 0; ii < 3; ii++){
-          response.concat(confTags[i][ii]);
-          response.concat("value=\"");
-          response.concat(matrixTags[i][ii]);
-          response.concat("\" ");
-      }
+    for (int ii = 0; ii < 3; ii++){
+      response.concat(confTags[i][ii]);
+      response.concat("value=\"");
+      response.concat(matrixTags[i][ii]);
+      response.concat("\" ");
     }
+  }
 
   response.concat(confHTML11);
   if (settings.alarm){

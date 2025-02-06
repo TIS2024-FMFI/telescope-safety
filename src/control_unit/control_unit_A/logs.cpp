@@ -112,9 +112,8 @@ int writeChangeToLog(ChangeType changeType, const char *ip) {
       myFile.print("UNKNOWN_CHANGE");
       break;
   }
-
   myFile.print(";");
-  myFile.print(ip);
+  myFile.print(ip, strlen(ip));
   myFile.println(";");
 
   myFile.close();

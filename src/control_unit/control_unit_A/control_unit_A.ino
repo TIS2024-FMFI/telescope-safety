@@ -119,10 +119,8 @@ void setupEthernet(){
 
 void setupSettings(){
   loadSettings();
-  for (int i = 0; i < 3; i++) {
-    for (int ii = 0; ii < 3; ii++){
-      TransformMatrix[i][ii] = 0;
-    }
-  }
+  char* file = loadFile(matrixFilePath);
+  setUpMatrix(file);
+  free(file);
   Serial.println("jupi2");
 }

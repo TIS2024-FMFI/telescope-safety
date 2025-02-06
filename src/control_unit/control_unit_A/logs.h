@@ -15,7 +15,7 @@ extern const char *logCollisionFilePath;
 extern const char *logFilePathPrefix;
 extern const char* ConfigFilePath;
 extern const char* forbiddenConfigFilePath;
-
+extern const char* matrixFilePath;
 
 int writeHeaderIfNeeded(String filename, const char *header);
 

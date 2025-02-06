@@ -46,7 +46,7 @@ int checkForbiddenZone(AzimuthElevation* azimutElevation) {
     }
   }
   stopAlarm();
-  enableMotors()
+  enableMotors();
   return 0;
 }
 

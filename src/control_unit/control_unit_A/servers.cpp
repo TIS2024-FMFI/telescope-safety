@@ -43,12 +43,14 @@ int sendToClients(AzimuthElevation* azimuthElevation, String error, String warni
     message.concat(",\"elevation\":");
     message.concat(String(azimuthElevation->elevation, 2));
     if (error != ""){
-      message.concat(",\"error\":");
+      message.concat(",\"error\":\"");
       message.concat(error);
+      message.concat("\"");
     }
     if (warning != ""){
-      message.concat(",\"warning\":");
+      message.concat(",\"warning\":\"");
       message.concat(warning);
+      message.concat("\"");
     }
     message.concat("}");
 

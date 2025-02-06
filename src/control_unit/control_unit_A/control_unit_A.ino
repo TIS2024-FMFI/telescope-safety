@@ -76,6 +76,8 @@ void setup() {
   }
 }
 
+bool resetflag=false;
+double azimuth;
 
 void loop() {
   #if DISPLAY_A
@@ -96,6 +98,12 @@ void loop() {
   doOperations();
   #endif
 
+  if(resetflag){
+    if (restartInertialUnit(azimuth) == 0){
+      resetflag=false;
+    }   
+  }
+
   if (toNano.available()) {
     String azimuthStr = toNano.readStringUntil('\n');
     int firstSpace = azimuthStr.indexOf(' ');
@@ -104,8 +112,8 @@ void loop() {
     azimuthDMS.degrees = azimuthStr.substring(0, firstSpace).toInt();
     azimuthDMS.minutes = azimuthStr.substring(firstSpace + 1, secondSpace).toInt();
     azimuthDMS.seconds = azimuthStr.substring(secondSpace + 1).toInt();
-    double azimuth = convertToDecimalDegrees(azimuthDMS);
-    restartInertialUnit(azimuth);
+    azimuth = convertToDecimalDegrees(azimuthDMS);
+    resetflag = true;
   }
 
 }

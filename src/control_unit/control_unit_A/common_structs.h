@@ -1,7 +1,9 @@
-#ifndef COMMON_STRUCTS
-#define COMMON_STRUCTS
+#ifndef COMMON_STRUCTS_H
+#define COMMON_STRUCTS_H
 
 #include <vector>
+
+
 
 struct AzimuthElevation {
     double azimuth;
@@ -23,6 +25,7 @@ using ForbiddenZones = std::vector<ForbiddenZone>;
 enum ChangeType {
     FORBIDDEN_ZONE_CHANGED,
     LOG_FREQUENCY_AND_ALARM_TYPE_CHANGED,
+    TRANSFORM_MATRIX_CHANGED,
     RESTART
 };
 
@@ -36,5 +39,6 @@ struct Settings {
 };
 
 extern Settings settings;
+extern int TransformMatrix[3][3];
 
 #endif

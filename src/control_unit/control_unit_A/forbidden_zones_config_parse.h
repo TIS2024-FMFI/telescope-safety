@@ -33,6 +33,8 @@ void sortZoneClockwise(ForbiddenZone& zone);
 
 double calculateAngle(const AzimuthElevation& point, const AzimuthElevation& centroid);
 
+int setUpMatrix(const char* newMatrix);
+
 // Parsing alarm type, logging status, log frequency and update frequency from file to global variable settings
 // @param newConfiguration loaded from file
 // returns -1 if unsuccessful and 0 if successful

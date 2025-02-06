@@ -14,6 +14,10 @@ const char *mainPageFilePath = "/www/index.html";
 const char *mainJSFilePath = "/www/main.js";
 const char *stylesCSSFilePath = "/www/styles.css";
 
+ const char* matrixTags[3][3] = {{MATRIX00, MATRIX01, MATRIX02},
+                    {MATRIX10, MATRIX11, MATRIX12},
+                    {MATRIX20, MATRIX21, MATRIX22}};
+
 
 #if PRELOAD
 
@@ -37,6 +41,10 @@ String confHTML13;
 String confHTML14;
 String confHTML15;
 String confHTML16;
+
+String confTags[3][3] = {{confHTML2, confHTML3, confHTML4},
+                         {confHTML5, confHTML6, confHTML7},
+                         {confHTML8, confHTML9, confHTML10}};
 
 #endif
 
@@ -69,131 +77,23 @@ int loadConf(const char* filePath){
   confHTML1.concat(file.readStringUntil('>'));  
   confHTML1.concat(">");
 
-  while (1){
-    int ch = file.read();
-    if (ch == -1){
-      break;
-    }
-    char c = ch;
-    confHTML2.concat(c);
-    if (confHTML2.endsWith(MATRIX00)){
-      break;
-    }
-  }
-  confHTML2.concat(file.readStringUntil(' '));  
-  confHTML2.concat(" ");
-
-  while (1){
-    int ch = file.read();
-    if (ch == -1){
-      break;
-    }
-    char c = ch;
-    confHTML3.concat(c);
-    if (confHTML3.endsWith(MATRIX01)){
-      break;
+  for (int i = 0; i < 3; i++){
+    for (int ii = 0; ii < 3; ii++){
+      while (1){
+        int ch = file.read();
+        if (ch == -1){
+          break;
+        }
+        char c = ch;
+        confTags[i][ii].concat(c);
+        if (confTags[i][ii].endsWith(matrixTags[i][ii])){
+          break;
+        }
+      }
+      confTags[i][ii].concat(file.readStringUntil(' '));  
+      confTags[i][ii].concat(" ");
     }
   }
-  confHTML3.concat(file.readStringUntil(' '));  
-  confHTML3.concat(" ");
-
-  while (1){
-    int ch = file.read();
-    if (ch == -1){
-      break;
-    }
-    char c = ch;
-    confHTML4.concat(c);
-    if (confHTML4.endsWith(MATRIX02)){
-      break;
-    }
-  }
-  confHTML4.concat(file.readStringUntil(' '));  
-  confHTML4.concat(" ");
-
-  while (1){
-    int ch = file.read();
-    if (ch == -1){
-      break;
-    }
-    char c = ch;
-    confHTML5.concat(c);
-    if (confHTML5.endsWith(MATRIX10)){
-      break;
-    }
-  }
-  confHTML5.concat(file.readStringUntil(' '));  
-  confHTML5.concat(" ");
-
-  while (1){
-    int ch = file.read();
-    if (ch == -1){
-      break;
-    }
-    char c = ch;
-    confHTML6.concat(c);
-    if (confHTML6.endsWith(MATRIX11)){
-      break;
-    }
-  }
-  confHTML6.concat(file.readStringUntil(' '));  
-  confHTML6.concat(" ");
-
-  while (1){
-    int ch = file.read();
-    if (ch == -1){
-      break;
-    }
-    char c = ch;
-    confHTML7.concat(c);
-    if (confHTML7.endsWith(MATRIX12)){
-      break;
-    }
-  }
-  confHTML7.concat(file.readStringUntil(' '));  
-  confHTML7.concat(" ");
-
-  while (1){
-    int ch = file.read();
-    if (ch == -1){
-      break;
-    }
-    char c = ch;
-    confHTML8.concat(c);
-    if (confHTML8.endsWith(MATRIX20)){
-      break;
-    }
-  }
-  confHTML8.concat(file.readStringUntil(' '));  
-  confHTML8.concat(" ");
-
-  while (1){
-    int ch = file.read();
-    if (ch == -1){
-      break;
-    }
-    char c = ch;
-    confHTML9.concat(c);
-    if (confHTML9.endsWith(MATRIX21)){
-      break;
-    }
-  }
-  confHTML9.concat(file.readStringUntil(' '));  
-  confHTML9.concat(" ");
-
-  while (1){
-    int ch = file.read();
-    if (ch == -1){
-      break;
-    }
-    char c = ch;
-    confHTML10.concat(c);
-    if (confHTML10.endsWith(MATRIX22)){
-      break;
-    }
-  }
-  confHTML10.concat(file.readStringUntil(' '));  
-  confHTML10.concat(" ");
 
   // load intil alarm
   confHTML11.reserve(100);
@@ -305,159 +205,27 @@ String loadConf(const char* filePath){
   response.concat(zones);
   free(zones);
 
-  while (1){
-    int ch = file.read();
-    if (ch == -1){
-      break;
-    }
-    char c = ch;
-    response.concat(c);
-    if (response.endsWith(MATRIX00)){
-      break;
+  for (int i = 0; i < 3; i++){
+    for (int ii = 0; ii < 3; ii++){
+      while (1){
+        int ch = file.read();
+        if (ch == -1){
+          break;
+        }
+        char c = ch;
+        response.concat(c);
+        if (response.endsWith(matrixTags[i][ii])){
+          break;
+        }
+      }
+      response.concat(file.readStringUntil(' '));  
+      response.concat(" ");
+      response.concat("value=\"");
+      response.concat(TransformMatrix[i][ii]);
+      response.concat("\" ");
+
     }
   }
-  response.concat(file.readStringUntil(' '));  
-  response.concat(" ");
-  response.concat("value=\"");
-  response.concat(TransformMatrix[0][0]);
-  response.concat("\" ");
-
-
-  while (1){
-    int ch = file.read();
-    if (ch == -1){
-      break;
-    }
-    char c = ch;
-    response.concat(c);
-    if (response.endsWith(MATRIX01)){
-      break;
-    }
-  }
-  response.concat(file.readStringUntil(' '));  
-  response.concat(" ");
-  response.concat("value=\"");
-  response.concat(TransformMatrix[0][1]);
-  response.concat("\" ");
-
-  while (1){
-    int ch = file.read();
-    if (ch == -1){
-      break;
-    }
-    char c = ch;
-    response.concat(c);
-    if (response.endsWith(MATRIX02)){
-      break;
-    }
-  }
-  response.concat(file.readStringUntil(' '));  
-  response.concat(" ");
-  response.concat("value=\"");
-  response.concat(TransformMatrix[0][2]);
-  response.concat("\" ");
-
-  while (1){
-    int ch = file.read();
-    if (ch == -1){
-      break;
-    }
-    char c = ch;
-    response.concat(c);
-    if (response.endsWith(MATRIX10)){
-      break;
-    }
-  }
-  response.concat(file.readStringUntil(' '));  
-  response.concat(" ");
-  response.concat("value=\"");
-  response.concat(TransformMatrix[1][0]);
-  response.concat("\" ");
-
-  while (1){
-    int ch = file.read();
-    if (ch == -1){
-      break;
-    }
-    char c = ch;
-    response.concat(c);
-    if (response.endsWith(MATRIX11)){
-      break;
-    }
-  }
-  response.concat(file.readStringUntil(' '));  
-  response.concat(" ");
-  response.concat("value=\"");
-  response.concat(TransformMatrix[1][1]);
-  response.concat("\" ");
-
-  while (1){
-    int ch = file.read();
-    if (ch == -1){
-      break;
-    }
-    char c = ch;
-    response.concat(c);
-    if (response.endsWith(MATRIX12)){
-      break;
-    }
-  }
-  response.concat(file.readStringUntil(' '));  
-  response.concat(" ");
-  response.concat("value=\"");
-  response.concat(TransformMatrix[1][2]);
-  response.concat("\" ");
-
-  while (1){
-    int ch = file.read();
-    if (ch == -1){
-      break;
-    }
-    char c = ch;
-    response.concat(c);
-    if (response.endsWith(MATRIX20)){
-      break;
-    }
-  }
-  response.concat(file.readStringUntil(' '));  
-  response.concat(" ");
-  response.concat("value=\"");
-  response.concat(TransformMatrix[2][0]);
-  response.concat("\" ");
-
-  while (1){
-    int ch = file.read();
-    if (ch == -1){
-      break;
-    }
-    char c = ch;
-    response.concat(c);
-    if (response.endsWith(MATRIX21)){
-      break;
-    }
-  }
-  response.concat(file.readStringUntil(' '));  
-  response.concat(" ");
-  response.concat("value=\"");
-  response.concat(TransformMatrix[2][1]);
-  response.concat("\" ");
-
-  while (1){
-    int ch = file.read();
-    if (ch == -1){
-      break;
-    }
-    char c = ch;
-    response.concat(c);
-    if (response.endsWith(MATRIX22)){
-      break;
-    }
-  }
-  response.concat(file.readStringUntil(' '));  
-  response.concat(" ");
-  response.concat("value=\"");
-  response.concat(TransformMatrix[2][2]);
-  response.concat("\" ");
 
 
   while (1){
@@ -616,7 +384,8 @@ void handleFormPOST() {
   Serial.println(message);
   #endif
 
-  const char *clientIP = server.client().remoteIP().toString().c_str();
+  String clientIPStr = server.client().remoteIP().toString();
+  const char *clientIP = clientIPStr.c_str();
   //Serial.print("Check: ");
   //Serial.println(server.arg(ZONE_CONFIG_BUTTON));
   if (server.arg(ZONE_CONFIG_BUTTON) != ""){
@@ -630,15 +399,11 @@ void handleFormPOST() {
     }
   }
   else if (server.arg(MATRIX_CONFIG_BUTTON) != "") {
-    TransformMatrix[0][0] = server.arg(MATRIX00).toInt();
-    TransformMatrix[0][1] = server.arg(MATRIX01).toInt();
-    TransformMatrix[0][2] = server.arg(MATRIX02).toInt();
-    TransformMatrix[1][0] = server.arg(MATRIX10).toInt();
-    TransformMatrix[1][1] = server.arg(MATRIX11).toInt();
-    TransformMatrix[1][2] = server.arg(MATRIX12).toInt();
-    TransformMatrix[2][0] = server.arg(MATRIX20).toInt();
-    TransformMatrix[2][1] = server.arg(MATRIX21).toInt();
-    TransformMatrix[2][2] = server.arg(MATRIX22).toInt();
+    for (int i = 0; i < 3; i++){
+      for (int ii = 0; ii < 3; ii++){
+        TransformMatrix[i][ii] = server.arg(matrixTags[i][ii]).toInt();
+      }
+    }
     if (saveMatrix() == 0) {
       writeChangeToLog(TRANSFORM_MATRIX_CHANGED, clientIP);
     }
@@ -674,44 +439,14 @@ void handleFormPage(){
   // If this takes to much time we should keep somewhere saved the zones String config
   response.concat(loadFile(forbiddenConfigFilePath));
 
-  response.concat(confHTML2);
-  response.concat("value=\"");
-  response.concat(TransformMatrix[0][0]);
-  response.concat("\" ");
-
-  response.concat(confHTML3);
-  response.concat("value=\"");
-  response.concat(TransformMatrix[0][1]);
-  response.concat("\" ");
-  response.concat(confHTML4);
-  response.concat("value=\"");
-  response.concat(TransformMatrix[0][2]);
-  response.concat("\" ");
-  response.concat(confHTML5);
-  response.concat("value=\"");
-  response.concat(TransformMatrix[1][0]);
-  response.concat("\" ");
-  response.concat(confHTML6);
-  response.concat("value=\"");
-  response.concat(TransformMatrix[1][1]);
-  response.concat("\" ");
-  response.concat(confHTML7);
-  response.concat("value=\"");
-  response.concat(TransformMatrix[1][2]);
-  response.concat("\" ");
-  response.concat(confHTML8);
-  response.concat("value=\"");
-  response.concat(TransformMatrix[2][0]);
-  response.concat("\" ");
-  response.concat(confHTML9);
-  response.concat("value=\"");
-  response.concat(TransformMatrix[2][1]);
-  response.concat("\" ");
-  response.concat(confHTML10);
-  response.concat("value=\"");
-  response.concat(TransformMatrix[2][2]);
-  response.concat("\" ");
-  
+  for (int i = 0; i < 3; i++){
+    for (int ii = 0; ii < 3; ii++){
+      response.concat(confTags[i][ii]);
+      response.concat("value=\"");
+      response.concat(matrixTags[i][ii]);
+      response.concat("\" ");
+    }
+  }
 
   response.concat(confHTML11);
   if (settings.alarm){

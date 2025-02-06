@@ -145,9 +145,10 @@ int restartInertialUnit(double azimuth, double calibrationMatrix[3][3]) {
 
 int lastUpdateDisplay = 0;
 const int secendsToMilis = 1000;
+const int displayUpdate = 10;
 
 void displayAE(AzimuthElevation* ae) {
-  if ((millis() - lastUpdateDisplay) >= (settings.update_frequency * secendsToMilis)){
+  if ((millis() - lastUpdateDisplay) >= (displayUpdate * secendsToMilis)){
     lastUpdateDisplay = millis();
     DegreesMinutesSeconds azimuth = convertToDMS(ae->azimuth, false);
     DegreesMinutesSeconds elevation = convertToDMS(ae->elevation, true);
@@ -159,14 +160,10 @@ void displayAE(AzimuthElevation* ae) {
 
 void doOperations(){
   AzimuthElevation* data = readFromInertialUnit();
-    if (data) {
-      if(checkForbiddenZone(data)==0){
-        displayAE(data);
-        sendToClients(data);
-        writeAEtoLog(data);
-      }
-      else{
-        writeAlarmToLog(data);
-    }
-    }
+  if (data) {
+    checkForbiddenZone(data);
+    displayAE(data);
+    sendToClients(data);
+    writeAEtoLog(data);
+  }
 }

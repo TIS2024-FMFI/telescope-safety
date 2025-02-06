@@ -48,4 +48,6 @@ void setupStaticFiles();
 #define MATRIX21 "matrix[2][1]"
 #define MATRIX22 "matrix[2][2]"
 
+extern  const char* matrixTags[3][3];
+
 #endif

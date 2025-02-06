@@ -83,7 +83,9 @@ void loop() {
     double azimuth = convertToDecimalDegrees(azimuthDMS);
     restartInertialUnit(azimuth);
   }
+
 }
+
 
 
 

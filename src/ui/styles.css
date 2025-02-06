@@ -76,6 +76,21 @@ h1, h2 {
 }
 
 /* Konfiguračná stránka */
+
+.matrix td {
+    width: 70px;
+    text-align: center; 
+    padding: 10px;
+    margin: 5px; 
+}
+
+.matrix input {
+    width: 60px;
+    text-align: center;
+    padding: 3px;
+    box-sizing: border-box;
+}
+
 textarea {
     width: 100%;
     padding: 0.8rem;

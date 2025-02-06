@@ -1,5 +1,6 @@
 
 #include "forbidden_zones_config_parse.h"
+#include <stdlib.h>
 
 ForbiddenZones systemForbiddenZones;
 
@@ -105,6 +106,32 @@ void sortZoneClockwise(ForbiddenZone& zone) {
 // Helper function to calculate the polar angle relative to the centroid
 double calculateAngle(const AzimuthElevation& point, const AzimuthElevation& centroid) {
     return atan2(point.elevation - centroid.elevation, point.azimuth - centroid.azimuth);
+}
+
+int setUpMatrix(const char* newMatrix){
+  std::string_view config(newMatrix);
+  std::string_view::size_type current = 0;
+  std::string_view::size_type end = 0;
+
+  int rowIndex = 0;  // To keep track of which row we're filling
+  // Split by lines
+  while ((end = config.find('\n', current)) != std::string_view::npos && rowIndex < 3) {
+    std::string_view line = config.substr(current, end - current);
+    current = end + 1; // Move past the newline
+
+    int value0;
+    int value1;
+    int value2;
+
+    if (sscanf(line.data(), "%d;%d;%d", value0, &value1, &value2) == 3){
+      TransformMatrix[rowIndex][0] = value0;
+      TransformMatrix[rowIndex][1] = value1;
+      TransformMatrix[rowIndex][2] = value2;
+    }
+    
+    rowIndex++;
+  }
+  return 0;
 }
 
 int setUpAlarmAndIntervals(const char* newConfiguration) {

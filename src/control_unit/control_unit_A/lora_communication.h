@@ -27,7 +27,7 @@ AzimuthElevation* readFromInertialUnit();
 // @return 0 if success, -1 if error
 // @param azimuth value indicates calibration of azimuth on inertial unit
   // if its -1 it stays the same and sensor just resets
-int restartInertialUnit(double azimuth = -1);
+int restartInertialUnit(double azimuth = -1, double calibrationMatrix[3][3] = nullptr);
 
 void displayAE(AzimuthElevation* ae);
 

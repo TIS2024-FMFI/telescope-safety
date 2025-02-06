@@ -15,7 +15,7 @@ extern const char *logCollisionFilePath;
 extern const char *logFilePathPrefix;
 extern const char* ConfigFilePath;
 extern const char* forbiddenConfigFilePath;
-
+extern const char* matrixFilePath;
 
 int writeHeaderIfNeeded(String filename, const char *header);
 
@@ -59,4 +59,9 @@ int loadSettings(); //to be done
 char* loadFile(const char* filePath);
 
 void setupSD();
+
+// Save transform matrix to file
+// @return 0 if success, -1 if error
+int saveMatrix();
+
 #endif

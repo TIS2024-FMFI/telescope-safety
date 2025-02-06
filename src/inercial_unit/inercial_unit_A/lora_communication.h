@@ -26,4 +26,6 @@ int sendToControlUnit(AzimuthElevation* azimuthElevation);
 // @return 0 if success, -1 if error
 int readFromControlUnit();
 
+void setCorrectionMatrix(double newMatrix[3][3]);
+
 #endif // LORA_COMMUNICATION_H

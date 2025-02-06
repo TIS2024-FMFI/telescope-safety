@@ -7,12 +7,12 @@ function confirmSubmit(event) {
 }
 
 function confirmSubmitRestart(event) {
-    const confirmed = confirm('Systém sa vypne. Chcete pokračovať?');
+    const confirmed = confirm('Senzor bude reštartovaný. Chcete pokračovať?');
     if (confirmed) {
-        alert('Systém bude vypnutý.');
+        alert('Senzor bude reštartovaný.');
     } else {
         event.preventDefault();
-        alert('Vypnutie systému bolo zrušené.');
+        alert('Reštartovanie senzoru bolo zrušené.');
     }
 }
 

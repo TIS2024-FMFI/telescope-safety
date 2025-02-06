@@ -5,6 +5,8 @@
 #include <cmath>
 #include "gain_roll_pitch_yaw.h"
 
+extern double R_correction[3][3];
+
 struct AzimuthElevation {
     double azimuth;
     double elevation;

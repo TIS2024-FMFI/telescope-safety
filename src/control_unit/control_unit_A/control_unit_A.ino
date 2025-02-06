@@ -50,8 +50,34 @@ void setup() {
 
   setupAlarm();
   setupMotors();
+  
+  const char* testMatrix = "1;2;3\n4;5;6\n7;8;9\n";
+  
+  // Zavolanie setUpMatrix, ktorá načíta maticu zo stringu
+  setUpMatrix(testMatrix);
+
+  // Vypísanie načítanej matice na Serial Monitor
+  Serial.println("Načítaná matica:");
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      Serial.print(TransformMatrix[i][j]);
+      if (j < 2) {
+         Serial.print(";");
+      }
+    }
+    Serial.println();
+  }
+
+  int result = saveMatrix();
+  if(result == 0) {
+    Serial.println("Matica bola úspešne uložená.");
+  } else {
+    Serial.println("Chyba pri ukladaní matice.");
+  }
 }
 
+bool resetflag=false;
+double azimuth;
 
 void loop() {
   #if DISPLAY_A
@@ -72,6 +98,12 @@ void loop() {
   doOperations();
   #endif
 
+  if(resetflag){
+    if (restartInertialUnit(azimuth) == 0){
+      resetflag=false;
+    }   
+  }
+
   if (toNano.available()) {
     String azimuthStr = toNano.readStringUntil('\n');
     int firstSpace = azimuthStr.indexOf(' ');
@@ -80,8 +112,8 @@ void loop() {
     azimuthDMS.degrees = azimuthStr.substring(0, firstSpace).toInt();
     azimuthDMS.minutes = azimuthStr.substring(firstSpace + 1, secondSpace).toInt();
     azimuthDMS.seconds = azimuthStr.substring(secondSpace + 1).toInt();
-    double azimuth = convertToDecimalDegrees(azimuthDMS);
-    restartInertialUnit(azimuth);
+    azimuth = convertToDecimalDegrees(azimuthDMS);
+    resetflag = true;
   }
 
 }

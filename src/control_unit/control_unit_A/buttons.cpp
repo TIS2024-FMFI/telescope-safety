@@ -2,17 +2,22 @@
 #include "hardware/uart.h"
 #include "buttons.h"
 
+//BUTTON1 - prepinanie medzi nastaveniami a zobrazovanim aktualnych dat
 bool button1State = false;
 bool lastButton1State = false;
 
+//BUTTON2 stlacenie - prepinanie medzi stupnami, minutami, sekundami v nastaveniach
+//BUTTON2 podrzanie - odoslanie nastaveneho azimutu na inercialnu jednotku
 bool button2State = false;
 bool lastButton2State = false;
 unsigned long button2PressTime = 0;
 bool button2LongPressSent = false;
 
+//BUTTON3 - zvysenie cisla na ktorom sme akutane nastaveni v nastaveniach
 bool button3State = false;
 bool lastButton3State = false;
 
+//BUTTON4 - znizenie cisla na ktorom sme akutane nastaveni v nastaveniach
 bool button4State = false;
 bool lastButton4State = false;
 

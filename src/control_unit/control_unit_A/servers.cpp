@@ -91,7 +91,7 @@ int setupWebSocketServer(){
 
 int setupMDNSServer(){
   Serial.println("Starting mDNS!");
-  if (MDNS.begin("telescop")) {
+  if (MDNS.begin("teleskop")) {
     Serial.println("MDNS responder started");
   }
   return 0;

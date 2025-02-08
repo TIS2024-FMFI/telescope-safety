@@ -8,6 +8,7 @@ bind()
 function bind() {
     ws.onopen = function () {
         const alert = document.getElementsByClassName("alert")[0];
+        alert.style.display = "block";
         alert.className = "alert alert--success";
 
         const alertText = document.getElementsByClassName("alert__text")[0];
@@ -16,6 +17,7 @@ function bind() {
 
     ws.onerror = function (event) {
         const alert = document.getElementsByClassName("alert")[0];
+        alert.style.display = "block";
         alert.className = "alert alert--error";
 
         const alertText = document.getElementsByClassName("alert__text")[0];
@@ -31,6 +33,7 @@ function bind() {
 
         if (data.error){
             const alert = document.getElementsByClassName("alert")[0];
+            alert.style.display = "block";
             alert.className = "alert alert--error";
 
             const alertText = document.getElementsByClassName("alert__text")[0];
@@ -39,6 +42,7 @@ function bind() {
 
         if (data.warning){
             const alert = document.getElementsByClassName("alert")[0];
+            alert.style.display = "block";
             alert.className = "alert alert--warning";
 
             const alertText = document.getElementsByClassName("alert__text")[0];
@@ -49,6 +53,7 @@ function bind() {
 
     ws.onclose = function (event) {
         const alert = document.getElementsByClassName("alert")[0];
+        alert.style.display = "block";
         alert.className = "alert alert--error";
 
         const alertText = document.getElementsByClassName("alert__text")[0];
@@ -59,6 +64,7 @@ function bind() {
 function retry() {
     if (ws.readyState !== WebSocket.OPEN && ws.readyState !== WebSocket.CONNECTING) {
         const alert = document.getElementsByClassName("alert")[0];
+        alert.style.display = "block";
         alert.className = "alert alert--warning";
 
         const alertText = document.getElementsByClassName("alert__text")[0];

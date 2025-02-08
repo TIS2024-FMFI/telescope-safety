@@ -8,8 +8,9 @@
 #define SPI_PORT SPI
 #define CS_PIN 2
 #define WIRE_PORT Wire
-#define AD0_VAL 0
 #define SENSOR_POWER_PIN 15
+
+extern uint8_t AD0_VAL;
 
 struct RollPitchYaw {
     double roll;

@@ -3,6 +3,8 @@
 
 double yawOffset=0.0;
 
+uint8_t AD0_VAL = 0;
+
 #ifdef USE_SPI
 ICM_20948_SPI myICM;
 #else
@@ -22,7 +24,11 @@ void initializeSensor() {
 #ifdef USE_SPI
         myICM.begin(CS_PIN, SPI_PORT);
 #else
-        myICM.begin(WIRE_PORT, AD0_VAL);
+        ICM_20948_Status_e status = myICM.begin(WIRE_PORT, AD0_VAL);
+        if(status!=ICM_20948_Stat_Ok){
+          AD0_VAL=1;
+          myICM.begin(WIRE_PORT, AD0_VAL);
+        }
 #endif
         if (myICM.status != ICM_20948_Stat_Ok) {
             delay(500);

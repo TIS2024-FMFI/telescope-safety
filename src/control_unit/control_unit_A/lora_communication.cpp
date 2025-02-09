@@ -83,64 +83,50 @@ AzimuthElevation* readFromInertialUnit() {
     return &inertialData;
 }
 
+const unsigned long timeout = 5000;   // Timeout for acknowledgment (in milliseconds)
+bool flagSend = true;
+unsigned long startTime = 0;
+
 int restartInertialUnit(double azimuth, double calibrationMatrix[3][3]) {
-    const unsigned long timeout = 400;   // Timeout pre potvrdenie (ms)
-    String completeCommand = "";  // Celková správa
-
-    if (!isnan(azimuth) || azimuth!=-1) {
-        completeCommand += "RESTART_INERTIAL_UNIT:";
-        completeCommand += String(azimuth, 2);
-    }
-
-    if (calibrationMatrix != nullptr) {
-        if (completeCommand.length() > 0) completeCommand += "|";   // Pridáme oddelovač ak už máme reštart príkaz
-        completeCommand += "SET_CALIBRATION_MATRIX:";
-        
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                completeCommand += String(calibrationMatrix[i][j], 6);  // 6 desatinných miest
-                if (!(i == 2 && j == 2)) {
-                    completeCommand += ",";  // Čiarky medzi hodnotami
-                }
-            }
-        }
-    }
-
+  String restartCommand = "RESTART_INERTIAL_UNIT:";
+  restartCommand += String(azimuth, 2);  // Add azimuth with 2 decimal places
+  if (flagSend){
     LoRa.beginPacket();
     LoRa.write(localAddress);
-    LoRa.write(completeCommand.length()); // Dĺžka celej správy
-    LoRa.print(completeCommand);
+    LoRa.write(restartCommand.length());
+    LoRa.print(restartCommand);
     if (!LoRa.endPacket()) {
-        Serial.println("Failed to send command.");
-        return -1;
+      Serial.println("Failed to send restart command.");
+      return -1;
     }
-
-    Serial.println("Command sent: " + completeCommand);
-    Serial.println("Waiting for acknowledgment...");
-
-    // Čakanie na potvrdenie
-    unsigned long startTime = millis();
-    while (millis() - startTime < timeout) {
-        int packetSize = LoRa.parsePacket();
-        if (packetSize > 0) {
-            String ackMessage = "";
-            while (LoRa.available()) {
-                ackMessage += (char)LoRa.read();
-            }
-
-            if (ackMessage.indexOf("ACK:RESTART_INERTIAL_UNIT") >= 0) {
-                Serial.println("Restart acknowledgment received.");
-            }
-
-            if (ackMessage.indexOf("ACK:SET_CALIBRATION") >= 0) {
-                Serial.println("Calibration acknowledgment received.");
-                return 0; // Success
-            }
+    startTime = millis();
+    flagSend = false;
+    Serial.println("Restart command sent successfully. Waiting for acknowledgment...");
+  }
+  else {
+    if (millis() - startTime < timeout) {
+    int packetSize = LoRa.parsePacket();
+      if (packetSize > 0) {
+        // Read acknowledgment
+        String ackMessage = "";
+        while (LoRa.available()) {
+          ackMessage += (char)LoRa.read();
         }
-    }
 
+        if (ackMessage == "ACK:RESTART_INERTIAL_UNIT") {
+          Serial.println("Acknowledgment received from inertial unit.");
+          flagSend = true;
+          return 0; // Success
+        }
+      }
+    }
+    else {
     Serial.println("Acknowledgment not received.");
-    return -1; // Failure
+    flagSend = true;
+    return -1; // Failure after retries
+  }
+  }
+  return -1;
 }
 
 int lastUpdateDisplay = 0;

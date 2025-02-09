@@ -154,17 +154,15 @@ String extractKey(WiFiClient& client){
   unsigned long startMillis = millis();
   bool keyExtraction = false;
 
-  while (client.connected() && (millis() - startMillis < timeout)) {
-    while (client.available()) {
+  while (client.connected() && client.available() && (millis() - startMillis < timeout)) {
       char c = client.read();
-      request.concat(c);
+      request.concat(c); 
       if (keyExtraction && request.endsWith("\r\n")){
         return request.substring(request.lastIndexOf(" ") + 1, request.lastIndexOf("\r"));
       }
       else if (request.endsWith("Sec-WebSocket-Key: ")){
         keyExtraction = true;
       }
-    }
   }
   return "";
 }

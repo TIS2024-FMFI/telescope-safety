@@ -1,6 +1,8 @@
 
 #include "transform_to_azimuth_elevation.h"
 
+double azimuthOffset=0.0;
+
 double R_correction[3][3] = {
     {1, 0, 0},
     {0, 1, 0},
@@ -79,6 +81,8 @@ AzimuthElevation* fromRPYtoAzimuthElevation(RollPitchYaw* rollPitchYaw) {
     // Výpočet azimutu
     result.azimuth = atan2(y, x) * 180.0 / M_PI;
     if (result.azimuth < 0) result.azimuth += 360.0;
+    result.azimuth+=azimuthOffset;
+    if (result.azimuth > 360) result.azimuth -= 360.0;
 
     // Výpočet elevácie
     result.elevation = atan2(z, sqrt(x * x + y * y)) * 180.0 / M_PI;

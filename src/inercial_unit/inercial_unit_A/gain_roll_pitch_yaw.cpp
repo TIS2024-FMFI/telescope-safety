@@ -1,8 +1,6 @@
 
 #include "gain_roll_pitch_yaw.h"
 
-double yawOffset=0.0;
-
 SensorType detectedSensor=SENSOR_UNKNOWN;
 
 //definitions needed for icm sensors
@@ -197,10 +195,6 @@ RollPitchYaw* readFromSensor() {
             double t3 = +2.0 * (qw * qz + qx * qy);
             double t4 = +1.0 - 2.0 * (qy * qy + qz * qz);
             roll_pitch_yaw.yaw = atan2(t3, t4) * 180.0 / PI;
-
-            roll_pitch_yaw.yaw += yawOffset;
-            if (roll_pitch_yaw.yaw > 180.0) roll_pitch_yaw.yaw -= 360.0;
-            if (roll_pitch_yaw.yaw < -180.0) roll_pitch_yaw.yaw += 360.0;
         }
     }
 
@@ -238,10 +232,6 @@ RollPitchYaw* readFromSensor() {
           roll_pitch_yaw.yaw=yaw;
           roll_pitch_yaw.pitch=pitch;
           roll_pitch_yaw.roll=roll;
-
-          roll_pitch_yaw.yaw += yawOffset;
-          if (roll_pitch_yaw.yaw > 180.0) roll_pitch_yaw.yaw -= 360.0;
-          if (roll_pitch_yaw.yaw < -180.0) roll_pitch_yaw.yaw += 360.0;
 
           }
   

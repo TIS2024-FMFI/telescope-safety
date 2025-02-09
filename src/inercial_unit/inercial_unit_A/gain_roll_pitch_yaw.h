@@ -20,8 +20,6 @@ struct RollPitchYaw {
     double yaw;
 };
 
-extern double yawOffset;
-
 void initializeSensor();
 
 typedef enum {

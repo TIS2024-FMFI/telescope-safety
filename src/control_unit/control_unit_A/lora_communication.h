@@ -26,11 +26,14 @@ AzimuthElevation* readFromInertialUnit();
 // Restarts inertial unit
 // @return 0 if success, -1 if error
 // @param azimuth value indicates calibration of azimuth on inertial unit
-  // if its -1 it stays the same and sensor just resets
-int restartInertialUnit(double azimuth = -1, double calibrationMatrix[3][3] = nullptr);
+// if its -1 it stays the same and sensor just resets
+int restartInertialUnit(double azimuth = -1, int calibrationMatrix[3][3] = nullptr);
 
+// Display given Azimuth and Elevation on the display
+// @param ae AzimuthElevation struct that should be displayed
 void displayAE(AzimuthElevation* ae);
 
+// Reads from senzor, evaluates danger, logs, displays on screen and sends to connected clients
 void doOperations();
 
 #endif // LORA_COMMUNICATION_H

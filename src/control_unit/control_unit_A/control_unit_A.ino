@@ -57,7 +57,7 @@ double azimuth;
 
 void loop() {
   #if DISPLAY_A
-  Serial.println("Looping.... Buttons");
+  // Serial.println("Looping.... Buttons");
   loopButtons();
   #endif
 
@@ -76,7 +76,7 @@ void loop() {
   #endif
 
   #if INERCIAL
-  Serial.println("Looping.... Inertial");
+  // Serial.println("Looping.... Inertial");
   doOperations();
   #endif
 
@@ -88,7 +88,7 @@ void loop() {
   }
 
   if (toNano.available()) {
-    Serial.println("Looping.... In NANO send");
+    // Serial.println("Looping.... In NANO send");
     String azimuthStr = toNano.readStringUntil('\n');
     int firstSpace = azimuthStr.indexOf(' ');
     int secondSpace = azimuthStr.indexOf(' ', firstSpace + 1);

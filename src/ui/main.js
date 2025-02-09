@@ -30,6 +30,7 @@ function bind() {
 
         document.getElementById("azimut").innerText = `${data.azimuth}°`;
         document.getElementById("elevacia").innerText = `${data.elevation}°`;
+        document.getElementById("update").innerText = Date.now();
 
         if (data.error){
             const alert = document.getElementsByClassName("alert")[0];

@@ -123,7 +123,7 @@ int setUpMatrix(const char* newMatrix){
     int value1;
     int value2;
 
-    if (sscanf(line.data(), "%d;%d;%d", value0, &value1, &value2) == 3){
+    if (sscanf(line.data(), "%d;%d;%d", &value0, &value1, &value2) == 3){
       TransformMatrix[rowIndex][0] = value0;
       TransformMatrix[rowIndex][1] = value1;
       TransformMatrix[rowIndex][2] = value2;

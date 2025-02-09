@@ -1,4 +1,5 @@
 #include "danger_evaluation.h"
+#include "servers.h"
 
 const int RELE = 27;
 const int ALARM = 28;
@@ -7,6 +8,7 @@ int enteredForbiddenZone(AzimuthElevation* azimutElevation){
     writeAlarmToLog(azimutElevation);
     startAlarm();
     disableMotors();
+    sendToClients(azimutElevation, "Teleskop práve nabúral!!!");
     return 0;
 }
 
@@ -43,6 +45,8 @@ int checkForbiddenZone(AzimuthElevation* azimutElevation) {
       return -1;
     }
   }
+  stopAlarm();
+  enableMotors();
   return 0;
 }
 

@@ -34,7 +34,7 @@ const int secendsToMilis = 1000;
 int sendToClients(AzimuthElevation* azimuthElevation, String error, String warning) {
   if (eth.status() == WL_CONNECTED &&   //probably will be connected, when clients are connected but to be sure
       websocketClients.size() &&
-      millis() - lastUpdateClients >= (settings.update_frequency * secendsToMilis)){
+      (millis() - lastUpdateClients >= (settings.update_frequency * secendsToMilis || warning != "" || error != ""))){ // send to clients after timeout or when recived message
     lastUpdateClients = millis();
     String message;
     message.reserve(45);
@@ -43,12 +43,14 @@ int sendToClients(AzimuthElevation* azimuthElevation, String error, String warni
     message.concat(",\"elevation\":");
     message.concat(String(azimuthElevation->elevation, 2));
     if (error != ""){
-      message.concat(",\"error\":");
+      message.concat(",\"error\":\"");
       message.concat(error);
+      message.concat("\"");
     }
     if (warning != ""){
-      message.concat(",\"warning\":");
+      message.concat(",\"warning\":\"");
       message.concat(warning);
+      message.concat("\"");
     }
     message.concat("}");
 

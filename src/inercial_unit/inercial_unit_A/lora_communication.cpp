@@ -62,6 +62,11 @@ int readFromControlUnit() {
     // Výpis prijatých údajov
     Serial.println("Received message from control unit: " + incoming);
 
+    LoRa.beginPacket();
+    LoRa.print("ACK:RESTART_INERTIAL_UNIT");
+    LoRa.endPacket();
+    Serial.println("Acknowledgment sent.");
+
     // Rozdelenie viacerých príkazov pomocou "|"
     char *command = strtok((char*)incoming.c_str(), "|");
 
@@ -91,28 +96,19 @@ int readFromControlUnit() {
                 while (!currentRPY) {
                     currentRPY = readFromSensor();
                 }
-                yawOffset = currentRPY->yaw; // Uloženie aktuálnej hodnoty yaw
+                azimuthOffset = fromRPYtoAzimuthElevation(currentRPY)->azimuth; // Uloženie aktuálnej hodnoty yaw
             } else {
                 Serial.print("Adjusting yaw to achieve azimuth: ");
                 Serial.println(azimuth);
 
-                // Reset senzora a nastavenie yawOffset
+                // Reset senzora a nastavenie azimuthOffset
                 resetSensorPower();
-                RollPitchYaw* currentRPY = readFromSensor();
-                while (!currentRPY) {
-                    currentRPY = readFromSensor();
-                }
-                yawOffset = adjustYawToAzimuth(azimuth, currentRPY);
+                azimuthOffset = azimuth;
             }
         }
 
         command = strtok(nullptr, "|");  // Prechádzame na ďalší príkaz
     }
-
-    LoRa.beginPacket();
-    LoRa.print("ACK:RESTART_INERTIAL_UNIT");
-    LoRa.endPacket();
-    Serial.println("Acknowledgment sent.");
 
     return 0;
 }

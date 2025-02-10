@@ -7,6 +7,8 @@
 
 extern double R_correction[3][3];
 
+extern double azimuthOffset;
+
 struct AzimuthElevation {
     double azimuth;
     double elevation;

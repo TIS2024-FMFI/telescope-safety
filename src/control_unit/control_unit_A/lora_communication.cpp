@@ -10,7 +10,7 @@ void initializeLoRa() {
 
   LoRa.setSPI(SPI1);
 
-  LoRa.setPins(LORA_CS_PIN, LORA_RESET_PIN, LORA_IRQ_PIN);2
+  LoRa.setPins(LORA_CS_PIN, LORA_RESET_PIN, LORA_IRQ_PIN);
 
   if (!LoRa.begin(LORA_FREQUENCY)) {
     Serial.println("LoRa initialization failed. Check connections!");
@@ -151,8 +151,5 @@ void doOperations(){
     displayAE(data);
     sendToClients(data);
     writeAEtoLog(data);
-  }
-  else {
-    Serial.println("DATA = nullptr");
   }
 }

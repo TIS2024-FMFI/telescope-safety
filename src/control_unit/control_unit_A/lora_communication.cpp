@@ -3,94 +3,102 @@
 
 AzimuthElevation inertialData;
 
+const unsigned long timeout = 5000;   // Timeout for acknowledgment (in milliseconds)
+bool flagSend = true;
+bool ackFlag = false;
+unsigned long startTime = 0;
+
 void initializeLoRa() {
+  SPI1.setSCK(10);
+  SPI1.setTX(11);
+  SPI1.setRX(12);
 
-    SPI1.setSCK(10);
-    SPI1.setTX(11);
-    SPI1.setRX(12);
+  LoRa.setSPI(SPI1);
 
-    LoRa.setSPI(SPI1);
+  LoRa.setPins(LORA_CS_PIN, LORA_RESET_PIN, LORA_IRQ_PIN);
 
-    LoRa.setPins(LORA_CS_PIN, LORA_RESET_PIN, LORA_IRQ_PIN);
+  if (!LoRa.begin(LORA_FREQUENCY)) {
+    Serial.println("LoRa initialization failed. Check connections!");
+    while (true);
+  }
 
-    if (!LoRa.begin(LORA_FREQUENCY)) {
-        Serial.println("LoRa initialization failed. Check connections!");
-        while (true);
-    }
-
-    Serial.println("LoRa initialization succeeded.");
+  Serial.println("LoRa initialization succeeded.");
 }
 
 AzimuthElevation* readFromInertialUnit() {
-    int packetSize = LoRa.parsePacket();  // Kontrola prichádzajúcej správy
-    if (packetSize == 0) {
-        return nullptr;  // Žiadna správa nebola prijatá
-    }
+  int packetSize = LoRa.parsePacket();  // Kontrola prichádzajúcej správy
+  if (packetSize == 0) {
+    return nullptr;  // Žiadna správa nebola prijatá
+  }
 
-    // Čítanie dĺžky prichádzajúcej správy
-    int sender = LoRa.read();
-    byte incomingLength = LoRa.read();  // Dĺžka správy
+  // Čítanie dĺžky prichádzajúcej správy
+  int sender = LoRa.read();
+  byte incomingLength = LoRa.read();  // Dĺžka správy
 
-    String incoming = "";
-    while (LoRa.available()) {
-        incoming += (char)LoRa.read();  // Čítanie obsahu správy
-    }
+  String incoming = "";
+  while (LoRa.available()) {
+    incoming += (char)LoRa.read();  // Čítanie obsahu správy
+  }
 
-    if (incomingLength != incoming.length()) {  // Overenie správnej dĺžky
-        Serial.println("Error: message length mismatch.");
-        return nullptr;
-    }
+  // Výpis prijatých údajov
+  // Serial.println("Received data from inertial unit: " + incoming);
 
-    if (sender != 0xBB) {
-        Serial.println("This message is not for me.");
-        return nullptr;
-    }
+  if (incomingLength != incoming.length()) {  // Overenie správnej dĺžky
+    Serial.println("Error: message length mismatch.");
+    return nullptr;
+  }
 
-    // Výpis prijatých údajov
-    //Serial.println("Received data from inertial unit: " + incoming);
+  if (sender != 0xBB) {
+      Serial.println("This message is not for me.");
+      return nullptr;
+  }
 
-    // Očakávaný formát: "Azimuth: <value>, Elevation: <value>"
-    int azimuthIndex = incoming.indexOf("Azimuth: ");
-    int elevationIndex = incoming.indexOf("Elevation: ");
-    if (azimuthIndex == -1 || elevationIndex == -1) {
-        Serial.println("Error: invalid data format.");
-        return nullptr;
-    }
+  if (incoming == "ACK:RESTART_INERTIAL_UNIT") {
+    ackFlag = true;
+    return nullptr;
+  }
 
-    // Extrahovanie azimutu a elevácie
-    String azimuthStr = incoming.substring(azimuthIndex + 9, elevationIndex - 2);
-    String elevationStr = incoming.substring(elevationIndex + 11);
+  // Očakávaný formát: "Azimuth: <value>, Elevation: <value>"
+  int azimuthIndex = incoming.indexOf("Azimuth: ");
+  int elevationIndex = incoming.indexOf("Elevation: ");
+  if (azimuthIndex == -1 || elevationIndex == -1) {
+    Serial.println("Error: invalid data format.");
+    return nullptr;
+  }
 
-    azimuthStr.trim();  // Odstránenie bielych znakov
-    elevationStr.trim();
+  // Extrahovanie azimutu a elevácie
+  String azimuthStr = incoming.substring(azimuthIndex + 9, elevationIndex - 2);
+  String elevationStr = incoming.substring(elevationIndex + 11);
 
-    // Konverzia na double
-    inertialData.azimuth = azimuthStr.toDouble();
-    inertialData.elevation = elevationStr.toDouble();
+  azimuthStr.trim();  // Odstránenie bielych znakov
+  elevationStr.trim();
 
-    // Overenie NaN hodnôt
-    if (isnan(inertialData.azimuth) || isnan(inertialData.elevation)) {
-        Serial.println("Error: received NaN values.");
-        return nullptr;
-    }
+  // Konverzia na double
+  inertialData.azimuth = azimuthStr.toDouble();
+  inertialData.elevation = elevationStr.toDouble();
 
-    // Výpis spracovaných hodnôt
-    Serial.print("Parsed Azimuth: ");
-    Serial.print(inertialData.azimuth, 2);  // Presnosť na 2 desatinných miest
-    Serial.print(", Elevation: ");
-    Serial.println(inertialData.elevation, 2);  // Presnosť na 2 desatinných miest
+  // Overenie NaN hodnôt
+  if (isnan(inertialData.azimuth) || isnan(inertialData.elevation)) {
+    Serial.println("Error: received NaN values.");
+    return nullptr;
+  }
 
-    return &inertialData;
+  // Výpis spracovaných hodnôt
+  Serial.print("Parsed Azimuth: ");
+  Serial.print(inertialData.azimuth, 2);  // Presnosť na 2 desatinných miest
+  Serial.print(", Elevation: ");
+  Serial.println(inertialData.elevation, 2);  // Presnosť na 2 desatinných miest
+
+  return &inertialData;
 }
 
-const unsigned long timeout = 5000;   // Timeout for acknowledgment (in milliseconds)
-bool flagSend = true;
-unsigned long startTime = 0;
 
-int restartInertialUnit(double azimuth, double calibrationMatrix[3][3]) {
-  String restartCommand = "RESTART_INERTIAL_UNIT:";
-  restartCommand += String(azimuth, 2);  // Add azimuth with 2 decimal places
+
+int restartInertialUnit(double azimuth, int calibrationMatrix[3][3]) {
+  // Serial.printf("restartInertialUnit, flagSend=%s\n", flagSend ? "true" : "false");
   if (flagSend){
+    String restartCommand = "RESTART_INERTIAL_UNIT:";
+    restartCommand += String(azimuth, 2);  // Add azimuth with 2 decimal places
     LoRa.beginPacket();
     LoRa.write(localAddress);
     LoRa.write(restartCommand.length());
@@ -101,30 +109,24 @@ int restartInertialUnit(double azimuth, double calibrationMatrix[3][3]) {
     }
     startTime = millis();
     flagSend = false;
+    ackFlag=false;
     Serial.println("Restart command sent successfully. Waiting for acknowledgment...");
+    return -1;
   }
   else {
     if (millis() - startTime < timeout) {
-    int packetSize = LoRa.parsePacket();
-      if (packetSize > 0) {
-        // Read acknowledgment
-        String ackMessage = "";
-        while (LoRa.available()) {
-          ackMessage += (char)LoRa.read();
-        }
-
-        if (ackMessage == "ACK:RESTART_INERTIAL_UNIT") {
-          Serial.println("Acknowledgment received from inertial unit.");
-          flagSend = true;
-          return 0; // Success
-        }
+      if (ackFlag){
+        Serial.println("Acknowledgment received from inertial unit.");
+        flagSend = true;
+        ackFlag = false;
+        return 0; // Success
       }
     }
     else {
-    Serial.println("Acknowledgment not received.");
-    flagSend = true;
-    return -1; // Failure after retries
-  }
+      Serial.println("Acknowledgment not received.");
+      flagSend = true;
+      return -1; // Failure after retries
+    }
   }
   return -1;
 }
@@ -151,5 +153,8 @@ void doOperations(){
     displayAE(data);
     sendToClients(data);
     writeAEtoLog(data);
+  }
+  else {
+    // Serial.println("DATA = nullptr");
   }
 }

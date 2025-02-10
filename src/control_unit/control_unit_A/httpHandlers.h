@@ -9,14 +9,31 @@ extern const char *mainPageFilePath;
 extern const char *mainJSFilePath;
 extern const char *stylesCSSFilePath;
 
+// Handles all links thet dont exist
 void handleNotFound();
+
+// Handles config page when data are send to server
 void handleFormPOST();
+
+// Handles config page when page is requested
 void handleFormPage();
+
+// Handles main page when page is requested
 void handleMainPage();
+
+// Handles CSS when it is requested
 void handleCSS();
+
+// Handles JS for main page when it is requested
 void handleJSMain();
+
+// Handles JS for config page when it is requested
 void handleJSForm();
+
+// Handles file downloading when it is requested
 void handleFileDownload();
+
+// Handles loading websites into RAM
 void setupStaticFiles();
 
 

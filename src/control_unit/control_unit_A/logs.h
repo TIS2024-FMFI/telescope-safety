@@ -17,6 +17,8 @@ extern const char* ConfigFilePath;
 extern const char* forbiddenConfigFilePath;
 extern const char* matrixFilePath;
 
+
+// Writes header to csv file if its start of the file
 int writeHeaderIfNeeded(String filename, const char *header);
 
 // Writes AzimuthElevation structure to log file, with timestamp in CSV format
@@ -56,8 +58,12 @@ int writeNewForbiddenConfig(const char* zones);
 // @return 0 if success, -1 if error
 int loadSettings(); //to be done
 
+// Loads file from SD into memory
+// @param filePath path to the file to be loaded
+// @return pointer to loaded file (file ist dinamicaly alocated)
 char* loadFile(const char* filePath);
 
+// sets up pins for SD
 void setupSD();
 
 // Save transform matrix to file

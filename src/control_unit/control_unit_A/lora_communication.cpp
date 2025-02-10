@@ -1,4 +1,3 @@
-
 #include "lora_communication.h"
 
 AzimuthElevation inertialData;

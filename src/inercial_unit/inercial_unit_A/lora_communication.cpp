@@ -62,8 +62,12 @@ int readFromControlUnit() {
     // Výpis prijatých údajov
     Serial.println("Received message from control unit: " + incoming);
 
+    String outgoing = String("ACK:RESTART_INERTIAL_UNIT");
+
     LoRa.beginPacket();
-    LoRa.print("ACK:RESTART_INERTIAL_UNIT");
+    LoRa.write(localAddress);
+    LoRa.write(outgoing.length());
+    LoRa.print(outgoing);
     LoRa.endPacket();
     Serial.println("Acknowledgment sent.");
 

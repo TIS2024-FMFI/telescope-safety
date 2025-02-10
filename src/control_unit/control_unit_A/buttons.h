@@ -34,9 +34,21 @@ extern bool lastButton4State;
 
 extern SoftwareSerial toNano;
 
+// Sets up pins of the buttons
 void setupButtons();
+
+// Checks if the buttons are pressed and evaluates the pressed buttons
 void loopButtons();
+
+// Converts doulbe degrees to degrees, minutes and seconds
+// @param decimalDegrees degrees in double format
+// @param isElevation determinates if the given decimalDegrees is an elevation
+// @return DegreesMinutesSeconds struct which containst all named in int format
 DegreesMinutesSeconds convertToDMS(double decimalDegrees, bool isElevation);
+
+// Converts degrees, minutes and seconds to doulbe degrees
+// @param dms degrees, minutes and seconds in DegreesMinutesSeconds struct
+// @return degrees in double format
 double convertToDecimalDegrees(DegreesMinutesSeconds dms);
 
 #endif

@@ -50,61 +50,65 @@ void setup() {
 
   setupAlarm();
   setupMotors();
-  
-  const char* testMatrix = "1;2;3\n4;5;6\n7;8;9\n";
-  
-  // Zavolanie setUpMatrix, ktorá načíta maticu zo stringu
-  setUpMatrix(testMatrix);
-
-  // Vypísanie načítanej matice na Serial Monitor
-  Serial.println("Načítaná matica:");
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
-      Serial.print(TransformMatrix[i][j]);
-      if (j < 2) {
-         Serial.print(";");
-      }
-    }
-    Serial.println();
-  }
-
-  int result = saveMatrix();
-  if(result == 0) {
-    Serial.println("Matica bola úspešne uložená.");
-  } else {
-    Serial.println("Chyba pri ukladaní matice.");
-  }
 }
 
 bool resetflag=false;
 double azimuth;
+unsigned long lastSend = 0;
+int sendTimeOut = 60000; // 60s
+
+
 
 void loop() {
+
+  if (millis() - lastSend >= sendTimeOut){
+    lastSend = millis();
+    Serial.println("Sending random message");
+    LoRa.beginPacket();
+    LoRa.write(localAddress);
+    LoRa.write(1);
+    LoRa.write(1);
+    if (!LoRa.endPacket()){
+      Serial.println("Packet wasn't sent.");
+    }
+    else {
+      Serial.println("Packet sent successfuly.");
+    }
+  }
+
   #if DISPLAY_A
+  // Serial.println("Looping.... Buttons");
   loopButtons();
   #endif
 
 
   #if SERVERS
   if (eth.status() == WL_CONNECTED){
+    Serial.println("Looping.... Clients HTTP");
     server.handleClient();
+    Serial.println("Looping.... MDNS");
     MDNS.update();
+    Serial.println("Looping.... WS");
     websocketLoop();
+    Serial.println("Looping.... Time");
     timeClient.update();
   }
   #endif
 
   #if INERCIAL
+  // Serial.println("Looping.... Inertial");
   doOperations();
   #endif
 
   if(resetflag){
+    // Serial.println("Looping.... In reset");
     if (restartInertialUnit(azimuth) == 0){
       resetflag=false;
     }   
   }
 
   if (toNano.available()) {
+    // Serial.println("Looping.... In NANO send");
     String azimuthStr = toNano.readStringUntil('\n');
     int firstSpace = azimuthStr.indexOf(' ');
     int secondSpace = azimuthStr.indexOf(' ', firstSpace + 1);
@@ -113,6 +117,7 @@ void loop() {
     azimuthDMS.minutes = azimuthStr.substring(firstSpace + 1, secondSpace).toInt();
     azimuthDMS.seconds = azimuthStr.substring(secondSpace + 1).toInt();
     azimuth = convertToDecimalDegrees(azimuthDMS);
+    // azimuth = -1;
     resetflag = true;
   }
 

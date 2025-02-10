@@ -38,8 +38,11 @@ int enableMotors(); //to be done
 // @return 0 if success, -1 if error
 int reenable(); //to be done
 
+
+// Sets the pin for motors and sets the correct output
 void setupMotors();
 
+// Sets the pin for alarm and sets the correct output
 void setupAlarm();
 
 #endif

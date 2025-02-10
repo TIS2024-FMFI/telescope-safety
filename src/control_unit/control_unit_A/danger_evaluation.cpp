@@ -3,6 +3,7 @@
 
 const int RELE = 27;
 const int ALARM = 28;
+bool already_evaluated = false;
 
 int enteredForbiddenZone(AzimuthElevation* azimutElevation){
     writeAlarmToLog(azimutElevation);
@@ -41,10 +42,14 @@ bool isPointInPolygon(AzimuthElevation* azimutElevation, const ForbiddenZone& po
 int checkForbiddenZone(AzimuthElevation* azimutElevation) {
   for (const auto& zone : settings.systemForbiddenZones) {
     if (isPointInPolygon(azimutElevation, zone)) {
-      enteredForbiddenZone(azimutElevation);
+      if(!already_evaluated){
+        enteredForbiddenZone(azimutElevation);
+        already_evaluated=true;
+      }
       return -1;
     }
   }
+  already_evaluated=false;
   stopAlarm();
   enableMotors();
   return 0;

@@ -3,6 +3,10 @@
 
 AzimuthElevation inertialData;
 
+const unsigned long timeout = 5000;   // Timeout for acknowledgment (in milliseconds)
+bool flagSend = true;
+unsigned long startTime = 0;
+
 void initializeLoRa() {
 
     SPI1.setSCK(10);
@@ -83,10 +87,6 @@ AzimuthElevation* readFromInertialUnit() {
     return &inertialData;
 }
 
-const unsigned long timeout = 5000;   // Timeout for acknowledgment (in milliseconds)
-bool flagSend = true;
-unsigned long startTime = 0;
-
 int restartInertialUnit(double azimuth, double calibrationMatrix[3][3]) {
   String restartCommand = "RESTART_INERTIAL_UNIT:";
   restartCommand += String(azimuth, 2);  // Add azimuth with 2 decimal places
@@ -126,7 +126,7 @@ int restartInertialUnit(double azimuth, double calibrationMatrix[3][3]) {
     return -1; // Failure after retries
   }
   }
-  return -1;
+  return 0;
 }
 
 int lastUpdateDisplay = 0;

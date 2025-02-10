@@ -87,7 +87,7 @@ const unsigned long timeout = 5000;   // Timeout for acknowledgment (in millisec
 bool flagSend = true;
 unsigned long startTime = 0;
 
-int restartInertialUnit(double azimuth, double calibrationMatrix[3][3]) {
+int restartInertialUnit(double azimuth, int calibrationMatrix[3][3]) {
   String restartCommand = "RESTART_INERTIAL_UNIT:";
   restartCommand += String(azimuth, 2);  // Add azimuth with 2 decimal places
   if (flagSend){

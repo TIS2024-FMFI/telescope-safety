@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Create a temporary download link
                     const a = document.createElement("a");
                     a.href = fileURL;
-                    a.download = fileName;
+                    a.download = fileName.split('/').pop();
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Create a temporary download link
                     const a = document.createElement("a");
                     a.href = fileURL;
-                    a.download = fileName;
+                    a.download = fileName.split('/').pop();
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);

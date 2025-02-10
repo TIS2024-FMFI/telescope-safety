@@ -405,6 +405,7 @@ void handleFormPOST() {
       }
     }
     if (saveMatrix() == 0) {
+      restartInertialUnit(-1,TransformMatrix);
       writeChangeToLog(TRANSFORM_MATRIX_CHANGED, clientIP);
     }
   }

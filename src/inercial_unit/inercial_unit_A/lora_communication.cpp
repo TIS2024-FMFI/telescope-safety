@@ -63,7 +63,6 @@ int readFromControlUnit() {
     Serial.println("Received message from control unit: " + incoming);
 
     // Rozdelenie viacerých príkazov pomocou "|"
-    int ackSent = 0;
     char *command = strtok((char*)incoming.c_str(), "|");
 
     while (command != nullptr) {
@@ -78,7 +77,6 @@ int readFromControlUnit() {
 
             setCorrectionMatrix(newMatrix);  
             Serial.println("Calibration matrix updated.");
-            ackSent++;
         }
 
         if (cmdStr.startsWith("RESTART_INERTIAL_UNIT:")) {
@@ -106,25 +104,17 @@ int readFromControlUnit() {
                 }
                 yawOffset = adjustYawToAzimuth(azimuth, currentRPY);
             }
-            ackSent++;
         }
 
         command = strtok(nullptr, "|");  // Prechádzame na ďalší príkaz
     }
 
-    if (ackSent > 0) {
-        LoRa.beginPacket();
-        if (incoming.indexOf("RESTART_INERTIAL_UNIT") >= 0) {
-            LoRa.print("ACK:RESTART_INERTIAL_UNIT|");
-        }
-        if (incoming.indexOf("SET_CALIBRATION_MATRIX") >= 0) {
-            LoRa.print("ACK:SET_CALIBRATION_MATRIX");
-        }
-        LoRa.endPacket();
-        Serial.println("Acknowledgment sent.");
-    }
+    LoRa.beginPacket();
+    LoRa.print("ACK:RESTART_INERTIAL_UNIT");
+    LoRa.endPacket();
+    Serial.println("Acknowledgment sent.");
 
-    return ackSent > 0 ? 0 : -1;
+    return 0;
 }
 
 void setCorrectionMatrix(double newMatrix[3][3]) {

@@ -6,6 +6,17 @@ const unsigned long timeout = 5000;   // Timeout for acknowledgment (in millisec
 bool flagSend = true;
 bool ackFlag = false;
 unsigned long startTime = 0;
+const int resetTime = 1500;
+unsigned long lastRead = 0;
+
+void restartLoRa(){
+  Serial.println("Resetting LoRa module...");
+  digitalWrite(LORA_RESET_PIN, LOW);
+  delay(10);
+  digitalWrite(LORA_RESET_PIN, HIGH);
+  delay(100);
+  LoRa.begin(LORA_FREQUENCY);
+}
 
 void initializeLoRa() {
   SPI1.setSCK(10);
@@ -27,8 +38,18 @@ void initializeLoRa() {
 AzimuthElevation* readFromInertialUnit() {
   int packetSize = LoRa.parsePacket();  // Kontrola prichádzajúcej správy
   if (packetSize == 0) {
+    if (millis() - lastRead >= resetTime){
+      lastRead = millis();
+      Serial.println("Haven't recived any data for too long. Restarting LoRa");
+      restartLoRa();
+      Serial.println("LoRa has been restarted");
+    }
     return nullptr;  // Žiadna správa nebola prijatá
   }
+  
+  lastRead = millis();
+
+  
 
   // Čítanie dĺžky prichádzajúcej správy
   int sender = LoRa.read();

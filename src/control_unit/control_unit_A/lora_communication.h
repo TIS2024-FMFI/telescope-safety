@@ -17,6 +17,7 @@
 
 #define localAddress 0xAA
 
+// Sets up the lora pins and frequencies
 void initializeLoRa();
 
 // Reads data from inertial unit and stores them in AzimuthElevation structure

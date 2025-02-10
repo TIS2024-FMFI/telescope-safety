@@ -175,7 +175,4 @@ void doOperations(){
     sendToClients(data);
     writeAEtoLog(data);
   }
-  else {
-    // Serial.println("DATA = nullptr");
-  }
 }

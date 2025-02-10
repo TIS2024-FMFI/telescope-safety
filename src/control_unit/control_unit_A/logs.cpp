@@ -1,5 +1,7 @@
 #include <SPI.h>
 #include <SD.h>
+#include <SdFat.h>
+#include <TimeLib.h>
 #include "logs.h"
 
 const int _MISO = 4;
@@ -13,6 +15,7 @@ const char *logFilePathPrefix = "/logs/Log_";
 const char* ConfigFilePath = "/conf/AlarmAndIntervalsConfig.txt";
 const char* forbiddenConfigFilePath = "/conf/zones.txt";
 const char* matrixFilePath = "/conf/Matrix.txt";
+SdFat mySdFat;
 
 
 void setupSD() {
@@ -25,6 +28,12 @@ void setupSD() {
     Serial.println("nie je dobre inicializovana SD");
     return;
   }
+
+  if (!mySdFat.begin(_CS)) {
+    Serial.println("Chyba inicializácie SdFat!");
+    return;
+  }
+  Serial.println("SdFat inicializovaná.");
   Serial.println("jupi");
 }
 
@@ -92,6 +101,8 @@ int writeChangeToLog(ChangeType changeType, const char *ip) {
     return -1;
   }
 
+  myFile.print(dateToString(getRealTime()));
+  myFile.print("_");
   myFile.print(timeToString(getRealTime()));
   myFile.print(";");
 
@@ -133,6 +144,8 @@ int writeAlarmToLog(AzimuthElevation *azimuthElevation) {
     return -1;
   }
 
+  myFile.print(dateToString(getRealTime()));
+  myFile.print("_");
   myFile.print(timeToString(getRealTime()));
   myFile.print(";");
   myFile.print(azimuthElevation->azimuth, 2);
@@ -152,7 +165,7 @@ int writeConfigAlarmAndIntervals(Settings settings) {
 
   myFile.print("Audiovizualne upozornenie:");
   myFile.println(settings.alarm);
-  
+
   myFile.print("Odpojenie systemu:");
   myFile.println(settings.rele);
 
@@ -256,3 +269,118 @@ int saveMatrix() {
   return 0;
 }
 
+// Pomocná funkcia: vráti voľné miesto na SD karte v bajtoch.
+// Táto verzia používa metódy dostupné v niektorých verziách SD knižnice.
+uint32_t getFreeSpace() {
+  uint32_t freeClusters = mySdFat.vol()->freeClusterCount();
+  uint32_t blocksPerCluster = mySdFat.vol()->sectorsPerCluster();
+  return freeClusters * blocksPerCluster * 512UL;
+}
+
+// Pomocná funkcia: zo súborového názvu (String) extrahuje dátum.
+// Očakáva sa, že názov súboru obsahuje na začiatku napr. "Log_2023-03-14".
+// Ak je extrakcia úspešná, hodnoty year, month a day sa nastavia a funkcia vráti true.
+bool parseLogFileDate(const String &filename, int &year, int &month, int &day) {
+  int lastSlash = filename.lastIndexOf('/');
+  String baseName = (lastSlash >= 0) ? filename.substring(lastSlash + 1) : filename;
+
+  if (!baseName.startsWith("Log_")) {
+    return false;
+  }
+
+  if (baseName.length() < 14) {
+    return false;
+  }
+
+  String dateStr = baseName.substring(4, 14);
+
+  year = dateStr.substring(0, 4).toInt();
+  month = dateStr.substring(5, 7).toInt();
+  day = dateStr.substring(8, 10).toInt();
+  return true;
+}
+
+// Pomocná funkcia: prevedie zadaný dátum (year, month, day) na Unix timestamp.
+// Použije sa vzorec pre výpočet juliánskeho dňa a prepočet na sekundy.
+unsigned long dateToTimestamp(int year, int month, int day) {
+  int a = (14 - month) / 12;
+  int y = year + 4800 - a;
+  int m = month + 12 * a - 3;
+  long julianDay = day + (153 * m + 2) / 5 + 365 * y + y / 4 - y / 100 + y / 400 - 32045;
+  long daysSinceEpoch = julianDay - 2440588;
+  return (unsigned long)daysSinceEpoch * 86400UL;
+}
+
+// Funkcia, ktorá prejde adresár "/logs" a vymaže všetky logovacie súbory,
+// ktorých dátum (podľa názvu) je starší ako 6 mesiacov.
+void deleteOldLogs() {
+  const unsigned long SIX_MONTHS_SECONDS = 180UL * 86400UL;
+  unsigned long currentTime = convertTimeToEpoch(getRealTime());
+  unsigned long thresholdTime = currentTime - SIX_MONTHS_SECONDS;
+
+  Serial.print("Threshold (6 mesiacov dozadu) timestamp: ");
+  Serial.println(thresholdTime);
+
+  File logsDir = SD.open("/logs");
+  if (!logsDir) {
+    Serial.println("Chyba: nepodarilo sa otvoriť adresár /logs.");
+    return;
+  }
+
+  while (true) {
+    File entry = logsDir.openNextFile();
+    if (!entry) break;
+    if (!entry.isDirectory()) {
+      String fileName = entry.name();
+      int year, month, day;
+      if (parseLogFileDate(fileName, year, month, day)) {
+        unsigned long fileTimestamp = dateToTimestamp(year, month, day);
+        Serial.print("Súbor: ");
+        Serial.print(fileName);
+        Serial.print(" má timestamp: ");
+        Serial.println(fileTimestamp);
+        
+        if (fileTimestamp <= thresholdTime) {
+          String fullPath = "/logs/";
+          fullPath += fileName;
+          SD.remove(fullPath);
+          Serial.print("Vymazaný súbor: ");
+          Serial.println(fileName);
+        }
+      }
+    }
+    entry.close();
+  }
+  logsDir.close();
+}
+
+// Funkcia, ktorá skontroluje voľné miesto na SD karte a ak je pod stanoveným prahom,
+// vymaže logovacie súbory staršie ako 6 mesiacov.
+void manageSDSpace() {
+  const uint32_t MIN_FREE_BYTES = 15UL * 1000UL * 1000UL * 1024UL;
+  uint32_t freeBytes = getFreeSpace();
+  Serial.print("Voľné miesto: ");
+  Serial.print(freeBytes);
+  Serial.println(" bajtov");
+  //deleteOldLogs();
+
+  if (freeBytes < MIN_FREE_BYTES) {
+    Serial.println("Nedostatok miesta – mažeme logy staršie ako 6 mesiacov.");
+    deleteOldLogs();
+    freeBytes = getFreeSpace();
+    Serial.print("Voľné miesto po mazaní: ");
+    Serial.print(freeBytes);
+    Serial.println(" bajtov");
+  }
+}
+
+unsigned long convertTimeToEpoch(const Time &t) {
+  tmElements_t tm;
+  tm.Year = t.year - 1970;
+  tm.Month = t.month;
+  tm.Day = t.day;
+  tm.Hour = t.hours;
+  tm.Minute = t.minutes;
+  tm.Second = t.seconds;
+  return makeTime(tm);
+}

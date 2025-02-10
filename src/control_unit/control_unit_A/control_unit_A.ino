@@ -1,4 +1,3 @@
-
 #include "lora_communication.h"
 #include "buttons.h"
 #include "danger_evaluation.h"
@@ -12,6 +11,7 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 
 Settings settings;
 int TransformMatrix[3][3];
+int lastManageDay = -1;
 
 
 #define SERVERS 1
@@ -119,6 +119,12 @@ void loop() {
     azimuth = convertToDecimalDegrees(azimuthDMS);
     // azimuth = -1;
     resetflag = true;
+  }
+
+  Time now = getRealTime();
+  if (now.hours == 18 && now.day != lastManageDay) {
+    manageSDSpace();
+    lastManageDay = now.day;
   }
 
 }

@@ -54,8 +54,28 @@ void setup() {
 
 bool resetflag=false;
 double azimuth;
+unsigned long lastSend = 0;
+int sendTimeOut = 60000; // 60s
+
+
 
 void loop() {
+
+  if (millis() - lastSend >= sendTimeOut){
+    lastSend = millis();
+    Serial.println("Sending random message");
+    LoRa.beginPacket();
+    LoRa.write(localAddress);
+    LoRa.write(1);
+    LoRa.write(1);
+    if (!LoRa.endPacket()){
+      Serial.println("Packet wasn't sent.");
+    }
+    else {
+      Serial.println("Packet sent successfuly.");
+    }
+  }
+
   #if DISPLAY_A
   // Serial.println("Looping.... Buttons");
   loopButtons();
@@ -81,7 +101,7 @@ void loop() {
   #endif
 
   if(resetflag){
-    Serial.println("Looping.... In reset");
+    // Serial.println("Looping.... In reset");
     if (restartInertialUnit(azimuth) == 0){
       resetflag=false;
     }   
@@ -97,6 +117,7 @@ void loop() {
     azimuthDMS.minutes = azimuthStr.substring(firstSpace + 1, secondSpace).toInt();
     azimuthDMS.seconds = azimuthStr.substring(secondSpace + 1).toInt();
     azimuth = convertToDecimalDegrees(azimuthDMS);
+    // azimuth = -1;
     resetflag = true;
   }
 

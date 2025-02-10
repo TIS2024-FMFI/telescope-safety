@@ -6,6 +6,8 @@ The system monitors currrent position of the telescope. Based on the configurati
 
 When telescope enters forbiden zone the collision is always written to Collisions Log. (Even when logging is turned off.) The alarm is triggered if its turned on and motors are disabled if turning of motors is enabled.
 
+When telescope leaves the forbidden zone alarm is automatically turned off and motors reanabled.
+
 
 All Changes to the configuration (setup) via webpaga are loged to Configuration Log.
 

@@ -101,7 +101,7 @@ void loop() {
   }
 
   Time now = getRealTime();
-  if (now.hours == 1 && now.day != lastManageDay) {
+  if (now.hours == 18 && now.day != lastManageDay) {
     manageSDSpace();
     lastManageDay = now.day;
   }

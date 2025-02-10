@@ -3,6 +3,11 @@
 
 AzimuthElevation inertialData;
 
+const unsigned long timeout = 5000;   // Timeout for acknowledgment (in milliseconds)
+bool flagSend = true;
+bool ackFlag = false;
+unsigned long startTime = 0;
+
 void initializeLoRa() {
   SPI1.setSCK(10);
   SPI1.setTX(11);
@@ -10,7 +15,7 @@ void initializeLoRa() {
 
   LoRa.setSPI(SPI1);
 
-  LoRa.setPins(LORA_CS_PIN, LORA_RESET_PIN, LORA_IRQ_PIN);2
+  LoRa.setPins(LORA_CS_PIN, LORA_RESET_PIN, LORA_IRQ_PIN);
 
   if (!LoRa.begin(LORA_FREQUENCY)) {
     Serial.println("LoRa initialization failed. Check connections!");
@@ -35,6 +40,9 @@ AzimuthElevation* readFromInertialUnit() {
     incoming += (char)LoRa.read();  // Čítanie obsahu správy
   }
 
+  // Výpis prijatých údajov
+  // Serial.println("Received data from inertial unit: " + incoming);
+
   if (incomingLength != incoming.length()) {  // Overenie správnej dĺžky
     Serial.println("Error: message length mismatch.");
     return nullptr;
@@ -45,8 +53,10 @@ AzimuthElevation* readFromInertialUnit() {
       return nullptr;
   }
 
-  // Výpis prijatých údajov
-  // Serial.println("Received data from inertial unit: " + incoming);
+  if (incoming == "ACK:RESTART_INERTIAL_UNIT") {
+    ackFlag = true;
+    return nullptr;
+  }
 
   // Očakávaný formát: "Azimuth: <value>, Elevation: <value>"
   int azimuthIndex = incoming.indexOf("Azimuth: ");
@@ -82,15 +92,13 @@ AzimuthElevation* readFromInertialUnit() {
   return &inertialData;
 }
 
-const unsigned long timeout = 5000;   // Timeout for acknowledgment (in milliseconds)
-bool flagSend = true;
-unsigned long startTime = 0;
+
 
 int restartInertialUnit(double azimuth, int calibrationMatrix[3][3]) {
-  Serial.printf("restartInertialUnit, flagSend=%s\n", flagSend ? "true" : "false");
-  String restartCommand = "RESTART_INERTIAL_UNIT:";
-  restartCommand += String(azimuth, 2);  // Add azimuth with 2 decimal places
+  // Serial.printf("restartInertialUnit, flagSend=%s\n", flagSend ? "true" : "false");
   if (flagSend){
+    String restartCommand = "RESTART_INERTIAL_UNIT:";
+    restartCommand += String(azimuth, 2);  // Add azimuth with 2 decimal places
     LoRa.beginPacket();
     LoRa.write(localAddress);
     LoRa.write(restartCommand.length());
@@ -101,23 +109,17 @@ int restartInertialUnit(double azimuth, int calibrationMatrix[3][3]) {
     }
     startTime = millis();
     flagSend = false;
+    ackFlag=false;
     Serial.println("Restart command sent successfully. Waiting for acknowledgment...");
+    return -1;
   }
   else {
     if (millis() - startTime < timeout) {
-      int packetSize = LoRa.parsePacket();
-      if (packetSize > 0) {
-        // Read acknowledgment
-        String ackMessage = "";
-        while (LoRa.available()) {
-          ackMessage += (char)LoRa.read();
-        }
-
-        if (ackMessage == "ACK:RESTART_INERTIAL_UNIT") {
-          Serial.println("Acknowledgment received from inertial unit.");
-          flagSend = true;
-          return 0; // Success
-        }
+      if (ackFlag){
+        Serial.println("Acknowledgment received from inertial unit.");
+        flagSend = true;
+        ackFlag = false;
+        return 0; // Success
       }
     }
     else {
@@ -153,6 +155,6 @@ void doOperations(){
     writeAEtoLog(data);
   }
   else {
-    Serial.println("DATA = nullptr");
+    // Serial.println("DATA = nullptr");
   }
 }

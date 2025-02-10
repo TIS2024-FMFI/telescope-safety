@@ -89,7 +89,7 @@ void initializeSensor() {
     }
     }
     else if (detectedSensor == SENSOR_ISM330DHCX) {
-      q[4] = {1.0, 0.0, 0.0, 0.0};
+      float q[4] = {1.0, 0.0, 0.0, 0.0};
 #if defined(ARDUINO_ADAFRUIT_FEATHER_ESP32S2_TFT)
         pinMode(TFT_I2C_POWER, OUTPUT);
         digitalWrite(TFT_I2C_POWER, HIGH);

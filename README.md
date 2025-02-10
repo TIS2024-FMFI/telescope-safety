@@ -1,5 +1,15 @@
-# telescope-safety
+# Telescope safety
 Monitoring of current position of large astronomical telescope
+
+## Descritption
+The system monitors currrent position of the telescope. Based on the configuration (setup) the system logs the possitions to the log file.
+
+When telescope enters forbiden zone the collision is always written to Collisions Log. (Even when logging is turned off.) The alarm is triggered if its turned on and motors are disabled if turning of motors is enabled.
+
+
+All Changes to the configuration (setup) via webpaga are loged to Configuration Log.
+
+
 
 ## Hardware
 ### Inertial unit
@@ -25,7 +35,11 @@ Monitoring of current position of large astronomical telescope
 
 ## Manual
 ### Monitoring and confuguration website
-On [main page](teleskop.local) there is displayed actual position of the telescope.
-On [config page](teleskop.local/config) you can configurate forbidden zones, transformantion matrix, update and loging intervals or download logs.
+On [main page](http://teleskop.local) there is displayed actual position of the telescope.
+
+On [config page](http://teleskop.local/config) you can configurate forbidden zones, transformantion matrix, update and loging intervals or download logs.
+
+When system starts you should calibrate actual azimut with display and buttons. The calibration is sent with long press of the button.
+
 
 

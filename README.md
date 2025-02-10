@@ -1,4 +1,4 @@
-# telescope-safety
+# Telescope safety
 Monitoring of current position of large astronomical telescope
 
 ## Descritption

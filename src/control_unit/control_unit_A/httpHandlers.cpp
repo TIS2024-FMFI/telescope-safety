@@ -2,7 +2,7 @@
 #include <Arduino.h>
 #include "logs.h"
 #include <SD.h>
-#include "forbidden_zones_config_parse.h"
+#include "config_parse.h"
 #include "lora_communication.h"
 
 #define DEBUG 1

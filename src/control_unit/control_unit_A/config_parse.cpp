@@ -1,5 +1,5 @@
 
-#include "forbidden_zones_config_parse.h"
+#include "config_parse.h"
 #include <stdlib.h>
 
 ForbiddenZones systemForbiddenZones;

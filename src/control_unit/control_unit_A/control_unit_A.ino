@@ -128,9 +128,6 @@ void loop() {
     manageSDSpace();
     lastManageDay = now.day;
   }
-
-  Serial.println(websocketClients.size());
-
 }
 
 

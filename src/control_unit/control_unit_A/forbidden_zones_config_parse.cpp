@@ -55,7 +55,8 @@ int setUpZones(const char* newConfiguration) {
 
         // Parse a point (azimuth, elevation)
         double az, el;
-        if (sscanf(line.data(), "%lf %lf", &az, &el) != 2) {
+        char ex;
+        if (sscanf(line.data(), "%lf %lf %c", &az, &el) != 2) {
             return -2; // Error: Invalid line format
         }
 

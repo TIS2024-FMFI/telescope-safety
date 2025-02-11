@@ -89,75 +89,75 @@ void initializeSensor() {
     }
     }
     else if (detectedSensor == SENSOR_ISM330DHCX) {
+    // Reset quaternion values to initial state
+    q[0] = 1.0;
+    q[1] = 0.0;
+    q[2] = 0.0;
+    q[3] = 0.0;
+
 #if defined(ARDUINO_ADAFRUIT_FEATHER_ESP32S2_TFT)
-        pinMode(TFT_I2C_POWER, OUTPUT);
-        digitalWrite(TFT_I2C_POWER, HIGH);
+    pinMode(TFT_I2C_POWER, OUTPUT);
+    digitalWrite(TFT_I2C_POWER, HIGH);
 #endif
 
-        Wire.begin();
+    Wire.begin();
 
-        Serial.begin(115200);
-        //while (!Serial);  //wait for serial monitor to connect (can replace this with delay())
+    Serial.begin(115200);
+    //while (!Serial);  //wait for serial monitor to connect (can replace this with delay())
 
-        if ( !ISM330.begin(0x6B) ) {  //0x6B is default with SFE library
-          Serial.println("ISM330 not detected.");
+    if (!ISM330.begin(0x6B)) {  // 0x6B is the default address
+        Serial.println("ISM330 not detected.");
         while (1) delay(1);
-        }
+    }
 
-  //  Serial.println("Applying settings.");
+    ISM330.setDeviceConfig();
+    ISM330.setBlockDataUpdate();
 
-  ISM330.setDeviceConfig();
-  ISM330.setBlockDataUpdate();
+    // Set accelerometer data rate and full scale
+    ISM330.setAccelDataRate(ISM_XL_ODR_104Hz);
+    ISM330.setAccelFullScale(ISM_2g);
 
-  // Set the output data rate and precision of the accelerometer
-  ISM330.setAccelDataRate(ISM_XL_ODR_104Hz);
-  ISM330.setAccelFullScale(ISM_2g);
+    // Set gyroscope data rate and full scale
+    ISM330.setGyroDataRate(ISM_GY_ODR_104Hz);
+    ISM330.setGyroFullScale(ISM_500dps);
 
-  // Set the output data rate and precision of the gyroscope
-  ISM330.setGyroDataRate(ISM_GY_ODR_104Hz);
-  ISM330.setGyroFullScale(ISM_500dps);
-
-  /*
-  	// Turn on the accelerometer's filter and apply settings.
-  	ISM330.setAccelFilterLP2();
-  	ISM330.setAccelSlopeFilter(ISM_LP_ODR_DIV_100);
-  */
-  // Turn on the gyroscope's filter and apply settings.
-  ISM330.setGyroFilterLP1();
-  ISM330.setGyroLP1Bandwidth(ISM_MEDIUM);
+    // Enable filters
+    ISM330.setGyroFilterLP1();
+    ISM330.setGyroLP1Bandwidth(ISM_MEDIUM);
 
 #ifdef CAL_GYRO
-
 #define GYRO_SAMPLES 500
-  Serial.println("Keep gyro still for offset calculation");
-  delay(2000);
+    Serial.println("Keep gyro still for offset calculation");
+    delay(2000);
 
+    // Reset gyro offsets
+    gxyz_offsets[0] = 0;
+    gxyz_offsets[1] = 0;
+    gxyz_offsets[2] = 0;
 
-  int loopcount = 0;
-  while (loopcount < GYRO_SAMPLES) {  //accumulate sums
-    // Check if both gyroscope and accelerometer data are available.
-    if ( ISM330.checkStatus() ) {
-      ISM330.getGyro(&gyr);
-      gxyz_offsets[0] += gyr.xData;
-      gxyz_offsets[1] += gyr.yData;
-      gxyz_offsets[2] += gyr.zData;
-      loopcount++;
+    int loopcount = 0;
+    while (loopcount < GYRO_SAMPLES) {  // Accumulate sums
+        if (ISM330.checkStatus()) {
+            ISM330.getGyro(&gyr);
+            gxyz_offsets[0] += gyr.xData;
+            gxyz_offsets[1] += gyr.yData;
+            gxyz_offsets[2] += gyr.zData;
+            loopcount++;
+        }
     }
-  }
 
-  // calculate and store gyro offsets
+    // Calculate and store gyro offsets
+    for (int i = 0; i < 3; i++) gxyz_offsets[i] /= (float)loopcount;
+#endif
 
-  for (int i = 0; i < 3; i++) gxyz_offsets[i] /= (float)loopcount;
-  #endif
-
-  // reminder!
-  Serial.print("Gyro offsets ");
-  for (int i = 0; i < 3; i++) {
-    Serial.print(gxyz_offsets[i], 1);
-    Serial.print(" ");
-  }
-  Serial.println();
+    // Print offsets
+    Serial.print("Gyro offsets: ");
+    for (int i = 0; i < 3; i++) {
+        Serial.print(gxyz_offsets[i], 1);
+        Serial.print(" ");
     }
+    Serial.println();
+}
 }
 
 RollPitchYaw* readFromSensor() {

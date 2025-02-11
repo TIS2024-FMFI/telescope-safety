@@ -26,7 +26,7 @@ void displayAE(AzimuthElevation* ae);
 
 void setup() {
   Serial.begin(9600);                   // initialize serial
-  while (!Serial);
+  //while (!Serial);
   Serial.println("Started Serial");
   
   #if INERCIAL

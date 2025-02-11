@@ -171,7 +171,13 @@ void doOperations(){
   if (data) {
     checkForbiddenZone(data);
     displayAE(data);
-    sendToClients(data);
+    if (already_evaluated) {
+      sendToClients(data, "Alarm je spustený, teleskop v zakázanej polohe");
+    }
+    else {
+      sendToClients(data);
+    }
+    
     writeAEtoLog(data);
   }
 }

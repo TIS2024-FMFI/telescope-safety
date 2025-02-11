@@ -97,7 +97,7 @@ void initializeSensor() {
         Wire.begin();
 
         Serial.begin(115200);
-        while (!Serial);  //wait for serial monitor to connect (can replace this with delay())
+        //while (!Serial);  //wait for serial monitor to connect (can replace this with delay())
 
         if ( !ISM330.begin(0x6B) ) {  //0x6B is default with SFE library
           Serial.println("ISM330 not detected.");

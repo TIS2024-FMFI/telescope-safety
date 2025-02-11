@@ -45,7 +45,7 @@ void displayAE(DegreesMinutesSeconds azimuth, DegreesMinutesSeconds elevation) {
   sprintf(minutes, "%d'", elevation.minutes);
   sprintf(seconds, "%d\"", elevation.seconds);
   myGLCD.print("Elevacia: ", 90, 180);
-  myGLCD.print(degrees, 245, 180);
+  myGLCD.print(degrees, 235, 180);
   myGLCD.print(minutes, 300, 180);
   myGLCD.print(seconds, 350, 180);
 }
@@ -104,8 +104,9 @@ void showSettings() {
   sprintf(degrees, "%d~", elevation.degrees);
   sprintf(minutes, "%d'", elevation.minutes);
   sprintf(seconds, "%d\"", elevation.seconds);
+  
   myGLCD.print("Elevacia: ", 90, 180);
-  myGLCD.print(degrees, 245, 180);
+  myGLCD.print(degrees, 235, 180);
   myGLCD.print(minutes, 300, 180);
   myGLCD.print(seconds, 350, 180);
 }

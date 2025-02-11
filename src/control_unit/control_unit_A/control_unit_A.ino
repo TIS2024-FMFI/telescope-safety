@@ -84,13 +84,14 @@ void loop() {
 
   #if SERVERS
   if (eth.status() == WL_CONNECTED){
-    Serial.println("Looping.... Clients HTTP");
+    //Serial.println("Looping.... Clients HTTP");
+    //Serial.println(eth.localIP());
     server.handleClient();
-    Serial.println("Looping.... MDNS");
+    // Serial.println("Looping.... MDNS");
     MDNS.update();
-    Serial.println("Looping.... WS");
+    // Serial.println("Looping.... WS");
     websocketLoop();
-    Serial.println("Looping.... Time");
+    // Serial.println("Looping.... Time");
     timeClient.update();
   }
   #endif
@@ -122,7 +123,8 @@ void loop() {
   }
 
   Time now = getRealTime();
-  if (now.hours == 18 && now.day != lastManageDay) {
+  if (now.hours == 9 && now.day != lastManageDay) {
+    Serial.println("Idem manageSD");
     manageSDSpace();
     lastManageDay = now.day;
   }

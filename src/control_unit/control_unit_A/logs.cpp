@@ -357,11 +357,14 @@ void deleteOldLogs() {
 // Funkcia, ktorá skontroluje voľné miesto na SD karte a ak je pod stanoveným prahom,
 // vymaže logovacie súbory staršie ako 6 mesiacov.
 void manageSDSpace() {
-  const uint32_t MIN_FREE_BYTES = 15UL * 1000UL * 1000UL * 1024UL;
+  const uint32_t MIN_FREE_BYTES = 1000UL * 1024UL;
   uint32_t freeBytes = getFreeSpace();
   Serial.print("Voľné miesto: ");
   Serial.print(freeBytes);
   Serial.println(" bajtov");
+
+  Serial.print("Min free bytes: ");
+  Serial.print(MIN_FREE_BYTES);
   //deleteOldLogs();
 
   if (freeBytes < MIN_FREE_BYTES) {

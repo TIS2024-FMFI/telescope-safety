@@ -5,7 +5,7 @@ extern UTFTGLUE myGLCD;
 void setup()
 {
   Serial.begin(9600);
-  while (!Serial);
+  //while (!Serial);
   toPico.begin(9600);
     
   myGLCD.InitLCD();

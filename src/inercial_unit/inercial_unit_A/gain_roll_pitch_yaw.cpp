@@ -103,7 +103,7 @@ void initializeSensor() {
     Wire.begin();
 
     Serial.begin(115200);
-    while (!Serial);  // Wait for serial monitor to connect (or replace with delay())
+    //while (!Serial);  //wait for serial monitor to connect (can replace this with delay())
 
     if (!ISM330.begin(0x6B)) {  // 0x6B is the default address
         Serial.println("ISM330 not detected.");

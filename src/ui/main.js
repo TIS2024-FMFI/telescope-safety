@@ -27,10 +27,14 @@ function bind() {
 
     ws.onmessage = function (event) {
         const data = JSON.parse(event.data);
+        const alert = document.getElementsByClassName("alert")[0];
+        alert.style.display = "none";
 
         document.getElementById("azimut").innerText = `${data.azimuth}°`;
         document.getElementById("elevacia").innerText = `${data.elevation}°`;
-        document.getElementById("update").innerText = Date.now();
+        now = new Date();
+        document.getElementById("update").innerText = now.toLocaleString();
+
 
         if (data.error){
             const alert = document.getElementsByClassName("alert")[0];

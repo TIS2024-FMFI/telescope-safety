@@ -43,5 +43,5 @@ On [config page](http://teleskop.local/config) you can configurate forbidden zon
 
 When system starts you should calibrate actual azimut with display and buttons. The calibration is sent with long press of the button.
 
-
+In "libraries" folders for each unit you have instructions about external libraries used.
 

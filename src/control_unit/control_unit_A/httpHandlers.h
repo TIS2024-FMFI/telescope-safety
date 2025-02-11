@@ -58,13 +58,21 @@ void setupStaticFiles();
 #define MATRIX00 "matrix[0][0]"
 #define MATRIX01 "matrix[0][1]"
 #define MATRIX02 "matrix[0][2]"
+#define MATRIX03 "matrix[0][3]"
 #define MATRIX10 "matrix[1][0]"
 #define MATRIX11 "matrix[1][1]"
 #define MATRIX12 "matrix[1][2]"
+#define MATRIX13 "matrix[1][3]"
 #define MATRIX20 "matrix[2][0]"
 #define MATRIX21 "matrix[2][1]"
 #define MATRIX22 "matrix[2][2]"
+#define MATRIX23 "matrix[2][3]"
+#define MATRIX30 "matrix[3][0]"
+#define MATRIX31 "matrix[3][1]"
+#define MATRIX32 "matrix[3][2]"
+#define MATRIX33 "matrix[3][3]"
 
-extern  const char* matrixTags[3][3];
+extern  const char* matrixTags[4][4];
+
 
 #endif

@@ -39,6 +39,6 @@ struct Settings {
 };
 
 extern Settings settings;
-extern int TransformMatrix[3][3];
+extern int TransformMatrix[4][4];
 
 #endif

@@ -29,10 +29,16 @@
 // Lines starting with # are ignored
 int setUpZones(const char* newConfiguration);
 
+
+// Sorts the Azimuths and Elevations in given zone clockwise.
+// @param zone it which the Azimuths and Elevations are reordered
 void sortZoneClockwise(ForbiddenZone& zone);
 
+// Calculates angle
 double calculateAngle(const AzimuthElevation& point, const AzimuthElevation& centroid);
 
+// loads given array as transform matrig into global setup
+// @param newMatrix that is loaded into global variable
 int setUpMatrix(const char* newMatrix);
 
 // Parsing alarm type, logging status, log frequency and update frequency from file to global variable settings

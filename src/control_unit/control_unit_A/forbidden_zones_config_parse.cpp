@@ -53,12 +53,23 @@ int setUpZones(const char* newConfiguration) {
             continue;
         }
 
-        // Parse a point (azimuth, elevation)
-        double az, el;
-        char ex;
-        if (sscanf(line.data(), "%lf %lf %c", &az, &el) != 2) {
-            return -2; // Error: Invalid line format
-        }
+      // Parse a point (azimuth, elevation)
+      double az, el;
+      int charsRead;
+      if (sscanf(line.data(), "%lf %lf %n", &az, &el, &charsRead) != 2) {
+        return -2; // Error: Invalid line format
+      }
+
+      // Trim trailing whitespace
+      std::string_view remaining = line.substr(charsRead);
+      while (!remaining.empty() && (remaining.front() == ' ' || remaining.front() == '\t' || remaining.front() == '\r' || remaining.front() == '\n')) {
+        remaining.remove_prefix(1);
+      }
+
+      // If anything is left after removing whitespace, it's an error
+      if (!remaining.empty()) {
+        return -2; // Error: Unexpected trailing characters
+      }
 
         // Add the point to the current zone
         temp_zone.push_back({az, el});

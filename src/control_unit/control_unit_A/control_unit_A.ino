@@ -1,4 +1,3 @@
-
 #include "lora_communication.h"
 #include "buttons.h"
 #include "danger_evaluation.h"
@@ -12,6 +11,7 @@ Wiznet55rp20lwIP eth(1 /* chip select */);
 
 Settings settings;
 int TransformMatrix[3][3];
+int lastManageDay = -1;
 
 
 #define SERVERS 1
@@ -26,7 +26,7 @@ void displayAE(AzimuthElevation* ae);
 
 void setup() {
   Serial.begin(9600);                   // initialize serial
-  while (!Serial);
+  //while (!Serial);
   Serial.println("Started Serial");
   
   #if INERCIAL
@@ -84,13 +84,14 @@ void loop() {
 
   #if SERVERS
   if (eth.status() == WL_CONNECTED){
-    Serial.println("Looping.... Clients HTTP");
+    //Serial.println("Looping.... Clients HTTP");
+    //Serial.println(eth.localIP());
     server.handleClient();
-    Serial.println("Looping.... MDNS");
+    // Serial.println("Looping.... MDNS");
     MDNS.update();
-    Serial.println("Looping.... WS");
+    // Serial.println("Looping.... WS");
     websocketLoop();
-    Serial.println("Looping.... Time");
+    // Serial.println("Looping.... Time");
     timeClient.update();
   }
   #endif
@@ -119,6 +120,13 @@ void loop() {
     azimuth = convertToDecimalDegrees(azimuthDMS);
     // azimuth = -1;
     resetflag = true;
+  }
+
+  Time now = getRealTime();
+  if (now.hours == 9 && now.day != lastManageDay) {
+    Serial.println("Idem manageSD");
+    manageSDSpace();
+    lastManageDay = now.day;
   }
 
 }

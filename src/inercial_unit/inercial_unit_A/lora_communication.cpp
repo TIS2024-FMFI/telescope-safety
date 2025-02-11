@@ -1,6 +1,18 @@
 
 #include "lora_communication.h"
 
+const int resetTime = 5*60000;
+unsigned long lastRead = 0;
+
+void restartLoRa(){
+  Serial.println("Resetting LoRa module...");
+  digitalWrite(LORA_RESET_PIN, LOW);
+  delay(10);
+  digitalWrite(LORA_RESET_PIN, HIGH);
+  delay(100);
+  LoRa.begin(LORA_FREQUENCY);
+}
+
 // Inicializácia LoRa
 void initializeLoRa() {
     LoRa.setPins(LORA_CS_PIN, LORA_RESET_PIN, LORA_IRQ_PIN);
@@ -37,8 +49,16 @@ int sendToControlUnit(AzimuthElevation* azimuthElevation) {
 int readFromControlUnit() {
     int packetSize = LoRa.parsePacket();
     if (packetSize == 0) {
-        return -1;  // Žiadna správa nebola prijatá
+      if (millis() - lastRead >= resetTime){
+        lastRead = millis();
+        Serial.println("Haven't recived any data for too long. Restarting LoRa");
+        restartLoRa();
+        Serial.println("LoRa has been restarted");
+      }
+      return -1;  // Žiadna správa nebola prijatá
     }
+  
+    lastRead = millis();
 
     // Čítanie hlavičky
     int sender = LoRa.read();
@@ -62,8 +82,12 @@ int readFromControlUnit() {
     // Výpis prijatých údajov
     Serial.println("Received message from control unit: " + incoming);
 
+    String outgoing = String("ACK:RESTART_INERTIAL_UNIT");
+
     LoRa.beginPacket();
-    LoRa.print("ACK:RESTART_INERTIAL_UNIT");
+    LoRa.write(localAddress);
+    LoRa.write(outgoing.length());
+    LoRa.print(outgoing);
     LoRa.endPacket();
     Serial.println("Acknowledgment sent.");
 

@@ -1,4 +1,3 @@
-
 #include "lora_communication.h"
 
 AzimuthElevation inertialData;
@@ -174,8 +173,5 @@ void doOperations(){
     displayAE(data);
     sendToClients(data);
     writeAEtoLog(data);
-  }
-  else {
-    // Serial.println("DATA = nullptr");
   }
 }

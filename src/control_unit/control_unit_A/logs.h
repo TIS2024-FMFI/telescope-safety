@@ -70,4 +70,15 @@ void setupSD();
 // @return 0 if success, -1 if error
 int saveMatrix();
 
+uint32_t getFreeSpace();
+
+bool parseLogFileDate(const String &filename, int &year, int &month, int &day);
+
+unsigned long dateToTimestamp(int year, int month, int day);
+
+void deleteOldLogs();
+
+void manageSDSpace();
+
+unsigned long convertTimeToEpoch(const Time &t);
 #endif

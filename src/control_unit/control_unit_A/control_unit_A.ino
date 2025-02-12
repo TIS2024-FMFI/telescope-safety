@@ -13,6 +13,9 @@ Settings settings;
 int TransformMatrix[4][4];
 int lastManageDay = -1;
 
+const unsigned long DHCPTimeOut = 60000;
+unsigned long lastTryDHCP = 0;
+
 
 #define SERVERS 1
 #define DISPLAY_A 1
@@ -94,6 +97,12 @@ void loop() {
     // Serial.println("Looping.... Time");
     timeClient.update();
   }
+  else {
+    if (millis() - lastTryDHCP >= DHCPTimeOut){
+      Serial.println("Ethernet lost connection! Restarting...");
+      restartEthernet();
+    }
+  }
   #endif
 
   #if INERCIAL
@@ -136,10 +145,11 @@ void loop() {
 // Functions
 
 
-int timeOut = 400;
+int timeOut = 200;
 
 void setupEthernet(){
   Serial.println("Starting ETH");
+  lastTryDHCP = millis();
   // Start the Ethernet port
   if (!eth.begin()) {
     Serial.println("No wired Ethernet hardware detected. Check pinouts, wiring.");
@@ -155,12 +165,16 @@ void setupEthernet(){
       Serial.println("Connection time out");
       break;
     }
-    delay(100);
-    Serial.print(".");
   }
 
   Serial.print("IP address: ");
   Serial.println(eth.localIP());
+}
+
+void restartEthernet() {
+  Serial.println("Restarting Ethernet...");
+  eth.end();  // Properly close the interface
+  setupEthernet();  // Reinitialize Ethernet
 }
 
 void setupSettings(){

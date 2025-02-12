@@ -413,7 +413,12 @@ void handleFormPOST() {
       }
     }
     if (saveMatrix() == 0) {
+<<<<<<< Updated upstream
       restartInertialUnit(-1, TransformMatrix);
+=======
+      transMatrix = true;
+      resetflag = true;
+>>>>>>> Stashed changes
       writeChangeToLog(TRANSFORM_MATRIX_CHANGED, clientIP);
     }
   }
@@ -432,9 +437,9 @@ void handleFormPOST() {
   }
   else if (server.arg(RESTART_BUTTON) != ""){
     Serial.println("POST restart");
-    if (restart() == 0){
-      Serial.println("restarting...");
-      writeChangeToLog(RESTART, clientIP);
+    restart()
+    Serial.println("restarting...");
+    writeChangeToLog(RESTART, clientIP);
     }
   }
   handleFormPage();
@@ -525,8 +530,8 @@ void handleJSForm(){
   
 }
 
-// Restarts system
-// @return 0 if success, -1 if error
-int restart(){
-  return restartInertialUnit(-1);
+// Restarts senzor
+void restart(){
+  resetflag = true;
+  azimuth = -1;
 }

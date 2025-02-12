@@ -16,21 +16,24 @@ All Changes to the configuration (setup) via webpaga are loged to Configuration 
 ## Hardware
 ### Inertial unit
 - [Raspberry Pico 2](https://www.raspberrypi.com/products/raspberry-pi-pico-2/)
-- [Inertial sensor](https://www.waveshare.com/wiki/10_DOF_IMU_Sensor_(D))
-- [LoRa]()
+- Inertial sensor (alternatives)
+  - [Waveshare 10 DOF IMU Sensor (D), ICM20948 Onboard](https://www.sparkfun.com/sparkfun-6dof-imu-breakout-ism330dhcx-qwiic.html)
+  - [SparkFun 6DoF IMU Breakout - ISM330DHCX](https://www.sparkfun.com/sparkfun-6dof-imu-breakout-ism330dhcx-qwiic.html) (best choice)
+  - [SparkFun 9DoF IMU Breakout - ICM-20948](https://www.sparkfun.com/sparkfun-9dof-imu-breakout-icm-20948-qwiic.html)
+- LoRa 868MHz SX1276 RF Transreceiver Module RFM96W
 
 ![Inertial unit scheme](/docs/schemes/inertial_unit.png)
 
 ### Control unit
 - [W55RP20-EVB-PICO](https://docs.wiznet.io/Product/ioNIC/W55RP20/w55rp20-evb-pico)
-- [Arduino NANO]()
-- [TLT LCD Shield Display]()
+- [Arduino NANO](https://store.arduino.cc/en-sk/products/arduino-nano)
+- 3.5 TLT LCD Shield Display
 - Micro SD Card
-- [LoRa]()
-- 4x [Buttons]()
-- 2x [Mosfet]()
-- [Rele]()
-- [Alarm]()
+- LoRa 868MHz SX1276 RF Transreceiver Module RFM96W
+- 4x Kapacitné dotykové tlačidlo TTP223
+- 2x MosfetDual mosfet PWM regulátor AOD4184A
+- Relé modul 1 kanál 5V
+- Siréna 12V LS-103
 
 ![Control unit scheme](/docs/schemes/control_unit.png)
 

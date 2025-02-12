@@ -1,7 +1,7 @@
 
 #include "lora_communication.h"
 
-const int resetTime = 5*60000;
+const int resetTime = 20000;
 unsigned long lastRead = 0;
 
 void restartLoRa(){

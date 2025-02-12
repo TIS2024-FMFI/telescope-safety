@@ -4,6 +4,8 @@
 #include "logs.h"
 #include <Arduino.h>
 
+extern bool already_evaluated;
+
 // Skontroluje, či bod patrí do jednej zakázanej zóny
 bool isPointInPolygon(AzimuthElevation* azimutElevation, const ForbiddenZone& polygon);
 

@@ -25,6 +25,7 @@ int setUpZones(const char* newConfiguration) {
     std::string_view line = config.substr(current, end - current);
     current = end + 1; // Move to the next line
 
+
     // Trim whitespace from the start and end
     while (!line.empty() && (line.front() == ' ' || line.front() == '\t')) {
       line.remove_prefix(1);

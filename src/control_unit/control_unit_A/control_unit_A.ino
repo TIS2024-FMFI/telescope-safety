@@ -52,7 +52,8 @@ void setup() {
   setupMotors();
 }
 
-bool resetflag=false;
+bool resetflag = false;
+bool transMatrix = false;
 double azimuth;
 unsigned long lastSend = 0;
 int sendTimeOut = 60000; // 60s
@@ -103,9 +104,18 @@ void loop() {
 
   if(resetflag){
     // Serial.println("Looping.... In reset");
-    if (restartInertialUnit(azimuth) == 0){
-      resetflag=false;
-    }   
+    if (transMatrix){
+      if (restartInertialUnit(azimuth, TransformMatrix) == 0){
+        transMatrix = false;
+        resetflag = false;
+      }   
+    }
+    else {
+      if (restartInertialUnit(azimuth) == 0){
+        resetflag = false;
+      }   
+    }
+    
   }
 
   if (toNano.available()) {

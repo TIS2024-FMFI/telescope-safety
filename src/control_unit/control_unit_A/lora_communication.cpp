@@ -114,7 +114,7 @@ AzimuthElevation* readFromInertialUnit() {
 
 
 
-int restartInertialUnit(double azimuth, int calibrationMatrix[3][3]) {
+int restartInertialUnit(double azimuth, int calibrationMatrix[4][4]) {
   // Serial.printf("restartInertialUnit, flagSend=%s\n", flagSend ? "true" : "false");
   if (flagSend){
     String restartCommand;

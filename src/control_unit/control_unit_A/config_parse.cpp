@@ -1,5 +1,5 @@
 
-#include "forbidden_zones_config_parse.h"
+#include "config_parse.h"
 #include <stdlib.h>
 
 ForbiddenZones systemForbiddenZones;
@@ -123,11 +123,13 @@ int setUpMatrix(const char* newMatrix){
     int value0;
     int value1;
     int value2;
+    int value3;
 
-    if (sscanf(line.data(), "%d;%d;%d", &value0, &value1, &value2) == 3){
+    if (sscanf(line.data(), "%d;%d;%d;%d", &value0, &value1, &value2, &value3) == 4){
       TransformMatrix[rowIndex][0] = value0;
       TransformMatrix[rowIndex][1] = value1;
       TransformMatrix[rowIndex][2] = value2;
+      TransformMatrix[rowIndex][3] = value3;
     }
     
     rowIndex++;

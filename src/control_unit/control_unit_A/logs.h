@@ -2,7 +2,7 @@
 #define LOGS_H
 
 #include "common_structs.h"
-#include "forbidden_zones_config_parse.h"
+#include "config_parse.h"
 #include "time.h"
 
 extern const int _MISO;

@@ -27,7 +27,11 @@ Priklad takehoto nastavenia 2 zon:
 58 60
 64 60
 60 50
-``` 
+```
+
+Dalej si vie uzivatel nastavit 4x4 transformacnu maticu, ktora sluzi na preratanie azimutu a elevacie senzora na azimut a elevaciu strednej osi tubusu. Matica sa odvija od toho kde je senzor na teleskope pripojeny(matica posunu/translacie- posun vyjadreny v stupnoch) a takisto ako je lokalne voci osiam tubusu natoceny(sucin rotacnych matic okolo osí x,y,z). Opisný obrázok: 
+
+![alt text](docs/images/transformacna_matica.png)
 
 V dalsej casti sa da nastavit, ci ma system spustat alarm pri vstupe do zakazanej zony, ci ma odpojit napajanie motorov, ktore ovladaju teleskop, ako casto sa maju posielat udaje o katualnej polohe z riadiacej jednotky na web, ako casto sa ma aktualna (okamzita) poloha teleskopu zapisovat do suboru s logmi ci sa maju taketo logy vobec zapisoavat podla tohoto nastavenie (ak su vypnute logy nezapisuju sa. Logy o vstupe do zakazanej zony a konfiguraciach sa vzdy zapisu).
 

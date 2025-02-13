@@ -118,16 +118,16 @@ int restartInertialUnit(double azimuth, int calibrationMatrix[4][4]) {
   // Serial.printf("restartInertialUnit, flagSend=%s\n", flagSend ? "true" : "false");
   if (flagSend){
     String restartCommand;
-    if(azimuth!=-1){
+    if(azimuth!=-1 || calibrationMatrix[4][4]==nullptr && azimuth==-1){
       restartCommand = "RESTART_INERTIAL_UNIT:";
       restartCommand += String(azimuth, 2);  // Add azimuth with 2 decimal places
     }
     else{
       restartCommand = "|SET_CALIBRATION_MATRIX:";
-      for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
+      for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
                 restartCommand += String(calibrationMatrix[i][j], 6);  // 6 desatinných miest
-                if (!(i == 2 && j == 2)) {
+                if (!(i == 3 && j == 3)) {
                     restartCommand += ",";  // Čiarky medzi hodnotami
                 }
             }

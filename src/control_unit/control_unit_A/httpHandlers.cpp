@@ -437,7 +437,7 @@ void handleFormPOST() {
   }
   else if (server.arg(RESTART_BUTTON) != ""){
     Serial.println("POST restart");
-    restart()
+    restart();
     Serial.println("restarting...");
     writeChangeToLog(RESTART, clientIP);
     }

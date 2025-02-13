@@ -3,8 +3,6 @@
 
 #include <vector>
 
-
-
 struct AzimuthElevation {
     double azimuth;
     double elevation;
@@ -38,6 +36,9 @@ struct Settings {
   ForbiddenZones systemForbiddenZones;
 };
 
+extern bool transMatrix;
+extern bool resetflag;
+extern double azimuth;
 extern Settings settings;
 extern int TransformMatrix[4][4];
 

@@ -4,9 +4,12 @@
 #include <SD.h>
 #include "config_parse.h"
 #include "lora_communication.h"
+#include "common_structs.h"
 
 #define DEBUG 1
 #define PRELOAD 0
+
+
 
 const char *confPageFilePath = "/www/config.html";
 const char *confJSFilePath = "/www/config.js";
@@ -55,9 +58,6 @@ String confTags[4][4] = {{confHTML2, confHTML3, confHTML4, confHTML5},
                          {confHTML14, confHTML15, confHTML16, confHTML17}};
 
 #endif
-
-
-int restart();
 
 
 #if PRELOAD
@@ -413,12 +413,10 @@ void handleFormPOST() {
       }
     }
     if (saveMatrix() == 0) {
-<<<<<<< Updated upstream
       restartInertialUnit(-1, TransformMatrix);
-=======
       transMatrix = true;
       resetflag = true;
->>>>>>> Stashed changes
+      azimuth=-1;
       writeChangeToLog(TRANSFORM_MATRIX_CHANGED, clientIP);
     }
   }
@@ -441,7 +439,6 @@ void handleFormPOST() {
     Serial.println("restarting...");
     writeChangeToLog(RESTART, clientIP);
     }
-  }
   handleFormPage();
 }
 
@@ -534,4 +531,5 @@ void handleJSForm(){
 void restart(){
   resetflag = true;
   azimuth = -1;
+  restartInertialUnit(azimuth);
 }

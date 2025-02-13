@@ -7,7 +7,7 @@ double R_correction[4][4] = {
     {1, 0, 0, 0},
     {0, 1, 0, 0},
     {0, 0, 1, 0},
-    {0, 0, 1, 0}
+    {0, 0, 0, 1}
 };
 
 AzimuthElevation* fromRPYtoAzimuthElevation(RollPitchYaw* rollPitchYaw) {
@@ -68,23 +68,9 @@ AzimuthElevation* fromRPYtoAzimuthElevation(RollPitchYaw* rollPitchYaw) {
     double y = R[1][0];
     double z = R[2][0];
 
-    // Výpočet azimutu senzora
-    result.azimuth = atan2(y, x) * 180.0 / M_PI;
-    if (result.azimuth < 0) result.azimuth += 360.0;
-    result.azimuth+=azimuthOffset;
-    if (result.azimuth > 360) result.azimuth -= 360.0;
-
-    // Výpočet elevácie senzora
-    result.elevation = atan2(z, sqrt(x * x + y * y)) * 180.0 / M_PI;
-
-    double dirVec[4] = {cos(result.elevation)*cos(result.azimuth),
-                        cos(result.elevation)*sin(result.azimuth),
-                        sin(result.elevation),
-                        1};
-
-    double newVec[4] = {R_correction[0][0]*dirVec[0]+R_correction[0][1]*dirVec[1]+R_correction[0][2]*dirVec[2]+R_correction[0][3]*dirVec[3],
-                        R_correction[1][0]*dirVec[0]+R_correction[1][1]*dirVec[1]+R_correction[1][2]*dirVec[2]+R_correction[1][3]*dirVec[3],
-                        R_correction[2][0]*dirVec[0]+R_correction[2][1]*dirVec[1]+R_correction[2][2]*dirVec[2]+R_correction[2][3]*dirVec[3],
+    double newVec[4] = {R_correction[0][0]*x+R_correction[0][1]*y+R_correction[0][2]*z+R_correction[0][3]*1,
+                        R_correction[1][0]*x+R_correction[1][1]*y+R_correction[1][2]*z+R_correction[1][3]*1,
+                        R_correction[2][0]*x+R_correction[2][1]*y+R_correction[2][2]*z+R_correction[2][3]*1,
                         1};
 
     // Výpočet azimutu tubusu

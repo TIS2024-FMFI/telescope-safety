@@ -11,5 +11,5 @@ void resetSensorPower() {
     digitalWrite(SENSOR_POWER_PIN, HIGH); // Zapnutie napájania
     delay(1000);                          // Čas na reštart senzora
     Serial.println("Sensor power reset complete.");
-    initializeSensor();
+    initializeSensor(); //inicializovanie senzora pri resete, teda aj detekovanie zmeny senzora-nie je zavisla na kompilacii
 }

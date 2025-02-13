@@ -3,10 +3,11 @@
 
 double azimuthOffset=0.0;
 
-double R_correction[3][3] = {
-    {1, 0, 0},
-    {0, 1, 0},
-    {0, 0, 1}
+double R_correction[4][4] = {
+    {1, 0, 0, 0},
+    {0, 1, 0, 0},
+    {0, 0, 1, 0},
+    {0, 0, 1, 0}
 };
 
 AzimuthElevation* fromRPYtoAzimuthElevation(RollPitchYaw* rollPitchYaw) {
@@ -21,16 +22,6 @@ AzimuthElevation* fromRPYtoAzimuthElevation(RollPitchYaw* rollPitchYaw) {
     double roll = rollPitchYaw->roll * M_PI / 180.0;
     double pitch = rollPitchYaw->pitch * M_PI / 180.0;
     double yaw = rollPitchYaw->yaw * M_PI / 180.0;
-
-    // Referenčný vektor pred aplikáciou yaw-pitch-roll transformácie
-    double refVec[3] = {1, 0, 0}; // Predpokladaný vektor dopredu
-
-    double correctedVec[3] = {0, 0, 0};
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            correctedVec[i] += R_correction[i][j] * refVec[j];
-        }
-    }
 
     // Rotačné matice pre yaw, pitch a roll
     double R_yaw[3][3] = {
@@ -73,19 +64,35 @@ AzimuthElevation* fromRPYtoAzimuthElevation(RollPitchYaw* rollPitchYaw) {
         }
     }
 
-    // Aplikácia transformačnej matice na opravený vektor
-    double x = R[0][0] * correctedVec[0] + R[0][1] * correctedVec[1] + R[0][2] * correctedVec[2];
-    double y = R[1][0] * correctedVec[0] + R[1][1] * correctedVec[1] + R[1][2] * correctedVec[2];
-    double z = R[2][0] * correctedVec[0] + R[2][1] * correctedVec[1] + R[2][2] * correctedVec[2];
+    double x = R[0][0];
+    double y = R[1][0];
+    double z = R[2][0];
 
-    // Výpočet azimutu
+    // Výpočet azimutu senzora
     result.azimuth = atan2(y, x) * 180.0 / M_PI;
     if (result.azimuth < 0) result.azimuth += 360.0;
     result.azimuth+=azimuthOffset;
     if (result.azimuth > 360) result.azimuth -= 360.0;
 
-    // Výpočet elevácie
+    // Výpočet elevácie senzora
     result.elevation = atan2(z, sqrt(x * x + y * y)) * 180.0 / M_PI;
 
+    double dirVec[4] = {cos(result.elevation)*cos(result.azimuth),
+                        cos(result.elevation)*sin(result.azimuth),
+                        sin(result.elevation),
+                        1};
+
+    double newVec[4] = {R_correction[0][0]*dirVec[0]+R_correction[0][1]*dirVec[1]+R_correction[0][2]*dirVec[2]+R_correction[0][3]*dirVec[3],
+                        R_correction[1][0]*dirVec[0]+R_correction[1][1]*dirVec[1]+R_correction[1][2]*dirVec[2]+R_correction[1][3]*dirVec[3],
+                        R_correction[2][0]*dirVec[0]+R_correction[2][1]*dirVec[1]+R_correction[2][2]*dirVec[2]+R_correction[2][3]*dirVec[3],
+                        1};
+
+    // Výpočet azimutu tubusu
+    result.azimuth = atan2(newVec[1], newVec[0]) * 180.0 / M_PI;
+    if (result.azimuth < 0) result.azimuth += 360.0;
+
+    // Výpočet elevácie tubusu
+    result.elevation = atan2(newVec[2], sqrt(newVec[0] * newVec[0] + newVec[1] * newVec[1])) * 180.0 / M_PI;          
+    
     return &result;
 }

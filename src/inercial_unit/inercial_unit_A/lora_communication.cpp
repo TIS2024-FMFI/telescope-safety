@@ -102,7 +102,8 @@ int readFromControlUnit() {
             sscanf(cmdStr.c_str(), "SET_CALIBRATION_MATRIX:%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf",
                    &newMatrix[0][0], &newMatrix[0][1], &newMatrix[0][2], &newMatrix[0][3],
                    &newMatrix[1][0], &newMatrix[1][1], &newMatrix[1][2], &newMatrix[1][3],
-                   &newMatrix[2][0], &newMatrix[2][1], &newMatrix[2][2], &newMatrix[2][3]);
+                   &newMatrix[2][0], &newMatrix[2][1], &newMatrix[2][2], &newMatrix[2][3],
+                   &newMatrix[3][0], &newMatrix[3][1], &newMatrix[3][2], &newMatrix[3][3]);
 
             setCorrectionMatrix(newMatrix);  
             Serial.println("Calibration matrix updated.");

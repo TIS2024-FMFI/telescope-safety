@@ -407,16 +407,23 @@ void handleFormPOST() {
     }
   }
   else if (server.arg(MATRIX_CONFIG_BUTTON) != "") {
+    int num;
     for (int i = 0; i < 4; i++){
       for (int ii = 0; ii < 4; ii++){
-        TransformMatrix[i][ii] = server.arg(matrixTags[i][ii]).toInt();
+        String valueStr = server.arg(matrixTags[i][ii]);
+        if (valueStr[0] == '-') {
+          num = valueStr.substring(1).toInt() * -1;
+        } else {
+          num = valueStr.toInt();
+        }
+        TransformMatrix[i][ii] = num;
       }
     }
     if (saveMatrix() == 0) {
-      restartInertialUnit(-1, TransformMatrix);
       transMatrix = true;
       resetflag = true;
       azimuth=-1;
+      restartInertialUnit(-1, TransformMatrix);
       writeChangeToLog(TRANSFORM_MATRIX_CHANGED, clientIP);
     }
   }

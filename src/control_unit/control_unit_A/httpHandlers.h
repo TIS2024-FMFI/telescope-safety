@@ -36,6 +36,7 @@ void handleFileDownload();
 // Handles loading websites into RAM
 void setupStaticFiles();
 
+void restart();
 
 // Define form names:
 #define ZONE_CONFIG_BUTTON "config_zones"
@@ -73,6 +74,5 @@ void setupStaticFiles();
 #define MATRIX33 "matrix[3][3]"
 
 extern  const char* matrixTags[4][4];
-
 
 #endif

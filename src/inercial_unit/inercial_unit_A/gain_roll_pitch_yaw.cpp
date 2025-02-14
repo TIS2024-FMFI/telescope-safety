@@ -5,12 +5,7 @@ SensorType detectedSensor=SENSOR_UNKNOWN;
 
 //definitions needed for icm sensors
 uint8_t AD0_VAL = 0;                  //
-                                      //
-#ifdef USE_SPI                        //
-ICM_20948_SPI myICM;                  //
-#else                                 //
 ICM_20948_I2C myICM;                  //
-#endif                                //
 //
 
 //definitions needed for ism sensor
@@ -49,24 +44,16 @@ SensorType detectSensor() {
 void initializeSensor() {
   detectedSensor = detectSensor();
   if (detectedSensor == SENSOR_ICM20948) {
-#ifdef USE_SPI
-    SPI_PORT.begin();
-#else
     WIRE_PORT.begin();
     WIRE_PORT.setClock(400000);
-#endif
 
     bool initialized = false;
     while (!initialized) {
-#ifdef USE_SPI
-        myICM.begin(CS_PIN, SPI_PORT);
-#else
         ICM_20948_Status_e status = myICM.begin(WIRE_PORT, AD0_VAL);
         if(status!=ICM_20948_Stat_Ok){
           AD0_VAL=1;
           myICM.begin(WIRE_PORT, AD0_VAL);
         }
-#endif
         if (myICM.status != ICM_20948_Stat_Ok) {
             delay(500);
         } else {
@@ -95,11 +82,6 @@ void initializeSensor() {
     q[2] = 0.0;
     q[3] = 0.0;
 
-#if defined(ARDUINO_ADAFRUIT_FEATHER_ESP32S2_TFT)
-    pinMode(TFT_I2C_POWER, OUTPUT);
-    digitalWrite(TFT_I2C_POWER, HIGH);
-#endif
-
     Wire.begin();
 
     Serial.begin(115200);
@@ -125,8 +107,6 @@ void initializeSensor() {
     ISM330.setGyroFilterLP1();
     ISM330.setGyroLP1Bandwidth(ISM_MEDIUM);
 
-#ifdef CAL_GYRO
-#define GYRO_SAMPLES 500
     Serial.println("Keep gyro still for offset calculation");
     delay(2000);
 
@@ -136,7 +116,7 @@ void initializeSensor() {
     gxyz_offsets[2] = 0;
 
     int loopcount = 0;
-    while (loopcount < GYRO_SAMPLES) {  // Accumulate sums
+    while (loopcount < 500) {  // Accumulate sums
         if (ISM330.checkStatus()) {
             ISM330.getGyro(&gyr);
             gxyz_offsets[0] += gyr.xData;
@@ -148,7 +128,6 @@ void initializeSensor() {
 
     // Calculate and store gyro offsets
     for (int i = 0; i < 3; i++) gxyz_offsets[i] /= (float)loopcount;
-#endif
 
     // Print offsets
     Serial.print("Gyro offsets: ");

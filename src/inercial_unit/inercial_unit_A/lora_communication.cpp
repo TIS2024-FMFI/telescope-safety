@@ -98,11 +98,12 @@ int readFromControlUnit() {
         String cmdStr = String(command);
 
         if (cmdStr.startsWith("SET_CALIBRATION_MATRIX:")) {
-            double newMatrix[3][3];
-            sscanf(cmdStr.c_str(), "SET_CALIBRATION_MATRIX:%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf",
-                   &newMatrix[0][0], &newMatrix[0][1], &newMatrix[0][2],
-                   &newMatrix[1][0], &newMatrix[1][1], &newMatrix[1][2],
-                   &newMatrix[2][0], &newMatrix[2][1], &newMatrix[2][2]);
+            double newMatrix[4][4];
+            sscanf(cmdStr.c_str(), "SET_CALIBRATION_MATRIX:%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf",
+                   &newMatrix[0][0], &newMatrix[0][1], &newMatrix[0][2], &newMatrix[0][3],
+                   &newMatrix[1][0], &newMatrix[1][1], &newMatrix[1][2], &newMatrix[1][3],
+                   &newMatrix[2][0], &newMatrix[2][1], &newMatrix[2][2], &newMatrix[2][3],
+                   &newMatrix[3][0], &newMatrix[3][1], &newMatrix[3][2], &newMatrix[3][3]);
 
             setCorrectionMatrix(newMatrix);  
             Serial.println("Calibration matrix updated.");
@@ -120,7 +121,7 @@ int readFromControlUnit() {
                 while (!currentRPY) {
                     currentRPY = readFromSensor();
                 }
-                azimuthOffset = fromRPYtoAzimuthElevation(currentRPY)->azimuth; // Uloženie aktuálnej hodnoty yaw
+                azimuthOffset = fromRPYtoAzimuthElevation(currentRPY)->azimuth; // Uloženie aktuálnej hodnoty azimuth
             } else {
                 Serial.print("Adjusting yaw to achieve azimuth: ");
                 Serial.println(azimuth);
@@ -137,9 +138,9 @@ int readFromControlUnit() {
     return 0;
 }
 
-void setCorrectionMatrix(double newMatrix[3][3]) {
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
+void setCorrectionMatrix(double newMatrix[4][4]) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
             R_correction[i][j] = newMatrix[i][j];
         }
     }

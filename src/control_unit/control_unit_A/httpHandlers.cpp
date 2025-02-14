@@ -4,9 +4,12 @@
 #include <SD.h>
 #include "config_parse.h"
 #include "lora_communication.h"
+#include "common_structs.h"
 
 #define DEBUG 1
 #define PRELOAD 0
+
+
 
 const char *confPageFilePath = "/www/config.html";
 const char *confJSFilePath = "/www/config.js";
@@ -55,9 +58,6 @@ String confTags[4][4] = {{confHTML2, confHTML3, confHTML4, confHTML5},
                          {confHTML14, confHTML15, confHTML16, confHTML17}};
 
 #endif
-
-
-int restart();
 
 
 #if PRELOAD
@@ -407,18 +407,23 @@ void handleFormPOST() {
     }
   }
   else if (server.arg(MATRIX_CONFIG_BUTTON) != "") {
+    int num;
     for (int i = 0; i < 4; i++){
       for (int ii = 0; ii < 4; ii++){
-        TransformMatrix[i][ii] = server.arg(matrixTags[i][ii]).toInt();
+        String valueStr = server.arg(matrixTags[i][ii]);
+        if (valueStr[0] == '-') {
+          num = valueStr.substring(1).toInt() * -1;
+        } else {
+          num = valueStr.toInt();
+        }
+        TransformMatrix[i][ii] = num;
       }
     }
     if (saveMatrix() == 0) {
-<<<<<<< Updated upstream
-      restartInertialUnit(-1, TransformMatrix);
-=======
       transMatrix = true;
       resetflag = true;
->>>>>>> Stashed changes
+      azimuth=-1;
+      restartInertialUnit(-1, TransformMatrix);
       writeChangeToLog(TRANSFORM_MATRIX_CHANGED, clientIP);
     }
   }
@@ -437,11 +442,10 @@ void handleFormPOST() {
   }
   else if (server.arg(RESTART_BUTTON) != ""){
     Serial.println("POST restart");
-    restart()
+    restart();
     Serial.println("restarting...");
     writeChangeToLog(RESTART, clientIP);
     }
-  }
   handleFormPage();
 }
 
@@ -534,4 +538,5 @@ void handleJSForm(){
 void restart(){
   resetflag = true;
   azimuth = -1;
+  restartInertialUnit(azimuth);
 }

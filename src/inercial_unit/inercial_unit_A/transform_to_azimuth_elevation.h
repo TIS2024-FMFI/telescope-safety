@@ -5,7 +5,7 @@
 #include <cmath>
 #include "gain_roll_pitch_yaw.h"
 
-extern double R_correction[3][3];
+extern double R_correction[4][4];
 
 extern double azimuthOffset;
 

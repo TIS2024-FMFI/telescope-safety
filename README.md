@@ -46,9 +46,9 @@ All Changes to the configuration (setup) via webpaga are loged to Configuration 
 ### Monitoring and confuguration website
 On [main page](http://teleskop.local) there is displayed actual position of the telescope.
 
-On [config page](http://teleskop.local/config) you can configurate forbidden zones, transformantion matrix, update and loging intervals or download logs.
+On [config page](http://teleskop.local/config) you can configurate forbidden zones, transformation matrix, updating and logging intervals or download logs.
 
-When system starts you should calibrate actual azimut with display and buttons. The calibration is sent with long press of the button.
+When system starts you should calibrate actual azimuth with display and buttons. The calibration is sent with long press of the button.
 
 In "libraries" folders for each unit you have instructions about external libraries used.
 
